@@ -48,7 +48,8 @@ def _main() -> None:
     num_eval = len(eval_tasks)
     for i, eval_task in enumerate(eval_tasks):
         success, info = utils.run_genplan_on_task(
-            generalized_plan, eval_task, horizon=FLAGS.horizon
+            generalized_plan, eval_task, horizon=FLAGS.horizon,
+            timeout=FLAGS.timeout
         )
         success_str = "Solved" if success else "Failed"
         logging.info(f"Eval task {i+1}/{num_eval}: {success_str} [{info}]")

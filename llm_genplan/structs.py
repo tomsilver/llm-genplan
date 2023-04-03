@@ -5,6 +5,7 @@ import tempfile
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
+from typing import List, Set, Tuple
 
 from pyperplan.grounding import ground as pyperplan_ground
 from pyperplan.pddl.parser import Parser
@@ -78,6 +79,28 @@ class Task:
         logging.disable(logging.NOTSET)
         return pyperplan_task
 
+    @cached_property
+    def objects(self) -> Set[Tuple[str, str]]:
+        """The objects (not including constants) and their types."""
+        objs = set()
+        for obj in sorted(self.problem.objects):
+            obj_type = self.problem.objects[obj]
+            objs.add((obj, str(obj_type)))
+        return objs
+
+    @cached_property
+    def init(self) -> Set[Tuple[str, Tuple[str, ...]]]:
+        """The initial atoms in the form {(predicate name, object names)}."""
+        return {pred_to_tuple(p) for p in self.problem.initial_state}
+
+    @cached_property
+    def goal(self) -> Set[Tuple[str, Tuple[str, ...]]]:
+        """The goal in the form {(predicate name, object names)}."""
+        return {pred_to_tuple(p) for p in self.problem.goal}
+
+    def goal_holds(self) -> bool:
+        return self.goal.issubset(self.init)
+
 
 @dataclass(frozen=True)
 class GeneralizedPlan:
@@ -100,3 +123,18 @@ class GeneralizedPlan:
     """
 
     code_str: str
+
+    def run(self, task: Task) -> List[str]:
+        """Run the generalized plan to get a plan for the task."""
+        # Add get_plan() to globals().
+        exec(self.code_str, globals())
+        # Run the generalized plan.
+        action_tuples = get_plan(task.objects, task.init, task.goal)
+        # Convert to string representation.
+        return [utils.action_tuple_to_action(a) for a in action_tuples]
+
+
+def pred_to_tuple(pred: PyperplanPredicate) -> Set[Tuple[str, Tuple[str, ...]]]:
+    """Create a tuple representation of a Pyperplan predicate (atom)."""
+    arg_strs = [str(o) for o, _ in pred.signature]
+    return (pred.name, tuple(arg_strs))

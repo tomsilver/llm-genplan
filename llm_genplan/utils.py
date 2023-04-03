@@ -8,7 +8,9 @@ import subprocess
 import urllib.request
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
+import multiprocessing as mp
+import time
 
 from llm_genplan.flags import FLAGS
 from llm_genplan.structs import (
@@ -74,7 +76,7 @@ def pred_to_str(pred: PyperplanPredicate) -> str:
     return f"({pred.name} {arg_str})"
 
 
-def get_objects_str(task: Task, include_constants: bool = False) -> str:
+def get_objects_str(task: Task) -> str:
     """Returns a PDDL encoding of the objects in the task."""
     # Create the objects string.
     type_to_objs: Dict[PyperplanType, List[PyperplanObject]] = {
@@ -83,11 +85,6 @@ def get_objects_str(task: Task, include_constants: bool = False) -> str:
     for obj in sorted(task.problem.objects):
         obj_type = task.problem.objects[obj]
         type_to_objs[obj_type].append(obj)
-    # Include constants too.
-    if include_constants:
-        for obj in sorted(task.domain.constants):  # pragma: no cover
-            obj_type = task.domain.constants[obj]
-            type_to_objs[obj_type].append(obj)
     # Construct the object list for the prompt.
     objects_strs: List[str] = []
     for typ, objs in type_to_objs.items():
@@ -174,7 +171,7 @@ def action_is_valid_for_task(task: Task, action: str) -> bool:
 def advance_task(task: Task, action: str) -> Task:
     """Create a new task with a new initial state."""
     action_op = action_to_task_operator(task, action)
-    objects_str = get_objects_str(task, include_constants=False)
+    objects_str = get_objects_str(task)
     init_strs = set(get_init_strs(task))
     init_strs = (init_strs - action_op.del_effects) | action_op.add_effects
     init_str = "\n  ".join(sorted(init_strs))
@@ -195,9 +192,63 @@ def advance_task(task: Task, action: str) -> Task:
     return new_task
 
 
+def _create_genplan_error_info(task: Task, msg: str) -> str:
+    return "\n".join([
+        "Given the following inputs:",
+        f"objects = {task.objects}",
+        f"init = {task.init}",
+        f"goal = {task.goal}",
+        msg
+    ])
+
+
+def _run_genplan_on_task_no_timeout(
+    generalized_plan: GeneralizedPlan, task: Task, horizon: int,
+    result_dict: Dict,
+) -> None:
+    """Helper for run_genplan_on_task()."""
+    result_dict["success"] = False
+    try:
+        plan = generalized_plan.run(task)
+    except Exception as e:
+        msg = f"The code raised the following exception: {e}"
+        result_dict["info"] = _create_genplan_error_info(task, msg)
+        return
+    if len(plan) > horizon:
+        msg = f"The code returned too long of a plan (horizon={horizon})."
+        result_dict["info"] = _create_genplan_error_info(task, msg)
+        return
+    for action in plan:
+        if not utils.action_is_valid_for_task(task, action):
+            msg = f"The code returned an invalid action: {action}"
+            result_dict["info"] = _create_genplan_error_info(task, msg)
+            return
+        task = advance_task(task, action)
+    # Check if goal achieved.
+    if task.goal_holds():
+        result_dict["success"] = True
+        result_dict["info"] = "Generalized plan succeeded."
+        return
+    msg = ("The code returned the following plan, which did not achieve the "
+           f"goal: {plan}")
+    result_dict["info"] = _create_genplan_error_info(task, msg)
+    return
+
+
 def run_genplan_on_task(
-    generalized_plan: GeneralizedPlan, task: Task, horizon: int
+    generalized_plan: GeneralizedPlan, task: Task, horizon: int, timeout: int,
 ) -> Tuple[bool, str]:
     """Returns bool success and an info string."""
-    del generalized_plan, task, horizon
-    return False, "TODO"
+    # Handle possible timeouts.
+    manager = mp.Manager()
+    result_dict = manager.dict()
+    p = mp.Process(target=_run_genplan_on_task_no_timeout, args=(generalized_plan, task, horizon, result_dict))
+    p.start()
+    p.join(timeout)
+    # Timeout reached.
+    if p.is_alive():
+        p.kill()
+        msg = "The code did not finish in time. Possible infinite loop."
+        result_dict["info"] = _create_genplan_error_info(task, msg)
+        return False, info
+    return result_dict["success"], result_dict["info"]

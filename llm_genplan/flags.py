@@ -15,6 +15,7 @@ def parse_flags() -> None:
     parser.add_argument("--num_train_tasks", default=2, type=int)
     parser.add_argument("--num_eval_tasks", default=10, type=int)
     parser.add_argument("--horizon", default=1000, type=int)
+    parser.add_argument("--timeout", default=10, type=int)
     parser.add_argument(
         "--debug",
         action="store_const",
