@@ -1,4 +1,9 @@
-"""Main entry point for experiments."""
+"""Main entry point for experiments.
+
+Example commands:
+    python llm_genplan/main.py --env pyperplan-blocks --seed 0 \
+        --experiment_id test
+"""
 
 import logging
 import sys
