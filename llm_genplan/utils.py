@@ -214,7 +214,7 @@ def _run_genplan_on_task_no_timeout(
     try:
         plan = generalized_plan.run(task)
     except Exception as e:  # pylint: disable=broad-exception-caught
-        msg = f"The code raised the following exception: {e}"
+        msg = f"The code raised the following exception: {repr(e)}"
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
     if len(plan) > horizon:
@@ -247,6 +247,12 @@ def run_genplan_on_task(
     timeout: int,
 ) -> Tuple[bool, str]:
     """Returns bool success and an info string."""
+
+    # Uncomment for debugging.
+    # result_dict = {}
+    # _run_genplan_on_task_no_timeout(generalized_plan, task, horizon, result_dict)
+    # import ipdb; ipdb.set_trace()
+
     # Handle possible timeouts.
     manager = mp.Manager()
     result_dict = manager.dict()

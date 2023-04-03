@@ -89,12 +89,12 @@ class Task:
         return objs
 
     @cached_property
-    def init(self) -> Set[Tuple[str, Tuple[str, ...]]]:
+    def init(self) -> Set[Tuple[str, ...]]:
         """The initial atoms in the form {(predicate name, object names)}."""
         return {pred_to_tuple(p) for p in self.problem.initial_state}
 
     @cached_property
-    def goal(self) -> Set[Tuple[str, Tuple[str, ...]]]:
+    def goal(self) -> Set[Tuple[str, ...]]:
         """The goal in the form {(predicate name, object names)}."""
         return {pred_to_tuple(p) for p in self.problem.goal}
 
@@ -135,16 +135,17 @@ class GeneralizedPlan:
         return [action_tuple_to_action(a) for a in action_tuples]
 
 
-def pred_to_tuple(pred: PyperplanPredicate) -> Tuple[str, Tuple[str, ...]]:
+def pred_to_tuple(pred: PyperplanPredicate) -> Tuple[str, ...]:
     """Create a tuple representation of a Pyperplan predicate (atom)."""
     arg_strs = [str(o) for o, _ in pred.signature]
-    return (pred.name, tuple(arg_strs))
+    return (pred.name,) + tuple(arg_strs)
 
 
-def action_tuple_to_action(act_tuple: Tuple[str, Tuple[str, ...]]) -> str:
+def action_tuple_to_action(act_tuple: Tuple[str, ...]) -> str:
     """Create a string action from a tuple."""
-    op_name, arg_names = act_tuple
-    if not arg_names:
+    op_name = act_tuple[0]
+    if len(act_tuple) == 1:
         return f"({op_name})"
+    arg_names = act_tuple[1:]
     arg_name_str = " ".join(arg_names)
     return f"({op_name} {arg_name_str})"
