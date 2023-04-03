@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
-        cache-dependency-path: '**/setup.py'
+        cache-dependency-path: '**/pyproject.toml'
     - name: Install dependencies
       run: |
         pip install -e .
@@ -47,7 +47,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
-        cache-dependency-path: '**/setup.py'
+        cache-dependency-path: '**/pyproject.toml'
     - name: Install dependencies
       run: |
         pip install -e .
