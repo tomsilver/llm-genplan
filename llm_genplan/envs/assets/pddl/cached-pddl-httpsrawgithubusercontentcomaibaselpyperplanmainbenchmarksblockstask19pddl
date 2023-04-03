@@ -1,0 +1,9 @@
+; Downloaded January 15, 2023 from https://raw.githubusercontent.com/aibasel/pyperplan/main/benchmarks/blocks/task19.pddl
+(define (problem blocks-10-0)
+(:domain blocks)
+(:objects d a h g b j e i f c - block)
+(:init (clear c) (clear f) (ontable i) (ontable f) (on c e) (on e j) (on j b)
+ (on b g) (on g h) (on h a) (on a d) (on d i) (handempty))
+(:goal (and (on d c) (on c f) (on f j) (on j e) (on e h) (on h b) (on b a)
+            (on a g) (on g i)))
+)

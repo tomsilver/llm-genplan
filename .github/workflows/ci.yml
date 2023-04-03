@@ -1,0 +1,57 @@
+name: CI Checks
+
+on: [push]
+
+jobs:
+  autoformat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run black to test code linting
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          jupyter: true
+      - name: Run isort to organize imports
+        uses: isort/isort-action@master
+  linting:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        cache-dependency-path: '**/setup.py'
+    - name: Install dependencies
+      run: |
+        pip install -e .
+        pip install pylint
+        pip install pytest-pylint
+    - name: Lint
+      run: |
+        pytest . --pylint -m pylint --pylint-rcfile=.llm_genplan_pylintrc
+  static-type-checking:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        cache-dependency-path: '**/setup.py'
+    - name: Install dependencies
+      run: |
+        pip install -e .
+        pip install mypy
+    - name: Mypy
+      run: |
+        mypy .

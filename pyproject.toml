@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm_genplan"
+version = "0.1.0"
+description = "Generalized planning with LLMs."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+   "PyYAML",
+   "types-PyYAML",
+   "numpy",
+   "pddlgym",
+   "pyperplan",
+]
+
+[project.optional-dependencies]
+develop = [
+    "black",
+    "docformatter",
+    "isort",
+    "mypy",
+    "pylint>=2.14.5",
+    "pytest-pylint>=0.18.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+# 'extend-exclude' excludes files or directories in addition to the defaults
+extend-exclude = """
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+(
+  llm_genplan/third_party
+)
+"""
+
+[tool.isort]
+py_version = 38
+profile = "black"
+multi_line_output = 2
+skip_glob = ["venv/*", "llm_genplan/third_party/*"]
+split_on_trailing_comma = true
+
+[tool.mypy]
+strict_equality = true
+disallow_untyped_calls = true
+warn_unreachable = true
+exclude = ["venv/*", "llm_genplan/third_party/*"]
+follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = [
+    "pddlgym.*",
+    "pyperplan.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--ignore=llm_genplan/third_party"
