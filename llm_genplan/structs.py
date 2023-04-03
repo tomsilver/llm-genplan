@@ -99,6 +99,7 @@ class Task:
         return {pred_to_tuple(p) for p in self.problem.goal}
 
     def goal_holds(self) -> bool:
+        """Check if the goal holds in the initial state."""
         return self.goal.issubset(self.init)
 
 
@@ -127,14 +128,23 @@ class GeneralizedPlan:
     def run(self, task: Task) -> List[str]:
         """Run the generalized plan to get a plan for the task."""
         # Add get_plan() to globals().
-        exec(self.code_str, globals())
+        exec(self.code_str, globals())  # pylint: disable=exec-used
         # Run the generalized plan.
-        action_tuples = get_plan(task.objects, task.init, task.goal)
+        action_tuples = get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
         # Convert to string representation.
-        return [utils.action_tuple_to_action(a) for a in action_tuples]
+        return [action_tuple_to_action(a) for a in action_tuples]
 
 
-def pred_to_tuple(pred: PyperplanPredicate) -> Set[Tuple[str, Tuple[str, ...]]]:
+def pred_to_tuple(pred: PyperplanPredicate) -> Tuple[str, Tuple[str, ...]]:
     """Create a tuple representation of a Pyperplan predicate (atom)."""
     arg_strs = [str(o) for o, _ in pred.signature]
     return (pred.name, tuple(arg_strs))
+
+
+def action_tuple_to_action(act_tuple: Tuple[str, Tuple[str, ...]]) -> str:
+    """Create a string action from a tuple."""
+    op_name, arg_names = act_tuple
+    if not arg_names:
+        return f"({op_name})"
+    arg_name_str = " ".join(arg_names)
+    return f"({op_name} {arg_name_str})"

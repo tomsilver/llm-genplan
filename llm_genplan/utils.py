@@ -3,14 +3,13 @@
 import functools
 import hashlib
 import logging
+import multiprocessing as mp
 import os
 import subprocess
 import urllib.request
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
-import multiprocessing as mp
-import time
+from typing import Any, Dict, List, Tuple
 
 from llm_genplan.flags import FLAGS
 from llm_genplan.structs import (
@@ -193,24 +192,28 @@ def advance_task(task: Task, action: str) -> Task:
 
 
 def _create_genplan_error_info(task: Task, msg: str) -> str:
-    return "\n".join([
-        "Given the following inputs:",
-        f"objects = {task.objects}",
-        f"init = {task.init}",
-        f"goal = {task.goal}",
-        msg
-    ])
+    return "\n".join(
+        [
+            "Given the following inputs:",
+            f"objects = {task.objects}",
+            f"init = {task.init}",
+            f"goal = {task.goal}",
+            msg,
+        ]
+    )
 
 
 def _run_genplan_on_task_no_timeout(
-    generalized_plan: GeneralizedPlan, task: Task, horizon: int,
+    generalized_plan: GeneralizedPlan,
+    task: Task,
+    horizon: int,
     result_dict: Dict,
 ) -> None:
     """Helper for run_genplan_on_task()."""
     result_dict["success"] = False
     try:
         plan = generalized_plan.run(task)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         msg = f"The code raised the following exception: {e}"
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
@@ -219,7 +222,7 @@ def _run_genplan_on_task_no_timeout(
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
     for action in plan:
-        if not utils.action_is_valid_for_task(task, action):
+        if not action_is_valid_for_task(task, action):
             msg = f"The code returned an invalid action: {action}"
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return
@@ -229,26 +232,34 @@ def _run_genplan_on_task_no_timeout(
         result_dict["success"] = True
         result_dict["info"] = "Generalized plan succeeded."
         return
-    msg = ("The code returned the following plan, which did not achieve the "
-           f"goal: {plan}")
+    msg = (
+        "The code returned the following plan, which did not achieve the "
+        f"goal: {plan}"
+    )
     result_dict["info"] = _create_genplan_error_info(task, msg)
     return
 
 
 def run_genplan_on_task(
-    generalized_plan: GeneralizedPlan, task: Task, horizon: int, timeout: int,
+    generalized_plan: GeneralizedPlan,
+    task: Task,
+    horizon: int,
+    timeout: int,
 ) -> Tuple[bool, str]:
     """Returns bool success and an info string."""
     # Handle possible timeouts.
     manager = mp.Manager()
     result_dict = manager.dict()
-    p = mp.Process(target=_run_genplan_on_task_no_timeout, args=(generalized_plan, task, horizon, result_dict))
+    p = mp.Process(
+        target=_run_genplan_on_task_no_timeout,
+        args=(generalized_plan, task, horizon, result_dict),
+    )
     p.start()
     p.join(timeout)
     # Timeout reached.
     if p.is_alive():
         p.kill()
         msg = "The code did not finish in time. Possible infinite loop."
-        result_dict["info"] = _create_genplan_error_info(task, msg)
+        info = _create_genplan_error_info(task, msg)
         return False, info
     return result_dict["success"], result_dict["info"]
