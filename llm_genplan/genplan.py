@@ -59,6 +59,7 @@ where
         'object-qux', ...))."""
 
     last_error_info: Optional[str] = None
+    gen_plan_code_str = ""
 
     for t in range(max_debug_attempts):
         # Get the prompt.
@@ -69,7 +70,10 @@ where
             prompt = f"{last_error_info}\nFix the code."
 
         # Query.
-        gen_plan_code_str = run_prompt(prompt, save_path, prompt_num=2 + t)
+        response = run_prompt(prompt, save_path, prompt_num=2 + t)
+        if response is None:
+            break
+        gen_plan_code_str = response
         gen_plan = GeneralizedPlan(gen_plan_code_str)
 
         # Test the generalized plan.
@@ -88,7 +92,7 @@ where
     return GeneralizedPlan(gen_plan_code_str)
 
 
-def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> str:
+def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> Optional[str]:
     """For now, query the LLM by hand."""
     # Set up save and load paths.
     prompt_path = save_path / f"{prompt_num}-prompt.txt"
@@ -102,13 +106,15 @@ def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> str:
         with open(response_path, "r", encoding="utf-8") as f:
             saved_response = f.read()
         logging.info(f"Loaded response from {response_path}.")
-        return saved_response
+        return _parse_python_code_from_response(saved_response)
     # Do new prompt.
     logging.info("Prompt:")
     logging.info(prompt)
     pyperclip.copy(prompt)
     logging.info("The prompt is now copied to your clipboard.")
-    input("Press enter after copying the response.")
+    user_input = input("Press enter after copying the response or (q) to quit ")
+    if "q" in user_input:
+        return None
     response = str(pyperclip.paste())
     logging.info("Received response:")
     logging.info(response)
@@ -118,4 +124,16 @@ def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> str:
     with open(response_path, "w", encoding="utf-8") as f:
         f.write(response)
     logging.info(f"Saved response to {response_path}.")
+    return _parse_python_code_from_response(response)
+
+
+def _parse_python_code_from_response(response: str) -> str:
+    # Parse out python code if it exists.
+    python_code_prefix = "```python"
+    if python_code_prefix in response:
+        python_start = response.index(python_code_prefix)
+        python_remainder = response[python_start + len(python_code_prefix) :]
+        python_end = python_remainder.index("```")
+        python_response = python_remainder[:python_end]
+        return python_response
     return response
