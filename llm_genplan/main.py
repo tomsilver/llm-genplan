@@ -32,9 +32,10 @@ def _main() -> None:
 
     # Generate train and eval tasks.
     logging.info("Generating tasks.")
-    train_tasks, eval_tasks = create_tasks(
+    prompt_tasks, extra_train_tasks, eval_tasks = create_tasks(
         env_name=FLAGS.env,
-        num_train=FLAGS.num_train_tasks,
+        num_prompt=FLAGS.num_prompt_tasks,
+        num_train=FLAGS.num_extra_train_tasks,
         num_eval=FLAGS.num_eval_tasks,
     )
 
@@ -44,7 +45,11 @@ def _main() -> None:
     save_path = utils.CACHE_DIR / f"{FLAGS.env}_{FLAGS.seed}_{FLAGS.experiment_id}"
     os.makedirs(save_path, exist_ok=True)
     generalized_plan = get_genplan_from_llm(
-        train_tasks, save_path, horizon=FLAGS.horizon, timeout=FLAGS.timeout
+        prompt_tasks,
+        extra_train_tasks,
+        save_path,
+        horizon=FLAGS.horizon,
+        timeout=FLAGS.timeout,
     )
 
     # Evaluate the generalized plan on the held-out evaluation tasks.

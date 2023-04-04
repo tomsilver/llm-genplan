@@ -1,4 +1,4 @@
-"""Create PDDL training and evaluation tasks."""
+"""Create PDDL prompting, training, and evaluation tasks."""
 
 from typing import List, Tuple
 
@@ -10,11 +10,12 @@ from llm_genplan.structs import Task
 
 def create_tasks(
     env_name: str,
+    num_prompt: int,
     num_train: int,
     num_eval: int,
-) -> Tuple[List[Task], List[Task]]:
-    """Create PDDL training and evaluation tasks."""
-    total_num_tasks = num_train + num_eval
+) -> Tuple[List[Task], List[Task], List[Task]]:
+    """Create PDDL prompting, training, and evaluation tasks."""
+    total_num_tasks = num_prompt + num_train + num_eval
 
     if env_name.startswith("pyperplan-"):
         benchmark_name = env_name[len("pyperplan-") :]
@@ -22,19 +23,20 @@ def create_tasks(
 
     elif env_name.startswith("pddlgym-"):
         benchmark_name = env_name[len("pddlgym-") :]
-        tasks = _get_pddlgym_tasks(benchmark_name, num_train)
+        tasks = _get_pddlgym_tasks(benchmark_name, num_prompt + num_train)
         tasks += _get_pddlgym_tasks(benchmark_name, num_eval, test=True)
     else:
         raise NotImplementedError(f"Unrecognized env: {env_name}.")
 
     # Sort from smallest to largest.
     sorted_tasks = sorted(tasks, key=lambda t: t.size)
-    # Use shortest for training.
-    train_tasks = sorted_tasks[:num_train]
-    eval_tasks = sorted_tasks[num_train:]
+    # Use shortest for prompting, next shortest for training.
+    prompt_tasks = sorted_tasks[:num_prompt]
+    train_tasks = sorted_tasks[num_prompt : (num_prompt + num_train)]
+    eval_tasks = sorted_tasks[(num_prompt + num_train) :]
     assert len(eval_tasks) == num_eval
 
-    return train_tasks, eval_tasks
+    return prompt_tasks, train_tasks, eval_tasks
 
 
 def _get_pyperplan_tasks(benchmark_name: str, num_tasks: int) -> List[Task]:

@@ -11,7 +11,8 @@ from llm_genplan.structs import GeneralizedPlan, Task
 
 
 def get_genplan_from_llm(
-    train_tasks: List[Task],
+    prompt_tasks: List[Task],
+    extra_train_tasks: List[Task],
     save_path: Path,
     horizon: int,
     timeout: int,
@@ -19,9 +20,10 @@ def get_genplan_from_llm(
 ) -> GeneralizedPlan:
     """Interact with an LLM to get a generalized plan."""
     # Initial prompt with domain and example problems.
-    domain_str = train_tasks[0].domain_str
-    assert all(t.domain_str == domain_str for t in train_tasks)
-    problems_str = "\n".join([t.problem_str for t in train_tasks])
+    all_train_tasks = prompt_tasks + extra_train_tasks
+    domain_str = all_train_tasks[0].domain_str
+    assert all(t.domain_str == domain_str for t in all_train_tasks)
+    problems_str = "\n".join([t.problem_str for t in prompt_tasks])
     prompt0 = (
         f"Domain:\n{domain_str.strip()}\n\n"
         f"Example problems:\n{problems_str.strip()}\n"
@@ -37,7 +39,7 @@ def get_genplan_from_llm(
     run_prompt(prompt1, save_path, prompt_num=1)
 
     # Python function.
-    if train_tasks[0].typed:
+    if all_train_tasks[0].typed:
         objects_description = "`objects` is a set of (object name, type name) tuples"
     else:
         objects_description = "`objects` is a set of objects (string names)"
@@ -78,7 +80,7 @@ where
 
         # Test the generalized plan.
         gen_plan_succeeded = True
-        for task in train_tasks:
+        for task in all_train_tasks:
             success, info = utils.run_genplan_on_task(gen_plan, task, horizon, timeout)
             if not success:
                 gen_plan_succeeded = False
