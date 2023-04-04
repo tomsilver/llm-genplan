@@ -40,7 +40,11 @@ def get_genplan_from_llm(
     run_prompt(prompt2, save_path, prompt_num=2)
 
     # Python function.
-    first_genplan_prompt = """Implement the strategy as a Python function.
+    if train_tasks[0].typed:
+        objects_description = "`objects` is a set of (object name, type name) tuples"
+    else:
+        objects_description = "`objects` is a set of objects (string names)"
+    first_genplan_prompt = f"""Implement the strategy as a Python function.
 
 The code should should be of the form
 
@@ -49,7 +53,7 @@ The code should should be of the form
         return plan
 
 where
-    - `objects` is a set of (object name, object type name) tuples
+    - {objects_description}
     - `init` is a set of ground atoms represented as tuples of predicate
         names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
     - `goal` is also a set of ground atoms represented in the same way

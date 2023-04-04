@@ -61,6 +61,11 @@ class Task:
         return self._parser.parse_domain()
 
     @cached_property
+    def typed(self) -> bool:
+        """Whether the domain is typed."""
+        return set(self.domain.types) != {"object"}
+
+    @cached_property
     def problem(self) -> PyperplanProblem:
         """The parsed PDDL problem for this task."""
         return self._parser.parse_problem(self.domain)
@@ -115,6 +120,7 @@ class GeneralizedPlan:
 
     where
         - `objects` is a set of (object name, object type name) tuples
+           if the domain is typed, and just object name strings otherwise
         - `init` is a set of ground atoms represented as tuples of predicate
            names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
         - `goal` is also a set of ground atoms represented in the same way
@@ -130,7 +136,11 @@ class GeneralizedPlan:
         # Add get_plan() to globals().
         exec(self.code_str, globals())  # pylint: disable=exec-used
         # Run the generalized plan.
-        action_tuples = get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
+        if task.typed:
+            objects = task.objects
+        else:
+            objects = {o for o, _ in task.objects}  # type: ignore
+        action_tuples = get_plan(objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
         # Convert to string representation.
         return [action_tuple_to_action(a) for a in action_tuples]
 
