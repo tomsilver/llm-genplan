@@ -24,20 +24,17 @@ def get_genplan_from_llm(
     problems_str = "\n".join([t.problem_str for t in train_tasks])
     prompt0 = (
         f"Domain:\n{domain_str.strip()}\n\n"
-        f"Example problems:\n{problems_str.strip()}"
+        f"Example problems:\n{problems_str.strip()}\n"
+        "Write a short summary of this domain in words."
     )
     run_prompt(prompt0, save_path, prompt_num=0)
 
-    # Summarize the domain.
-    prompt1 = "Write a short summary of this domain in words."
-    run_prompt(prompt1, save_path, prompt_num=1)
-
     # Simple strategy without search.
-    prompt2 = (
+    prompt1 = (
         "There is a simple strategy for solving all problems in this domain "
         "without using search. What is that strategy?"
     )
-    run_prompt(prompt2, save_path, prompt_num=2)
+    run_prompt(prompt1, save_path, prompt_num=1)
 
     # Python function.
     if train_tasks[0].typed:
@@ -72,7 +69,7 @@ where
             prompt = f"{last_error_info}\nFix the code."
 
         # Query.
-        gen_plan_code_str = run_prompt(prompt, save_path, prompt_num=3 + t)
+        gen_plan_code_str = run_prompt(prompt, save_path, prompt_num=2 + t)
         gen_plan = GeneralizedPlan(gen_plan_code_str)
 
         # Test the generalized plan.
