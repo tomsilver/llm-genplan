@@ -21,10 +21,9 @@ from llm_genplan.structs import (
 )
 
 # Global constants.
-LLM_QUESTION_TOKEN = "Q:"
-LLM_ANSWER_TOKEN = "A:"
 _DIR = Path(__file__).parent
 PDDL_DIR = _DIR / "envs" / "assets" / "pddl"
+CACHE_DIR = _DIR / "llm_cache"
 
 
 @functools.lru_cache(maxsize=None)
