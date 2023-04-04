@@ -1,0 +1,6 @@
+Given the following inputs:
+objects = {('ball4', 'object'), ('ball3', 'object'), ('right', 'object'), ('roomb', 'object'), ('ball1', 'object'), ('ball2', 'object'), ('rooma', 'object'), ('left', 'object')}
+init = {('ball', 'ball4'), ('ball', 'ball1'), ('carry', 'ball2', 'right'), ('at', 'ball4', 'rooma'), ('gripper', 'left'), ('ball', 'ball2'), ('at', 'ball1', 'rooma'), ('carry', 'ball3', 'left'), ('gripper', 'right'), ('room', 'rooma'), ('room', 'roomb'), ('ball', 'ball3'), ('at-robby', 'rooma')}
+goal = {('at', 'ball4', 'roomb')}
+The code returned an invalid action: (move roomb). Note the valid actions are: (drop ?obj ?room ?gripper) (move ?from ?to) (pick ?obj ?room ?gripper)
+Fix the code.

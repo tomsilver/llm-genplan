@@ -1,0 +1,47 @@
+def get_grippers(init):
+    return [x[1] for x in init if x[0] == "gripper"]
+
+def get_rooms(init):
+    return [x[1] for x in init if x[0] == "room"]
+
+def get_balls(init):
+    return [x[1] for x in init if x[0] == "ball"]
+
+def get_initial_robby_location(init):
+    return [x[1] for x in init if x[0] == "at-robby"][0]
+
+def get_goal_balls_location(goal):
+    return {x[1]: x[2] for x in goal if x[0] == "at"}
+
+def get_plan(objects, init, goal):
+    grippers = get_grippers(init)
+    rooms = get_rooms(init)
+    balls = get_balls(init)
+    robby_location = get_initial_robby_location(init)
+    goal_balls_location = get_goal_balls_location(goal)
+
+    plan = []
+    source_room, target_room = rooms if robby_location == rooms[0] else rooms[::-1]
+
+    while balls:
+        if robby_location != source_room:
+            plan.append(("move", source_room))
+            robby_location = source_room
+
+        ball1 = balls.pop()
+        plan.append(("pick", ball1, source_room, grippers[0]))
+
+        if balls:
+            ball2 = balls.pop()
+            plan.append(("pick", ball2, source_room, grippers[1]))
+
+        plan.append(("move", target_room))
+        robby_location = target_room
+
+        plan.append(("drop", ball1, target_room, grippers[0]))
+
+        if ball2:
+            plan.append(("drop", ball2, target_room, grippers[1]))
+            ball2 = None
+
+    return plan

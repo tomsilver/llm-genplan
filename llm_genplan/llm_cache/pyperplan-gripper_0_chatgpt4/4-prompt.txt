@@ -1,0 +1,6 @@
+Given the following inputs:
+objects = {('ball4', 'object'), ('ball3', 'object'), ('right', 'object'), ('roomb', 'object'), ('ball1', 'object'), ('ball2', 'object'), ('rooma', 'object'), ('left', 'object')}
+init = {('ball', 'ball4'), ('ball', 'ball1'), ('at', 'ball3', 'rooma'), ('at', 'ball4', 'rooma'), ('at', 'ball2', 'rooma'), ('ball', 'ball2'), ('gripper', 'left'), ('at', 'ball1', 'rooma'), ('gripper', 'right'), ('room', 'rooma'), ('free', 'right'), ('free', 'left'), ('room', 'roomb'), ('ball', 'ball3'), ('at-robby', 'rooma')}
+goal = {('at', 'ball4', 'roomb'), ('at', 'ball2', 'roomb'), ('at', 'ball1', 'roomb'), ('at', 'ball3', 'roomb')}
+The code raised the following exception: NameError("name 'get_grippers' is not defined")
+Fix the code.
