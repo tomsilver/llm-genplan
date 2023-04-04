@@ -80,7 +80,11 @@ class Task:
     def pyperplan_task(self) -> PyperplanTask:
         """The pyperplan task for this task."""
         logging.disable(logging.ERROR)
-        pyperplan_task = pyperplan_ground(self.problem)
+        pyperplan_task = pyperplan_ground(
+            self.problem,
+            remove_irrelevant_operators=False,
+            remove_statics_from_initial_state=False,
+        )
         logging.disable(logging.NOTSET)
         return pyperplan_task
 

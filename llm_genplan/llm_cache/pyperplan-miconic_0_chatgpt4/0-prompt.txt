@@ -1,0 +1,138 @@
+Domain:
+(define (domain miconic)
+  (:requirements :strips)
+  (:types passenger - object
+          floor - object
+         )
+
+(:predicates 
+(origin ?person - passenger ?floor - floor)
+;; entry of ?person is ?floor
+;; inertia
+
+(destin ?person - passenger ?floor - floor)
+;; exit of ?person is ?floor
+;; inertia
+
+(above ?floor1 - floor  ?floor2 - floor)
+;; ?floor2 is located above of ?floor1
+
+(boarded ?person - passenger)
+;; true if ?person has boarded the lift
+
+(not-boarded ?person - passenger)
+;; true if ?person has not boarded the lift
+
+(served ?person - passenger)
+;; true if ?person has alighted as her destination
+
+(not-served ?person - passenger)
+;; true if ?person is not at their destination
+
+(lift-at ?floor - floor)
+;; current position of the lift is at ?floor
+)
+
+
+;;stop and allow boarding
+
+(:action board
+  :parameters (?f - floor ?p - passenger)
+  :precondition (and (lift-at ?f) (origin ?p ?f))
+  :effect (boarded ?p))
+
+(:action depart
+  :parameters (?f - floor ?p - passenger)
+  :precondition (and (lift-at ?f) (destin ?p ?f)
+		     (boarded ?p))
+  :effect (and (not (boarded ?p))
+	       (served ?p)))
+;;drive up
+
+(:action up
+  :parameters (?f1 - floor ?f2 - floor)
+  :precondition (and (lift-at ?f1) (above ?f1 ?f2))
+  :effect (and (lift-at ?f2) (not (lift-at ?f1))))
+
+
+;;drive down
+
+(:action down
+  :parameters (?f1 - floor ?f2 - floor)
+  :precondition (and (lift-at ?f1) (above ?f2 ?f1))
+  :effect (and (lift-at ?f2) (not (lift-at ?f1))))
+)
+
+Example problems:
+(define (problem mixed-f2-p1-u0-v0-g0-a0-n0-a0-b0-n0-f0-r0)
+   (:domain miconic)
+   (:objects p0 - passenger
+             f0 f1 - floor)
+
+
+(:init
+(above f0 f1)
+
+
+
+(origin p0 f1)
+(destin p0 f0)
+
+
+
+
+
+
+(lift-at f0)
+)
+
+
+(:goal (and 
+(served p0)
+))
+)
+
+
+
+
+
+
+(define (problem mixed-f4-p2-u0-v0-g0-a0-n0-a0-b0-n0-f0-r0)
+   (:domain miconic)
+   (:objects p0 p1 - passenger
+             f0 f1 f2 f3 - floor)
+
+
+(:init
+(above f0 f1)
+(above f0 f2)
+(above f0 f3)
+
+(above f1 f2)
+(above f1 f3)
+
+(above f2 f3)
+
+
+
+(origin p0 f3)
+(destin p0 f2)
+
+(origin p1 f1)
+(destin p1 f3)
+
+
+
+
+
+
+(lift-at f0)
+)
+
+
+(:goal (and 
+(served p0)
+(served p1)
+))
+)
+Write a short summary of this domain in words.

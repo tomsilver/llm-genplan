@@ -268,4 +268,5 @@ def run_genplan_on_task(
         msg = "The code did not finish in time. Possible infinite loop."
         info = _create_genplan_error_info(task, msg)
         return False, info
+
     return result_dict["success"], result_dict["info"]
