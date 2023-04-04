@@ -1,4 +1,3 @@
-; Downloaded January 22, 2023 from https://raw.githubusercontent.com/aibasel/pyperplan/main/benchmarks/gripper/task06.pddl
 (define (problem strips-gripper-x-6)
    (:domain gripper-strips)
    (:objects rooma roomb ball14 ball13 ball12 ball11 ball10 ball9

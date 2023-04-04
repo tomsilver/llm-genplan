@@ -1,4 +1,3 @@
-; Downloaded January 15, 2023 from https://raw.githubusercontent.com/aibasel/pyperplan/main/benchmarks/gripper/domain.pddl
 (define (domain gripper-strips)
    (:predicates (room ?r)
 		(ball ?b)

@@ -7,7 +7,6 @@ import multiprocessing as mp
 import os
 import subprocess
 import urllib.request
-from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -55,10 +54,6 @@ def get_pddl_from_url(url: str, cache_dir: Path = PDDL_DIR) -> str:
             raise ValueError(f"PDDL file not found at {url}.")
         if "(:action" not in pddl and "(:init" not in pddl:
             raise ValueError(f"PDDL file not found at {url}.")
-        # Add a note at the top of the file about when this was downloaded.
-        today = date.today().strftime("%B %d, %Y")
-        note = f"; Downloaded {today} from {url}\n"
-        pddl = note + pddl
         # Cache.
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(pddl)

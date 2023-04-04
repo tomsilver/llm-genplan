@@ -41,7 +41,9 @@ def _main() -> None:
     # Go back and forth with ChatGPT until it finds a generalized plan that
     # works on all of the train tasks, or until we run out of patience.
     logging.info("Starting conversation with LLM.")
-    generalized_plan = get_genplan_from_llm(train_tasks)
+    generalized_plan = get_genplan_from_llm(
+        train_tasks, horizon=FLAGS.horizon, timeout=FLAGS.timeout
+    )
 
     # Evaluate the generalized plan on the held-out evaluation tasks.
     num_successes = 0

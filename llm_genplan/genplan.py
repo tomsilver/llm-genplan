@@ -1,63 +1,100 @@
 """Interact with an LLM to get a generalized plan."""
 
-from typing import List
+import logging
+from typing import List, Optional
 
+import pyperclip
+
+from llm_genplan import utils
 from llm_genplan.structs import GeneralizedPlan, Task
 
 
-def get_genplan_from_llm(train_tasks: List[Task]) -> GeneralizedPlan:
+def get_genplan_from_llm(
+    train_tasks: List[Task], horizon: int, timeout: int, max_debug_attempts: int = 8
+) -> GeneralizedPlan:
     """Interact with an LLM to get a generalized plan."""
-    # Coming soon
-    del train_tasks
-    gen_plan_code_str = """def get_plan(objects, init, goal):
-    initial_state = set(init)
-    actions = []
+    # Initial prompt with domain and example problems.
+    domain_str = train_tasks[0].domain_str
+    assert all(t.domain_str == domain_str for t in train_tasks)
+    problems_str = "\n".join([t.problem_str for t in train_tasks])
+    prompt0 = (
+        f"Domain:\n{domain_str.strip()}\n\n"
+        f"Example problems:\n{problems_str.strip()}"
+    )
+    run_prompt(prompt0)
 
-    def find(predicate, *args):
-        for atom in initial_state:
-            if atom[0] == predicate and all(a == b for a, b in zip(args, atom[1:])):
-                return atom[1:]
-        return None
+    # Summarize the domain.
+    prompt1 = "Write a short summary of this domain in words."
+    run_prompt(prompt1)
 
-    def find_all(predicate):
-        return [atom[1:] for atom in initial_state if atom[0] == predicate]
+    # Simple strategy without search.
+    prompt2 = (
+        "There is a simple strategy for solving all problems in this domain "
+        "without using search. What is that strategy?"
+    )
+    run_prompt(prompt2)
 
-    def move_to_room(room):
-        robby_room = find('at-robby')[0]
-        if robby_room != room:
-            actions.append(('move', robby_room, room))
-            initial_state.discard(('at-robby', robby_room))
-            initial_state.add(('at-robby', room))
+    # Python function.
+    first_genplan_prompt = """Implement the strategy as a Python function.
 
-    def pick_ball(ball, room, gripper):
-        actions.append(('pick', ball, room, gripper))
-        initial_state.discard(('at', ball, room))
-        initial_state.discard(('free', gripper))
-        initial_state.add(('carry', ball, gripper))
+The code should should be of the form
 
-    def drop_ball(ball, room, gripper):
-        actions.append(('drop', ball, room, gripper))
-        initial_state.add(('at', ball, room))
-        initial_state.add(('free', gripper))
-        initial_state.discard(('carry', ball, gripper))
+    def get_plan(objects, init, goal):
+        # Your code here
+        return plan
 
-    balls = find_all('ball')
-    grippers = find_all('gripper')
-    free_grippers = [g[0] for g in find_all('free')]
+where
+    - `objects` is a set of (object name, object type name) tuples
+    - `init` is a set of ground atoms represented as tuples of predicate
+        names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is represented as a
+        tuple of operator name and arguments (e.g., ('operator-baz',
+        'object-qux', ...))."""
 
-    for ball, dest_room in [atom[1:] for atom in goal if atom[0] == 'at']:
-        if ball in [b[0] for b in balls]:
-            ball_room = find('at', ball)[1]
-            move_to_room(ball_room)
+    last_error_info: Optional[str] = None
 
-            gripper = free_grippers.pop()
-            pick_ball(ball, ball_room, gripper)
+    for t in range(max_debug_attempts):
+        # Get the prompt.
+        if t == 0:
+            prompt = first_genplan_prompt
+        else:
+            assert last_error_info is not None
+            prompt = f"{last_error_info}\nFix the code."
 
-            move_to_room(dest_room)
-            drop_ball(ball, dest_room, gripper)
+        # Query.
+        gen_plan_code_str = run_prompt(prompt)
+        gen_plan = GeneralizedPlan(gen_plan_code_str)
 
-            free_grippers.append(gripper)
+        # Test the generalized plan.
+        gen_plan_succeeded = True
+        for task in train_tasks:
+            success, info = utils.run_genplan_on_task(gen_plan, task, horizon, timeout)
+            if not success:
+                gen_plan_succeeded = False
+                last_error_info = info
+                break
 
-    return actions
-"""
+        # Succeeded on the training problem.
+        if gen_plan_succeeded:
+            break
+
+        # Requery to debug.
+        assert last_error_info is not None
+        debug_prompt = f"{last_error_info}\nFix the code."
+        gen_plan_code_str = run_prompt(debug_prompt)
+
     return GeneralizedPlan(gen_plan_code_str)
+
+
+def run_prompt(prompt: str) -> str:
+    """For now, query the LLM by hand."""
+    logging.info("Prompt:")
+    logging.info(prompt)
+    pyperclip.copy(prompt)
+    logging.info("The prompt is now copied to your clipboard.")
+    input("Press enter after copying the response.")
+    response = str(pyperclip.paste())
+    logging.info("Received response:")
+    logging.info(response)
+    return response

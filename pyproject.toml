@@ -15,6 +15,7 @@ dependencies = [
    "pddlgym",
    "pyperplan",
    "pathos",
+   "pyperclip",
 ]
 
 [project.optional-dependencies]
@@ -57,6 +58,7 @@ follow_imports = "skip"
 module = [
     "pddlgym.*",
     "pyperplan.*",
+    "pyperclip.*",
 ]
 ignore_missing_imports = true
 
