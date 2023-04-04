@@ -107,6 +107,20 @@ class Task:
         """Check if the goal holds in the initial state."""
         return self.goal.issubset(self.init)
 
+    @cached_property
+    def actions_hint(self) -> str:
+        """Write the action signatures."""
+        signatures: List[str] = []
+        for op_name in sorted(self.domain.actions):
+            var_names = [v for v, _ in self.domain.actions[op_name].signature]
+            if not var_names:
+                signature = f"({op_name})"
+            else:
+                arg_names = " ".join(var_names)
+                signature = f"({op_name} {arg_names})"
+            signatures.append(signature)
+        return " ".join(signatures)
+
 
 @dataclass(frozen=True)
 class GeneralizedPlan:

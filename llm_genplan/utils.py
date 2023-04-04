@@ -157,7 +157,10 @@ def action_is_valid_for_task(task: Task, action: str) -> bool:
     """Check whether the action is valid in the task initial state."""
     pyperplan_task = task.pyperplan_task
     current_facts = pyperplan_task.initial_state
-    action_op = action_to_task_operator(task, action)
+    try:
+        action_op = action_to_task_operator(task, action)
+    except ValueError:
+        return False
     return action_op.applicable(current_facts)
 
 
@@ -217,7 +220,10 @@ def _run_genplan_on_task_no_timeout(
         return
     for action in plan:
         if not action_is_valid_for_task(task, action):
-            msg = f"The code returned an invalid action: {action}"
+            msg = (
+                f"The code returned an invalid action: {action}. "
+                f"Note the valid actions are: {task.actions_hint}"
+            )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return
         task = advance_task(task, action)
