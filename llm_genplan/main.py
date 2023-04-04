@@ -1,8 +1,7 @@
 """Main entry point for experiments.
 
-Example commands:
-    python llm_genplan/main.py --env pyperplan-blocks --seed 0 \
-        --experiment_id test
+Example commands:     python llm_genplan/main.py --env pyperplan-gripper
+--seed 0 --experiment_id chatgpt4
 """
 
 import logging
