@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    plan = []
+    balls_in_rooma = sorted([ball for ball in objects if ('at', ball, 'rooma') in init])
+    grippers = [gripper for gripper in objects if ('gripper', gripper) in init]
+
+    while balls_in_rooma:
+        # Pick up a ball in rooma with the left gripper
+        ball1 = balls_in_rooma.pop(0)
+        plan.append(('pick', ball1, 'rooma', grippers[0]))
+
+        # If there is another ball in rooma, pick it up with the right gripper
+        if balls_in_rooma:
+            ball2 = balls_in_rooma.pop(0)
+            plan.append(('pick', ball2, 'rooma', grippers[1]))
+
+        # Move from rooma to roomb
+        plan.append(('move', 'rooma', 'roomb'))
+
+        # If carrying a ball in the right gripper, drop it in roomb
+        if 'ball2' in locals():
+            plan.append(('drop', ball2, 'roomb', grippers[1]))
+            del ball2
+
+        # Drop the ball in the left gripper in roomb
+        plan.append(('drop', ball1, 'roomb', grippers[0]))
+
+        # Move back to rooma
+        plan.append(('move', 'roomb', 'rooma'))
+
+    return plan
