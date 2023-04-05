@@ -189,10 +189,14 @@ def advance_task(task: Task, action: str) -> Task:
 
 
 def _create_genplan_error_info(task: Task, msg: str) -> str:
+    if task.typed:
+        objects = task.objects
+    else:
+        objects = {o for o, _ in task.objects}  # type: ignore
     return "\n".join(
         [
             "Given the following inputs:",
-            f"objects = {task.objects}",
+            f"objects = {objects}",
             f"init = {task.init}",
             f"goal = {task.goal}",
             msg,
@@ -218,11 +222,12 @@ def _run_genplan_on_task_no_timeout(
         msg = f"The code returned too long of a plan (horizon={horizon})."
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
-    for action in plan:
+    for t, action in enumerate(plan):
         if not action_is_valid_for_task(task, action):
             msg = (
-                f"The code returned an invalid action: {action}. "
-                f"Note the valid actions are: {task.actions_hint}"
+                f"The code returned this plan: {plan} "
+                f"but the action {action} is invalid at step {t}. "
+                f"(Note the valid operators are: {task.actions_hint}.)"
             )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return

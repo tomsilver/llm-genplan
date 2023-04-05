@@ -1,9 +1,0 @@
-The gripper-strips domain is a simplified planning problem that involves a robot named Robby, which has two grippers (left and right) and operates in an environment consisting of two rooms (rooma and roomb). The objective of the problem is to move balls from one room to the other. There are three actions defined in this domain: move, pick, and drop.
-
-    The move action allows Robby to move between the two rooms. It has two parameters, ?from and ?to, representing the source and destination rooms, respectively. The precondition requires Robby to be in the source room, and the effect is that Robby moves to the destination room, leaving the source room.
-
-    The pick action allows Robby to pick up a ball using a free gripper. The parameters for this action are ?obj, ?room, and ?gripper, representing the ball, the room where the ball is located, and the gripper used to pick up the ball, respectively. The preconditions ensure that the ball is in the specified room, Robby is also in the same room, and the gripper is free. The effect of this action is that Robby carries the ball using the specified gripper, and the gripper is no longer free.
-
-    The drop action allows Robby to drop a ball carried by a gripper in a room. The parameters are ?obj, ?room, and ?gripper, representing the ball, the room where the ball will be dropped, and the gripper carrying the ball, respectively. The preconditions require that Robby is carrying the ball using the specified gripper and is in the specified room. The effect of this action is that the ball is placed in the room, and the gripper becomes free.
-
-The example problems provided have different numbers of balls to be moved from rooma to roomb, with the goal being to have all the balls in roomb.

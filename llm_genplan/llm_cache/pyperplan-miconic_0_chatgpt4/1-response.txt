@@ -1,5 +1,0 @@
-The simple strategy for solving all problems in this domain without using search is the "Sweep" strategy. This strategy involves moving the elevator sequentially through all floors, starting from the lowest floor to the highest floor and then back down, stopping at each floor along the way.
-
-When the elevator stops at a floor, it allows any passengers waiting at that floor to board, and any passengers whose destination is that floor to depart. This process is repeated until all passengers have been served.
-
-The "Sweep" strategy guarantees that all passengers will eventually be picked up and dropped off at their destinations, and it does not require any search to find an optimal solution. However, it may not be the most efficient solution in terms of time or energy consumption, as the elevator stops at every floor, even if there are no passengers to board or depart at some floors.

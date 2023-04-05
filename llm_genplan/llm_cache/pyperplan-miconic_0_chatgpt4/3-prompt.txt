@@ -1,6 +1,0 @@
-Given the following inputs:
-objects = {('f1', 'floor'), ('p0', 'passenger'), ('f0', 'floor')}
-init = {('destin', 'p0', 'f0'), ('above', 'f0', 'f1'), ('lift-at', 'f0'), ('origin', 'p0', 'f1')}
-goal = {('served', 'p0')}
-The code returned an invalid action: (up f0 f0). Note the valid actions are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2)
-Fix the code.

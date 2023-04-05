@@ -1,6 +1,0 @@
-Given the following inputs:
-objects = {('f1', 'floor'), ('p0', 'passenger'), ('f2', 'floor'), ('f3', 'floor'), ('f4', 'floor'), ('p1', 'passenger'), ('f5', 'floor'), ('p2', 'passenger'), ('f0', 'floor')}
-init = {('lift-at', 'f4'), ('above', 'f0', 'f3'), ('above', 'f0', 'f2'), ('above', 'f0', 'f1'), ('above', 'f3', 'f4'), ('above', 'f4', 'f5'), ('above', 'f0', 'f4'), ('above', 'f2', 'f5'), ('boarded', 'p2'), ('above', 'f1', 'f5'), ('origin', 'p1', 'f3'), ('destin', 'p1', 'f1'), ('origin', 'p2', 'f5'), ('served', 'p0'), ('above', 'f2', 'f3'), ('above', 'f1', 'f3'), ('boarded', 'p1'), ('above', 'f2', 'f4'), ('above', 'f1', 'f2'), ('above', 'f1', 'f4'), ('destin', 'p2', 'f1'), ('above', 'f3', 'f5'), ('above', 'f0', 'f5'), ('destin', 'p0', 'f4'), ('origin', 'p0', 'f1')}
-goal = {('served', 'p0')}
-The code returned an invalid action: (depart f4 p0). Note the valid actions are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2)
-Fix the code.
