@@ -6,6 +6,7 @@ import logging
 import multiprocessing as mp
 import os
 import subprocess
+import traceback
 import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -215,7 +216,10 @@ def _run_genplan_on_task_no_timeout(
     try:
         plan = generalized_plan.run(task)
     except Exception as e:  # pylint: disable=broad-exception-caught
-        msg = f"The code raised the following exception: {repr(e)}"
+        tb = traceback.format_exception(e)
+        tb_lines = [l for l in tb if generalized_plan.filepath.stem in l]
+        tb_str = "".join(tb_lines)
+        msg = f"The code raised the following exception:\n{tb_str}"
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
     if len(plan) > horizon:

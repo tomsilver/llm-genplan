@@ -1,6 +1,8 @@
 """Data structures."""
 
+import importlib.util
 import logging
+import sys
 import tempfile
 from dataclasses import dataclass
 from functools import cached_property
@@ -149,16 +151,31 @@ class GeneralizedPlan:
 
     code_str: str
 
+    @cached_property
+    def filepath(self) -> Path:
+        """Get a file with the code string implemented in it."""
+        filename = Path(tempfile.NamedTemporaryFile(delete=False, suffix=".py").name)
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(self.code_str)
+        return filename
+
     def run(self, task: Task) -> List[str]:
         """Run the generalized plan to get a plan for the task."""
-        # Add get_plan() to globals().
-        exec(self.code_str, globals())  # pylint: disable=exec-used
+        # Import get_plan().
+        module_name = f"{self.filepath.stem}"
+        spec = importlib.util.spec_from_file_location(module_name, self.filepath)
+        assert spec is not None
+        assert spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        assert module is not None
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
         # Run the generalized plan.
         if task.typed:
             objects = task.objects
         else:
             objects = {o for o, _ in task.objects}  # type: ignore
-        action_tuples = get_plan(objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
+        action_tuples = module.get_plan(objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
         # Convert to string representation.
         return [action_tuple_to_action(a) for a in action_tuples]
 
