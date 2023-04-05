@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to perform the actions sequentially in a fixed order, as follows:
+
+    Execute the rewind-movie action if the precondition counter-at-other-than-two-hours is true, or execute the rewind-movie-2 action if the precondition counter-at-two-hours is true. This will result in the movie-rewound effect.
+    Execute the reset-counter action, which will result in the counter-at-zero effect.
+    Execute the get-chips action with any available chip object. This will result in the have-chips effect.
+    Execute the get-dip action with any available dip object. This will result in the have-dip effect.
+    Execute the get-pop action with any available pop object. This will result in the have-pop effect.
+    Execute the get-cheese action with any available cheese object. This will result in the have-cheese effect.
+    Execute the get-crackers action with any available cracker object. This will result in the have-crackers effect.
+
+By performing these actions in the given order, you will satisfy the goal conditions of having the movie rewound, the counter at zero, and all the snacks gathered for the movie night.
