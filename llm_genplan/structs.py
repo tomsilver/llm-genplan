@@ -86,6 +86,7 @@ class Task:
             self.problem,
             remove_irrelevant_operators=False,
             remove_statics_from_initial_state=False,
+            remove_statics_from_operators=False,
         )
         logging.disable(logging.NOTSET)
         return pyperplan_task

@@ -13,7 +13,7 @@ dependencies = [
    "types-PyYAML",
    "numpy",
    "pddlgym",
-   "pyperplan",
+   "pyperplan@git+https://github.com/tomsilver/pyperplan.git",
    "pathos",
    "pyperclip",
 ]
