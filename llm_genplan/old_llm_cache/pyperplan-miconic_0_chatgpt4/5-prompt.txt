@@ -1,6 +1,0 @@
-Given the following inputs:
-objects = {('f2', 'floor'), ('f0', 'floor'), ('p1', 'passenger'), ('f1', 'floor'), ('f3', 'floor'), ('p0', 'passenger')}
-init = {('origin', 'p0', 'f3'), ('lift-at', 'f3'), ('destin', 'p0', 'f2'), ('origin', 'p1', 'f1'), ('served', 'p1'), ('above', 'f0', 'f2'), ('above', 'f2', 'f3'), ('above', 'f0', 'f3'), ('above', 'f0', 'f1'), ('above', 'f1', 'f2'), ('above', 'f1', 'f3'), ('boarded', 'p0'), ('destin', 'p1', 'f3')}
-goal = {('served', 'p0')}
-The code returned this plan: ['(up f0 f1)', '(board f1 p1)', '(up f1 f2)', '(up f2 f3)', '(board f3 p0)', '(depart f3 p1)', '(board f3 p0)', '(depart f3 p1)', '(down f3 f2)', '(depart f2 p0)', '(down f2 f1)', '(down f1 f0)'] but the action (depart f3 p1) is invalid at step 7. (Note the valid operators are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2).)
-Fix the code.

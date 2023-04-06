@@ -1,5 +1,0 @@
-The Miconic domain is a planning problem that simulates the operation of a lift (elevator) in a building. The goal is to efficiently serve passengers by moving them from their origin floor to their destination floor. The domain includes two types of objects: passengers and floors.
-
-Predicates are used to define various conditions such as origins, destinations, lift positions, and whether a passenger is onboard or has reached their destination. There are four actions in this domain: boarding, departing, moving up, and moving down. Boarding and departing actions allow passengers to enter and exit the lift, while moving up and down actions control the lift's movement between floors.
-
-Example problems consist of a set of floors, passengers with their respective origin and destination floors, and the initial position of the lift. The goal is to ensure all passengers have reached their destinations by serving them efficiently using the lift.
