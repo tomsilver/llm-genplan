@@ -1,0 +1,12 @@
+Given the following inputs:
+objects = {('f1', 'floor'), ('f0', 'floor'), ('p0', 'passenger')}
+init = {('above', 'f0', 'f1'), ('lift-at', 'f0'), ('destin', 'p0', 'f0'), ('origin', 'p0', 'f1')}
+goal = {('served', 'p0')}
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 2, in get_plan
+    floors = get_floors(objects)
+             ^^^^^^^^^^
+NameError: name 'get_floors' is not defined
+
+Fix the code.

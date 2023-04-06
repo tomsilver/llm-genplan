@@ -1,0 +1,11 @@
+The simple strategy to solve all problems in this domain without using search is to follow the "Sweep" or "Sequential Floor Visiting" strategy. This approach involves the lift visiting all floors sequentially in one direction (upwards or downwards) and then reversing the direction when the top or bottom floor is reached. Here's the step-by-step process:
+
+    Start at the initial floor (typically the ground floor or floor 0).
+    Check if there's any passenger to board or depart on the current floor. If there is, perform the appropriate action (board or depart).
+    Move the lift to the next floor in the current direction (up or down).
+    Repeat steps 2 and 3 until you reach the top floor if moving up, or the bottom floor if moving down.
+    Once the top or bottom floor is reached, change the direction of the lift (from up to down or vice versa).
+    Continue with steps 2 and 3 in the new direction until you reach the end of the floor sequence again.
+    Keep repeating steps 5 and 6 until all passengers have reached their destination floors.
+
+This approach may not be the most efficient solution, but it guarantees that all passengers will eventually be served, without the need for search or complex planning algorithms.

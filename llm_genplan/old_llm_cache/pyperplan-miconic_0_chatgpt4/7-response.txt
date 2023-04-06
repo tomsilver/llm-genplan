@@ -1,0 +1,68 @@
+def get_plan(objects, init, goal):
+    def get_floor_order(init, floors):
+        order = []
+        visited = set()
+        for floor in floors:
+            if floor not in visited:
+                stack = [floor]
+                while stack:
+                    f = stack.pop()
+                    if f not in visited:
+                        visited.add(f)
+                        order.append(f)
+                        for atom in init:
+                            if atom[0] == 'above' and atom[1] == f:
+                                stack.append(atom[2])
+        return order
+
+    floors = sorted([obj[0] for obj in objects if obj[1] == "floor"])
+    passengers = [obj[0] for obj in objects if obj[1] == "passenger"]
+
+    origins = {atom[1]: atom[2] for atom in init if atom[0] == "origin"}
+    destinations = {atom[1]: atom[2] for atom in init if atom[0] == "destin"}
+    lift_position = next(atom[1] for atom in init if atom[0] == "lift-at")
+
+    floor_order = get_floor_order(init, floors)
+
+    plan = []
+    unserved_passengers = set(passenger for passenger in passengers if ('served', passenger) not in init)
+    boarded_passengers = set(passenger for passenger in passengers if ('boarded', passenger) in init)
+
+    while unserved_passengers:
+        # Move the elevator upwards
+        for floor in floor_order:
+            if lift_position != floor:
+                plan.append(("up", lift_position, floor))
+                lift_position = floor
+
+            # Board passengers
+            for passenger, origin in origins.items():
+                if origin == floor and passenger in unserved_passengers and passenger not in boarded_passengers:
+                    plan.append(("board", floor, passenger))
+                    boarded_passengers.add(passenger)
+
+            # Depart passengers
+            for passenger, destin in destinations.items():
+                if destin == floor and passenger in boarded_passengers and passenger in unserved_passengers:
+                    plan.append(("depart", floor, passenger))
+                    unserved_passengers.discard(passenger)
+
+        # Move the elevator downwards
+        for floor in reversed(floor_order):
+            if lift_position != floor:
+                plan.append(("down", lift_position, floor))
+                lift_position = floor
+
+            # Board passengers
+            for passenger, origin in origins.items():
+                if origin == floor and passenger in unserved_passengers and passenger not in boarded_passengers:
+                    plan.append(("board", floor, passenger))
+                    boarded_passengers.add(passenger)
+
+            # Depart passengers
+            for passenger, destin in destinations.items():
+                if destin == floor and passenger in boarded_passengers and passenger in unserved_passengers:
+                    plan.append(("depart", floor, passenger))
+                    unserved_passengers.discard(passenger)
+
+    return plan

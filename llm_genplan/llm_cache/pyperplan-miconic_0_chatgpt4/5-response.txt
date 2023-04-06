@@ -1,0 +1,36 @@
+def get_floor_order(init):
+    floor_relations = {atom[1:]: True for atom in init if atom[0] == 'above'}
+    floors = list(set([floor for relation in floor_relations.keys() for floor in relation]))
+
+    def is_above(floor1, floor2):
+        return (floor1, floor2) in floor_relations
+
+    sorted_floors = sorted(floors, key=lambda x: (sum(1 for _ in filter(lambda f: is_above(f, x), floors)), x))
+    return sorted_floors
+
+
+def get_plan(objects, init, goal):
+    floors = get_floor_order(init)
+    passengers = get_passengers(objects)
+    origins, destinations = get_origins_and_destinations(init)
+    lift_start = get_lift_start(init)
+
+    plan = []
+
+    for direction in ['up', 'down']:
+        for floor in (floors if direction == 'up' else reversed(floors)):
+            if lift_start != floor:
+                plan.append(f"({direction} {lift_start} {floor})")
+                lift_start = floor
+
+            for passenger in passengers:
+                if origins[passenger] == floor:
+                    plan.append(f"(board {floor} {passenger})")
+                    origins[passenger] = None
+
+            for passenger in passengers:
+                if destinations[passenger] == floor and origins[passenger] is None:
+                    plan.append(f"(depart {floor} {passenger})")
+                    destinations[passenger] = None
+
+    return plan

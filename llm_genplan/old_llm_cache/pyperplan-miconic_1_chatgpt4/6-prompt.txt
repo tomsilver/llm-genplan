@@ -1,0 +1,6 @@
+Given the following inputs:
+objects = {('f1', 'floor'), ('f0', 'floor'), ('p0', 'passenger')}
+init = {('above', 'f0', 'f1'), ('lift-at', 'f0'), ('destin', 'p0', 'f0'), ('origin', 'p0', 'f1')}
+goal = {('served', 'p0')}
+The code returned this plan: ['(depart f0 p0)', '(up f0 f1)'] but the action (depart f0 p0) is invalid at step 0. (Note the valid operators are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2).)
+Fix the code.

@@ -1,0 +1,63 @@
+def get_objects_by_type(objects, object_type):
+    return {o for o, t in objects if t == object_type}
+
+def get_predicate_args(init, predicate):
+    return {tuple(args[1:]) for args in init if args[0] == predicate}
+
+def has_goal_been_reached(init, goal):
+    return goal.issubset(init)
+
+def passengers_to_serve(init):
+    return {p for p, _ in get_predicate_args(init, "origin")} - {p for p, _ in get_predicate_args(init, "served")}
+
+def lift_floor(init):
+    lift_at = next(args for args in init if args[0] == "lift-at")
+    return lift_at[1]
+
+def next_floor(floors, current_floor, direction):
+    if direction == "up":
+        above_floors = {f2 for f1, f2 in floors if f1 == current_floor}
+        return min(above_floors) if above_floors else None
+    else:
+        below_floors = {f1 for f1, f2 in floors if f2 == current_floor}
+        return max(below_floors) if below_floors else None
+
+def perform_board_and_depart(init, current_floor):
+    actions = []
+    for p, f in get_predicate_args(init, "origin"):
+        if f == current_floor and (p, f) not in get_predicate_args(init, "boarded"):
+            actions.append(("board", current_floor, p))
+            init.remove(("origin", p, f))
+            init.add(("boarded", p, f))
+    for p, f in get_predicate_args(init, "destin"):
+        if f == current_floor and (p, f) not in get_predicate_args(init, "served"):
+            actions.append(("depart", current_floor, p))
+            init.remove(("boarded", p, f))
+            init.add(("served", p, f))
+    return actions
+
+def get_plan(objects, init, goal):
+    plan = []
+    passengers = get_objects_by_type(objects, "passenger")
+    floors = get_predicate_args(init, "above")
+    direction = "up"
+    init = set(init)  # Convert input init to a mutable set
+    
+    while not has_goal_been_reached(init, goal):
+        current_floor = lift_floor(init)
+        
+        actions = perform_board_and_depart(init, current_floor)
+        plan.extend(actions)
+        
+        if not passengers_to_serve(init):
+            break
+
+        next_f = next_floor(floors, current_floor, direction)
+        if next_f is not None:
+            plan.append((direction, current_floor, next_f))
+            init.remove(("lift-at", current_floor))
+            init.add(("lift-at", next_f))
+        else:
+            direction = "down" if direction == "up" else "up"
+
+    return plan
