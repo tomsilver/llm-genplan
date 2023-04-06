@@ -154,15 +154,19 @@ def action_to_task_operator(task: Task, action: str) -> PyperplanOperator:
     return action_op
 
 
-def action_is_valid_for_task(task: Task, action: str) -> bool:
+def action_is_valid_for_task(task: Task, action: str) -> Tuple[bool, str]:
     """Check whether the action is valid in the task initial state."""
     pyperplan_task = task.pyperplan_task
     current_facts = pyperplan_task.initial_state
     try:
         action_op = action_to_task_operator(task, action)
     except ValueError:
-        return False
-    return action_op.applicable(current_facts)
+        return False, f"(Note the valid operators are: {task.actions_hint}.)"
+    result = action_op.applicable(current_facts)
+    if not result:
+        missing_preconds = set(action_op.preconditions - current_facts)
+        return False, f"(Missing preconditions: {missing_preconds}.)"
+    return True, "action valid"
 
 
 def advance_task(task: Task, action: str) -> Task:
@@ -227,11 +231,11 @@ def _run_genplan_on_task_no_timeout(
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
     for t, action in enumerate(plan):
-        if not action_is_valid_for_task(task, action):
+        is_valid, hint = action_is_valid_for_task(task, action)
+        if not is_valid:
             msg = (
                 f"The code returned this plan: {plan} "
-                f"but the action {action} is invalid at step {t}. "
-                f"(Note the valid operators are: {task.actions_hint}.)"
+                f"but the action {action} is invalid at step {t}. {hint}"
             )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return

@@ -54,11 +54,10 @@ The code should should be of the form
 where
     - {objects_description}
     - `init` is a set of ground atoms represented as tuples of predicate
-        names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
     - `goal` is also a set of ground atoms represented in the same way
-    - `plan` is a list of actions, where each action is represented as a
-        tuple of operator name and arguments (e.g., ('operator-baz',
-        'object-qux', ...))."""
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')."""
 
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""

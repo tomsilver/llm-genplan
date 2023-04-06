@@ -7,7 +7,7 @@ import tempfile
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Union
 
 from pyperplan.grounding import ground as pyperplan_ground
 from pyperplan.pddl.parser import Parser
@@ -91,12 +91,15 @@ class Task:
         return pyperplan_task
 
     @cached_property
-    def objects(self) -> Set[Tuple[str, str]]:
+    def objects(self) -> Union[Set[Tuple[str, str]], Set[str]]:
         """The objects (not including constants) and their types."""
         objs = set()
-        for obj in sorted(self.problem.objects):
-            obj_type = self.problem.objects[obj]
-            objs.add((obj, str(obj_type)))
+        for obj in self.problem.objects:
+            if self.typed:
+                obj_type = self.problem.objects[obj]
+                objs.add((obj, str(obj_type)))
+            else:
+                objs.add(obj)
         return objs
 
     @cached_property
@@ -144,9 +147,8 @@ class GeneralizedPlan:
         - `init` is a set of ground atoms represented as tuples of predicate
            names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
         - `goal` is also a set of ground atoms represented in the same way
-        - `plan` is a list of actions, where each action is represented as a
-           tuple of operator name and arguments (e.g., ('operator-baz',
-           'object-qux', ...)).
+        - `plan` is a list of actions, where each action is a ground operator
+           represented as a string (e.g., '(operator-baz object-qux ...)').
     """
 
     code_str: str
@@ -171,26 +173,10 @@ class GeneralizedPlan:
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
         # Run the generalized plan.
-        if task.typed:
-            objects = task.objects
-        else:
-            objects = {o for o, _ in task.objects}  # type: ignore
-        action_tuples = module.get_plan(objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
-        # Convert to string representation.
-        return [action_tuple_to_action(a) for a in action_tuples]
+        return module.get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
 
 
 def pred_to_tuple(pred: PyperplanPredicate) -> Tuple[str, ...]:
     """Create a tuple representation of a Pyperplan predicate (atom)."""
     arg_strs = [str(o) for o, _ in pred.signature]
     return (pred.name,) + tuple(arg_strs)
-
-
-def action_tuple_to_action(act_tuple: Tuple[str, ...]) -> str:
-    """Create a string action from a tuple."""
-    op_name = act_tuple[0]
-    if len(act_tuple) == 1:
-        return f"({op_name})"
-    arg_names = act_tuple[1:]
-    arg_name_str = " ".join(arg_names)
-    return f"({op_name} {arg_name_str})"
