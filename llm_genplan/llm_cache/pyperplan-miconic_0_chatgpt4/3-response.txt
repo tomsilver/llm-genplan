@@ -1,3 +1,21 @@
+def get_floors(objects):
+    return sorted([obj[0] for obj in objects if obj[1] == 'floor'])
+
+
+def get_passengers(objects):
+    return [obj[0] for obj in objects if obj[1] == 'passenger']
+
+
+def get_origins_and_destinations(init):
+    origins = {atom[1]: atom[2] for atom in init if atom[0] == 'origin'}
+    destinations = {atom[1]: atom[2] for atom in init if atom[0] == 'destin'}
+    return origins, destinations
+
+
+def get_lift_start(init):
+    return [atom[1] for atom in init if atom[0] == 'lift-at'][0]
+
+
 def get_plan(objects, init, goal):
     floors = get_floors(objects)
     passengers = get_passengers(objects)
@@ -5,6 +23,7 @@ def get_plan(objects, init, goal):
     lift_start = get_lift_start(init)
 
     plan = []
+    boarded_passengers = set()
 
     for direction in ['up', 'down']:
         for floor in (floors if direction == 'up' else reversed(floors)):
@@ -16,10 +35,11 @@ def get_plan(objects, init, goal):
                 if origins[passenger] == floor:
                     plan.append(f"(board {floor} {passenger})")
                     origins[passenger] = None
+                    boarded_passengers.add(passenger)
 
-            for passenger in passengers:
-                if destinations[passenger] == floor and origins[passenger] is None:
+                if destinations[passenger] == floor and passenger in boarded_passengers:
                     plan.append(f"(depart {floor} {passenger})")
                     destinations[passenger] = None
+                    boarded_passengers.remove(passenger)
 
     return plan

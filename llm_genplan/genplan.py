@@ -74,7 +74,11 @@ where
         response = run_prompt(prompt, save_path, prompt_num=2 + t)
         if response is None:
             break
-        gen_plan_code_str = response
+
+        # Note: appending the response so that if the LLM is relying on any
+        # helper functions that it previously defined, they will be available.
+        # If it rewrites `get_plan`, the newer code will take precedence.
+        gen_plan_code_str += "\n\n\n" + response
         gen_plan = GeneralizedPlan(gen_plan_code_str)
 
         # Test the generalized plan.
