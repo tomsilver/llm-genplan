@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    balls = [obj for obj in objects if obj.startswith("ball")]
+    source_room = next(atom[1] for atom in init if atom[0] == "at-robby")
+    target_room = next(atom[1] for atom in goal if atom[0] == "at")
+
+    plan = []
+    for ball in balls:
+        # Move to the source room if not already there
+        if source_room != target_room:
+            plan.append(f"(move {source_room} {target_room})")
+            source_room, target_room = target_room, source_room
+
+        # Pick up the ball using the left gripper
+        plan.append(f"(pick {ball} {source_room} left)")
+
+        # Move to the target room
+        plan.append(f"(move {source_room} {target_room})")
+        source_room, target_room = target_room, source_room
+
+        # Drop the ball in the target room using the left gripper
+        plan.append(f"(drop {ball} {target_room} left)")
+
+    return plan

@@ -1,0 +1,8 @@
+Given the following inputs:
+objects = {'ball1', 'ball2', 'ball3', 'ball4', 'left', 'right', 'rooma', 'roomb'}
+init = {('at', 'ball1', 'rooma'), ('at', 'ball2', 'rooma'), ('at', 'ball3', 'rooma'), ('at', 'ball4', 'rooma'), ('at-robby', 'rooma'), ('ball', 'ball1'), ('ball', 'ball2'), ('ball', 'ball3'), ('ball', 'ball4'), ('free', 'left'), ('free', 'right'), ('gripper', 'left'), ('gripper', 'right'), ('room', 'rooma'), ('room', 'roomb')}
+goal = {('at', 'ball1', 'roomb'), ('at', 'ball2', 'roomb'), ('at', 'ball3', 'roomb'), ('at', 'ball4', 'roomb')}
+The code returned this plan: ['(move rooma roomb)', '(pick ball4 roomb left)', '(move roomb rooma)', '(drop ball4 roomb left)', '(move rooma roomb)', '(pick ball3 roomb left)', '(move roomb rooma)', '(drop ball3 roomb left)', '(move rooma roomb)', '(pick ball1 roomb left)', '(move roomb rooma)', '(drop ball1 roomb left)', '(move rooma roomb)', '(pick ball2 roomb left)', '(move roomb rooma)', '(drop ball2 roomb left)']
+However, the action (pick ball4 roomb left) is invalid at step 1.
+NOTE: The action has missing preconditions: {('at', 'ball4', 'roomb')}.
+Fix the code.
