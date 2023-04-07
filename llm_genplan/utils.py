@@ -9,7 +9,7 @@ import subprocess
 import traceback
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 from llm_genplan.flags import FLAGS
 from llm_genplan.structs import (
@@ -154,13 +154,20 @@ def action_to_task_operator(task: Task, action: str) -> PyperplanOperator:
     return action_op
 
 
+def _set_to_reproducible_str(s: Set) -> str:
+    return "{" + ", ".join(map(repr, sorted(s))) + "}"
+
+
 def _create_genplan_error_info(task: Task, msg: str) -> str:
+    sorted_obj_str = _set_to_reproducible_str(task.objects)
+    sorted_init_str = _set_to_reproducible_str(task.init)
+    sorted_goal_str = _set_to_reproducible_str(task.goal)
     return "\n".join(
         [
             "Given the following inputs:",
-            f"objects = {task.objects}",
-            f"init = {task.init}",
-            f"goal = {task.goal}",
+            f"objects = {sorted_obj_str}",
+            f"init = {sorted_init_str}",
+            f"goal = {sorted_goal_str}",
             msg,
         ]
     )
@@ -197,18 +204,22 @@ def _run_genplan_on_task_no_timeout(
             action_op = action_to_task_operator(task, action)
         except ValueError:
             msg = (
-                f"The code returned this plan: {plan} "
-                f"but the action {action} is invalid at step {t}. "
-                f"(Note the valid operators are: {task.actions_hint}.)"
+                f"The code returned this plan: {plan}\n"
+                f"However, the action {action} is invalid at step {t}.\n"
+                f"NOTE: the valid operators are: {task.actions_hint}."
             )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return
         if not action_op.applicable(facts):
-            missing_preconds = set(action_op.preconditions - facts)
+            missing_precond_facts = set(action_op.preconditions - facts)
+            missing_preconds = {
+                tuple(f[1:-1].split(" ")) for f in missing_precond_facts
+            }
+            missing_preconds_str = _set_to_reproducible_str(missing_preconds)
             msg = (
-                f"The code returned this plan: {plan} "
-                f"but the action {action} is invalid at step {t}. "
-                f"(Missing preconditions: {missing_preconds}.)"
+                f"The code returned this plan: {plan}\n"
+                f"However, the action {action} is invalid at step {t}.\n"
+                f"NOTE: The action has missing preconditions: {missing_preconds_str}."
             )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return
