@@ -1,0 +1,16 @@
+The "movie-strips" domain is designed to model a scenario where a movie is being prepared for watching, including rewinding the movie and gathering snacks. The domain defines several predicates and actions.
+
+The predicates are related to the movie's rewind state, the counter's position (at two hours, other than two hours, or zero), and the availability of various snacks (chips, dip, pop, cheese, and crackers).
+
+There are eight defined actions:
+
+    rewind-movie-2: Rewinds the movie when the counter is at two hours, resulting in a rewound movie.
+    rewind-movie: Rewinds the movie when the counter is at other than two hours, resulting in a rewound movie and the counter not being at zero.
+    reset-counter: Resets the counter to zero.
+    get-chips: Retrieves chips, resulting in having chips.
+    get-dip: Retrieves dip, resulting in having dip.
+    get-pop: Retrieves pop, resulting in having pop.
+    get-cheese: Retrieves cheese, resulting in having cheese.
+    get-crackers: Retrieves crackers, resulting in having crackers.
+
+Two example problems are provided, both with the goal of having the movie rewound, the counter at zero, and all snacks available. The difference between the problems is the number of snack options available, with the second problem having one extra option for each snack type.

@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Determine counter state
+    counter_state = [atom for atom in init if "counter" in atom[0]]
+    
+    # Step 1: Rewind the movie
+    if ('counter-at-two-hours',) in counter_state:
+        plan.append('(rewind-movie-2)')
+    elif ('counter-at-other-than-two-hours',) in counter_state:
+        plan.append('(rewind-movie)')
+
+    # Step 2: Reset the counter
+    plan.append('(reset-counter)')
+
+    # Steps 3-7: Get snacks
+    snack_types = ['chips', 'dip', 'pop', 'cheese', 'crackers']
+    for snack_type in snack_types:
+        available_snacks = [obj for obj in objects if (snack_type, obj) in init]
+        if available_snacks:
+            plan.append(f'(get-{snack_type} {available_snacks[0]})')
+
+    return plan
