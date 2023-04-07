@@ -194,14 +194,10 @@ def advance_task(task: Task, action: str) -> Task:
 
 
 def _create_genplan_error_info(task: Task, msg: str) -> str:
-    if task.typed:
-        objects = task.objects
-    else:
-        objects = {o for o, _ in task.objects}  # type: ignore
     return "\n".join(
         [
             "Given the following inputs:",
-            f"objects = {objects}",
+            f"objects = {task.objects}",
             f"init = {task.init}",
             f"goal = {task.goal}",
             msg,
