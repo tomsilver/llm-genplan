@@ -113,10 +113,6 @@ class Task:
         """The goal in the form {(predicate name, object names)}."""
         return {pred_to_tuple(p) for p in self.problem.goal}
 
-    def goal_holds(self) -> bool:
-        """Check if the goal holds in the initial state."""
-        return self.goal.issubset(self.init)
-
     @cached_property
     def actions_hint(self) -> str:
         """Write the action signatures."""

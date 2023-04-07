@@ -154,45 +154,6 @@ def action_to_task_operator(task: Task, action: str) -> PyperplanOperator:
     return action_op
 
 
-def action_is_valid_for_task(task: Task, action: str) -> Tuple[bool, str]:
-    """Check whether the action is valid in the task initial state."""
-    pyperplan_task = task.pyperplan_task
-    current_facts = pyperplan_task.initial_state
-    try:
-        action_op = action_to_task_operator(task, action)
-    except ValueError:
-        return False, f"(Note the valid operators are: {task.actions_hint}.)"
-    result = action_op.applicable(current_facts)
-    if not result:
-        missing_preconds = set(action_op.preconditions - current_facts)
-        return False, f"(Missing preconditions: {missing_preconds}.)"
-    return True, "action valid"
-
-
-def advance_task(task: Task, action: str) -> Task:
-    """Create a new task with a new initial state."""
-    action_op = action_to_task_operator(task, action)
-    objects_str = get_objects_str(task)
-    init_strs = set(get_init_strs(task))
-    init_strs = (init_strs - action_op.del_effects) | action_op.add_effects
-    init_str = "\n  ".join(sorted(init_strs))
-    goal_str = get_goal_str(task)
-    new_problem_str = f"""(define (problem synthetic-problem)
-   (:domain {task.domain.name})
-  (:objects
-  {objects_str}
-  )
-  (:init
-  {init_str}
-  )
-  (:goal
-  {goal_str}
-  )
-)"""
-    new_task = Task(task.domain_str, new_problem_str)
-    return new_task
-
-
 def _create_genplan_error_info(task: Task, msg: str) -> str:
     return "\n".join(
         [
@@ -230,18 +191,30 @@ def _run_genplan_on_task_no_timeout(
         msg = f"The code returned too long of a plan (horizon={horizon})."
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
+    facts = set(task.pyperplan_task.initial_state)
     for t, action in enumerate(plan):
-        is_valid, hint = action_is_valid_for_task(task, action)
-        if not is_valid:
+        try:
+            action_op = action_to_task_operator(task, action)
+        except ValueError:
             msg = (
                 f"The code returned this plan: {plan} "
-                f"but the action {action} is invalid at step {t}. {hint}"
+                f"but the action {action} is invalid at step {t}. "
+                f"(Note the valid operators are: {task.actions_hint}.)"
             )
             result_dict["info"] = _create_genplan_error_info(task, msg)
             return
-        task = advance_task(task, action)
+        if not action_op.applicable(facts):
+            missing_preconds = set(action_op.preconditions - facts)
+            msg = (
+                f"The code returned this plan: {plan} "
+                f"but the action {action} is invalid at step {t}. "
+                f"(Missing preconditions: {missing_preconds}.)"
+            )
+            result_dict["info"] = _create_genplan_error_info(task, msg)
+            return
+        facts = (facts - action_op.del_effects) | action_op.add_effects
     # Check if goal achieved.
-    if task.goal_holds():
+    if task.pyperplan_task.goal_reached(facts):
         result_dict["success"] = True
         result_dict["info"] = "Generalized plan succeeded."
         return
