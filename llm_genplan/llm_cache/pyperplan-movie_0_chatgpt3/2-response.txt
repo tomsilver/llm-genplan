@@ -1,0 +1,55 @@
+from llm_genplan.utils import get_next_state
+
+def get_plan(task):
+    plan = []
+    atoms = task.init.copy()
+    
+    # Get chips
+    chips = [obj for obj in task.objects if obj.startswith('c')]
+    for chip in chips:
+        if ('chips', chip) in atoms:
+            plan.append(f'(get-chips {chip})')
+            atoms = get_next_state(task, atoms, f'(get-chips {chip})')
+    
+    # Get dip
+    dips = [obj for obj in task.objects if obj.startswith('d')]
+    for dip in dips:
+        if ('dip', dip) in atoms:
+            plan.append(f'(get-dip {dip})')
+            atoms = get_next_state(task, atoms, f'(get-dip {dip})')
+    
+    # Get pop
+    pops = [obj for obj in task.objects if obj.startswith('p')]
+    for pop in pops:
+        if ('pop', pop) in atoms:
+            plan.append(f'(get-pop {pop})')
+            atoms = get_next_state(task, atoms, f'(get-pop {pop})')
+    
+    # Get cheese
+    cheeses = [obj for obj in task.objects if obj.startswith('z')]
+    for cheese in cheeses:
+        if ('cheese', cheese) in atoms:
+            plan.append(f'(get-cheese {cheese})')
+            atoms = get_next_state(task, atoms, f'(get-cheese {cheese})')
+    
+    # Get crackers
+    crackers = [obj for obj in task.objects if obj.startswith('k')]
+    for cracker in crackers:
+        if ('crackers', cracker) in atoms:
+            plan.append(f'(get-crackers {cracker})')
+            atoms = get_next_state(task, atoms, f'(get-crackers {cracker})')
+    
+    # Rewind the movie if needed
+    if ('counter-at-zero',) in atoms and ('movie-rewound',) not in atoms:
+        plan.append('(rewind-movie)')
+        atoms = get_next_state(task, atoms, '(rewind-movie)')
+    elif ('counter-at-two-hours',) in atoms and ('movie-rewound',) not in atoms:
+        plan.append('(rewind-movie-2)')
+        atoms = get_next_state(task, atoms, '(rewind-movie-2)')
+    
+    # Reset the counter
+    if ('counter-at-zero',) not in atoms:
+        plan.append('(reset-counter)')
+        atoms = get_next_state(task, atoms, '(reset-counter)')
+    
+    return plan

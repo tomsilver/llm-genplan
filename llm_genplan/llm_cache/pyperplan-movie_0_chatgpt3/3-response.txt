@@ -1,0 +1,26 @@
+from llm_genplan.utils import get_next_state
+
+def get_plan(task):
+    plan = []
+    atoms = task.init.copy()
+    
+    # Get chips
+    chips = [obj for obj in task.objects if obj.startswith('c')]
+    for chip in chips:
+        if ('chips', chip) in atoms and ('have-chips',) not in atoms:
+            plan.append(f'(get-chips {chip})')
+            atoms = get_next_state(task, atoms, f'(get-chips {chip})')
+    
+    # Get dip
+    dips = [obj for obj in task.objects if obj.startswith('d')]
+    for dip in dips:
+        if ('dip', dip) in atoms and ('have-dip',) not in atoms:
+            plan.append(f'(get-dip {dip})')
+            atoms = get_next_state(task, atoms, f'(get-dip {dip})')
+    
+    # Get pop
+    pops = [obj for obj in task.objects if obj.startswith('p')]
+    for pop in pops:
+        if ('pop', pop) in atoms and ('have-pop',) not in atoms:
+            plan.append(f'(get-pop {pop})')
+            atoms = get_next_state(task, atoms, f'(get-pop {pop})')

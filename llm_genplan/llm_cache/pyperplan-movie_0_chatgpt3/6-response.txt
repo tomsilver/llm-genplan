@@ -1,0 +1,12 @@
+from llm_genplan.utils import get_next_state
+
+def get_plan(task):
+    atoms = task.init
+    plan = []
+    for operator in task.operators:
+        if operator.precond.issubset(atoms):
+            plan.append(str(operator))
+            atoms = get_next_state(task, atoms, operator)
+            if task.goal.issubset(atoms):
+                return plan
+    return None
