@@ -281,5 +281,11 @@ def run_genplan_on_task(
         # Give it a few more seconds then kill for good.
         p.join(3)
         p.kill()
+        # Add a little more info.
+        assert "KeyboardInterrupt" in result_dict["info"]
+        result_dict["info"] += (
+            "\nThe code was interrupted because it timed out "
+            "(possible infinite loop)."
+        )
 
     return result_dict["success"], result_dict["info"]
