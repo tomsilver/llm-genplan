@@ -1,0 +1,50 @@
+from llm_genplan.utils import get_next_state
+
+def get_plan(task):
+    objects, init, goal = task.objects, task.init, task.goal
+    plan = []
+    stacks = {}  # Dictionary to store the desired goal stacks
+    ontable = set()  # Set to store blocks that need to be placed on the table
+
+    # Create the desired goal stacks dictionary
+    for atom in goal:
+        if atom[0] == 'on':
+            if atom[2] not in stacks:
+                stacks[atom[2]] = []
+            stacks[atom[2]].append(atom[1])
+
+    # Sort stacks by the order in which blocks should be placed
+    for stack in stacks.values():
+        stack.sort(reverse=True)
+
+    # Clear any block that is not in the correct position
+    for atom in init:
+        if atom[0] == 'on' and atom not in goal:
+            ontable.add(atom[1])
+            action = f'(unstack {atom[1]} {atom[2]})'
+            init = get_next_state(task, init, action)
+            plan.append(action)
+
+    # Put down any block being held
+    for atom in init:
+        if atom[0] == 'holding':
+            action = f'(put-down {atom[1]})'
+            init = get_next_state(task, init, action)
+            plan.append(action)
+            ontable.add(atom[1])
+
+    # Place the blocks on the table or stack them as needed
+    for target, stack in stacks.items():
+        for block in stack:
+            if block in ontable:
+                action = f'(pick-up {block})'
+                init = get_next_state(task, init, action)
+                plan.append(action)
+                ontable.remove(block)
+
+            action = f'(stack {block} {target})'
+            init = get_next_state(task, init, action)
+            plan.append(action)
+            target = block
+
+    return plan

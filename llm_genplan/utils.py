@@ -154,6 +154,19 @@ def action_to_task_operator(task: Task, action: str) -> PyperplanOperator:
     return action_op
 
 
+def get_next_state(
+    task: Task, atoms: Set[Tuple[str, ...]], action: str
+) -> Set[Tuple[str, ...]]:
+    """Helper function for genplan."""
+    facts = {"(" + " ".join(a) + ")" for a in atoms}
+    action_op = action_to_task_operator(task, action)
+    if not action_op.applicable(facts):
+        raise ValueError(f"Action {action} not applicable in state {atoms}")
+    next_facts = (facts - action_op.del_effects) | action_op.add_effects
+    next_atoms = {tuple(f.split(" ")) for f in next_facts}
+    return next_atoms
+
+
 def _set_to_reproducible_str(s: Set) -> str:
     return "{" + ", ".join(map(repr, sorted(s))) + "}"
 

@@ -134,16 +134,16 @@ class GeneralizedPlan:
 
     The code should should be of the form
 
-    def get_plan(objects, init, goal):
+    def get_plan(task):
         # Your code here
         return plan
 
     where
-        - `objects` is a set of (object name, object type name) tuples
+        - `task.objects` is a set of (object name, object type name) tuples
            if the domain is typed, and just object name strings otherwise
-        - `init` is a set of ground atoms represented as tuples of predicate
+        - `task.init` is a set of ground atoms represented as tuples of predicate
            names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
-        - `goal` is also a set of ground atoms represented in the same way
+        - `task.goal` is also a set of ground atoms represented in the same way
         - `plan` is a list of actions, where each action is a ground operator
            represented as a string (e.g., '(operator-baz object-qux ...)').
     """
@@ -170,7 +170,7 @@ class GeneralizedPlan:
         sys.modules[module_name] = module
         spec.loader.exec_module(module)
         # Run the generalized plan.
-        return module.get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
+        return module.get_plan(task)  # type: ignore  # pylint: disable=undefined-variable
 
 
 def pred_to_tuple(pred: PyperplanPredicate) -> Tuple[str, ...]:

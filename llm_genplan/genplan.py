@@ -40,24 +40,29 @@ def get_genplan_from_llm(
 
     # Python function.
     if all_train_tasks[0].typed:
-        objects_description = "`objects` is a set of (object name, type name) tuples"
+        objects_description = "a set of (object name, type name) tuples"
     else:
-        objects_description = "`objects` is a set of objects (string names)"
+        objects_description = "a set of objects (string names)"
     first_genplan_prompt = f"""Implement the strategy as a Python function.
 
 The code should should be of the form
 
-    def get_plan(objects, init, goal):
+    # Optional helper functions
+    from llm_genplan.utils import get_next_state
+
+    def get_plan(task):
         # Your code here
         return plan
 
 where
-    - {objects_description}
-    - `init` is a set of ground atoms represented as tuples of predicate
+    - `task.objects` is {objects_description}
+    - `task.init` is a set of ground atoms represented as tuples of predicate
        names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
-    - `goal` is also a set of ground atoms represented in the same way
+    - `task.goal` is also a set of ground atoms represented in the same way
     - `plan` is a list of actions, where each action is a ground operator
-       represented as a string (e.g., '(operator-baz object-qux ...)')."""
+       represented as a string (e.g., '(operator-baz object-qux ...)')
+    - `get_next_state(task, atoms, action)` applies the PDDL operator for `action`
+       to `atoms` and returns the next state (set of ground atoms)"""
 
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""
