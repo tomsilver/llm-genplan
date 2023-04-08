@@ -208,6 +208,10 @@ def _run_genplan_on_task_no_timeout(
         msg = f"The code raised the following exception:\n{tb_str}"
         result_dict["info"] = _create_genplan_error_info(task, msg)
         return
+    if not isinstance(plan, list):
+        msg = f"The code returned {plan}, which is not a list of actions."  # type: ignore[unreachable] # pylint:disable=line-too-long
+        result_dict["info"] = _create_genplan_error_info(task, msg)
+        return
     if len(plan) > horizon:
         msg = f"The code returned too long of a plan (horizon={horizon})."
         result_dict["info"] = _create_genplan_error_info(task, msg)
