@@ -1,0 +1,6 @@
+Given the following inputs:
+objects = {('f0', 'floor'), ('f1', 'floor'), ('p0', 'passenger')}
+init = {('above', 'f0', 'f1'), ('destin', 'p0', 'f0'), ('lift-at', 'f0'), ('origin', 'p0', 'f1')}
+goal = {('served', 'p0')}
+The code returned the following plan, which did not achieve the goal: []
+Fix the code.

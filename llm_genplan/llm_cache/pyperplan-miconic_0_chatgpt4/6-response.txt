@@ -1,0 +1,15 @@
+def get_floor_order(init):
+    above_relations = {(a[1], a[2]) for a in init if a[0] == "above"}
+    floors = sorted(set().union(*above_relations))
+    
+    order = []
+    while above_relations:
+        candidates = {floor for floor, _ in above_relations} - {floor for _, floor in above_relations}
+        if not candidates:
+            break
+        candidate = min(candidates)
+        order.append(candidate)
+        above_relations = {(a, b) for a, b in above_relations if a != candidate}
+    
+    order.extend(sorted(set(floors) - set(order)))
+    return order

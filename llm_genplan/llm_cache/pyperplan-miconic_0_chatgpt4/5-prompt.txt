@@ -1,0 +1,14 @@
+Given the following inputs:
+objects = {('f0', 'floor'), ('f1', 'floor'), ('f2', 'floor'), ('f3', 'floor'), ('p0', 'passenger'), ('p1', 'passenger')}
+init = {('above', 'f0', 'f1'), ('above', 'f0', 'f2'), ('above', 'f0', 'f3'), ('above', 'f1', 'f2'), ('above', 'f1', 'f3'), ('above', 'f2', 'f3'), ('destin', 'p0', 'f2'), ('destin', 'p1', 'f3'), ('lift-at', 'f0'), ('origin', 'p0', 'f3'), ('origin', 'p1', 'f1')}
+goal = {('served', 'p0'), ('served', 'p1')}
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 134, in get_plan
+    floors = get_floor_order(task.init)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line -1, in get_floor_order
+KeyboardInterrupt
+
+The code was interrupted because it timed out (possible infinite loop).
+Fix the code.

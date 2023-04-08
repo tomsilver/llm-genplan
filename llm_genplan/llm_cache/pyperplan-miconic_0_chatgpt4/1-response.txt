@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to follow a "greedy" approach. This means the elevator moves sequentially from the lowest to the highest floor, picking up any passengers along the way, and dropping off passengers at their destinations as it reaches them. To do this, follow these steps:
+
+    Start at the lowest floor.
+    Move up one floor at a time.
+    a. If there's a passenger at the current floor with an origin matching the floor, let them board the elevator (using the "board" action).
+    b. If there's a boarded passenger with a destination matching the current floor, let them depart the elevator (using the "depart" action).
+    Repeat step 2 until the highest floor is reached.
+    Move down one floor at a time, repeating steps 2a and 2b, until you reach the lowest floor again.
+    Repeat steps 2-4 until all passengers have been served.
+
+This strategy ensures that the elevator will visit all floors and serve all passengers without needing to search for an optimal plan. Note that this strategy might not always produce the shortest plan, but it guarantees that all passengers will be served.
