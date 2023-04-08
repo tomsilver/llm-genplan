@@ -1,0 +1,85 @@
+from llm_genplan.utils import get_next_state
+
+def get_plan(task):
+    def is_holding(state):
+        return next((atom for atom in state if atom[0] == "holding"), None)
+    
+    def is_clear(state, block_name):
+        return ('clear', block_name) in state
+
+    def find_clear_block(state):
+        return next(atom[1] for atom in state if atom[0] == "clear")
+
+    def find_ontable_block(state, block_name):
+        return ('ontable', block_name) in state
+
+    def get_goal_stack(goal_state):
+        stack = []
+        for atom in goal_state:
+            if atom[0] == "on":
+                stack.append((atom[1], atom[2]))
+        return sorted(stack, key=lambda x: x[1], reverse=True)
+
+    def put_down_held_block(state):
+        held_block = is_holding(state)
+        if held_block:
+            block_name = held_block[1]
+            action = f"(put-down {block_name})"
+            return get_next_state(task, state, action), action
+        return state, None
+
+    def clear_blocks(state):
+        actions = []
+        while not all(is_clear(state, block[0]) for block in task.objects):
+            block_name = find_clear_block(state)
+            on_block_list = [atom[2] for atom in state if atom[0] == "on" and atom[1] == block_name]
+            
+            if not on_block_list:  # The clear block is on the table
+                if not is_holding(state):
+                    action = f"(pick-up {block_name})"
+                    state = get_next_state(task, state, action)
+                    actions.append(action)
+                continue
+            
+            on_block = on_block_list[0]
+            if not is_holding(state):
+                action = f"(unstack {block_name} {on_block})"
+                state = get_next_state(task, state, action)
+                actions.append(action)
+            else:
+                new_state, action = put_down_held_block(state)
+                if action:
+                    state = new_state
+                    actions.append(action)
+        return state, actions
+
+    def build_goal_stack(state, goal_stack):
+        actions = []
+        for block_pair in goal_stack:
+            top, bottom = block_pair
+            if not find_ontable_block(state, top):
+                action = f"(pick-up {top})"
+                state = get_next_state(task, state, action)
+                actions.append(action)
+            action = f"(stack {top} {bottom})"
+            state = get_next_state(task, state, action)
+            actions.append(action)
+        return actions
+
+    plan = []
+
+    # Step 1: Ensure hand is empty
+    new_state, action = put_down_held_block(task.init)
+    if action:
+        plan.append(action)
+
+    # Step 2: Clear all blocks
+    new_state, actions = clear_blocks(new_state)
+    plan.extend(actions)
+
+    # Step 3: Build the goal stack
+    goal_stack = get_goal_stack(task.goal)
+    actions = build_goal_stack(new_state, goal_stack)
+    plan.extend(actions)
+
+    return plan

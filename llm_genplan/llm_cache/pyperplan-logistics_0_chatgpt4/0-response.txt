@@ -1,0 +1,3 @@
+The logistics domain is concerned with the transportation of packages using trucks and airplanes. The domain includes various types of objects such as trucks, airplanes, packages, vehicles, airports, locations, cities, places, and physical objects.
+
+The main actions that can be performed in this domain are loading and unloading packages from trucks and airplanes, driving trucks from one location to another within the same city, and flying airplanes between airports. The goal of problems in this domain typically involves moving packages to specific destinations using the available vehicles while adhering to the constraints defined by the domain.

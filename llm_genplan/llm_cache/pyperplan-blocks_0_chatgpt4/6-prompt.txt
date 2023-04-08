@@ -1,0 +1,19 @@
+Given the following inputs:
+objects = {('a', 'block'), ('b', 'block'), ('c', 'block'), ('d', 'block')}
+init = {('clear', 'b'), ('handempty',), ('on', 'a', 'd'), ('on', 'b', 'c'), ('on', 'c', 'a'), ('ontable', 'd')}
+goal = {('on', 'a', 'b'), ('on', 'c', 'a'), ('on', 'd', 'c')}
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 309, in get_plan
+    new_state, actions = clear_blocks(new_state)
+                         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 269, in clear_blocks
+    while not all(is_clear(state, block[0]) for block in task.objects):
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 269, in <genexpr>
+    while not all(is_clear(state, block[0]) for block in task.objects):
+    
+KeyboardInterrupt
+
+The code was interrupted because it timed out (possible infinite loop).
+Fix the code.

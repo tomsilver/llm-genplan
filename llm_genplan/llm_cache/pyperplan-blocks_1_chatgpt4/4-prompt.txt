@@ -1,0 +1,6 @@
+Given the following inputs:
+objects = {('a', 'block'), ('b', 'block'), ('c', 'block'), ('d', 'block')}
+init = {('clear', 'b'), ('handempty',), ('on', 'a', 'd'), ('on', 'b', 'c'), ('on', 'c', 'a'), ('ontable', 'd')}
+goal = {('on', 'a', 'b'), ('on', 'c', 'a'), ('on', 'd', 'c')}
+The code returned the following plan, which did not achieve the goal: ['(unstack b c)']
+Fix the code.

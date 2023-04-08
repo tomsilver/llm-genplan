@@ -1,0 +1,15 @@
+Given the following inputs:
+objects = {('apn1', 'airplane'), ('apt1', 'airport'), ('apt2', 'airport'), ('cit1', 'city'), ('cit2', 'city'), ('obj11', 'package'), ('obj12', 'package'), ('obj13', 'package'), ('obj21', 'package'), ('obj22', 'package'), ('obj23', 'package'), ('pos1', 'location'), ('pos2', 'location'), ('tru1', 'truck'), ('tru2', 'truck')}
+init = {('at', 'apn1', 'apt2'), ('at', 'obj11', 'pos1'), ('at', 'obj12', 'pos1'), ('at', 'obj13', 'pos1'), ('at', 'obj21', 'pos2'), ('at', 'obj22', 'pos2'), ('at', 'obj23', 'pos2'), ('at', 'tru1', 'pos1'), ('at', 'tru2', 'pos2'), ('in-city', 'apt1', 'cit1'), ('in-city', 'apt2', 'cit2'), ('in-city', 'pos1', 'cit1'), ('in-city', 'pos2', 'cit2')}
+goal = {('at', 'obj11', 'apt1'), ('at', 'obj13', 'apt1'), ('at', 'obj21', 'pos1'), ('at', 'obj23', 'pos1')}
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 61, in get_plan
+    plan.append(load_package(task, pkg, truck, pkg_loc))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 8, in load_package
+    action = f'(load-{vehicle.type} {pkg} {vehicle} {loc})'
+                      ^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'type'
+
+Fix the code.

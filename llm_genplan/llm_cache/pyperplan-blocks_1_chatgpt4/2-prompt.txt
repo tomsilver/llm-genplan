@@ -1,0 +1,20 @@
+Implement the strategy as a Python function.
+
+The code should should be of the form
+
+    # Optional helper functions
+    from llm_genplan.utils import get_next_state
+
+    def get_plan(task):
+        # Your code here
+        return plan
+
+where
+    - `task.objects` is a set of (object name, type name) tuples
+    - `task.init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `task.goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')
+    - `get_next_state(task, atoms, action)` applies the PDDL operator for `action`
+       to `atoms` and returns the next state (set of ground atoms)

@@ -1,0 +1,55 @@
+def clear_blocks(task, state):
+    actions = []
+    for atom in state:
+        if atom[0] == 'on':
+            block1, block2 = atom[1], atom[2]
+            if ('clear', block1) in state and ('handempty',) in state:
+                action = f'(unstack {block1} {block2})'
+                actions.append(action)
+                state = get_next_state(task, state, action)
+    return actions, state
+
+def pick_up_block(task, state, block):
+    if ('clear', block) in state and ('handempty',) in state:
+        action = f'(pick-up {block})'
+        state = get_next_state(task, state, action)
+        return action, state
+    return None, state
+
+def build_goal_stacks(task, state, goal):
+    actions = []
+    for atom in goal:
+        if atom[0] == 'on':
+            block1, block2 = atom[1], atom[2]
+            if ('clear', block1) in state and ('clear', block2) in state and ('handempty',) in state:
+                pick_up_action, state = pick_up_block(task, state, block1)
+                if pick_up_action:
+                    actions.append(pick_up_action)
+
+                action = f'(stack {block1} {block2})'
+                actions.append(action)
+                state = get_next_state(task, state, action)
+    return actions
+
+def get_plan(task):
+    state = task.init
+    plan = []
+
+    # Ensure the robot hand is empty.
+    for atom in state:
+        if atom[0] == 'holding':
+            block = atom[1]
+            action = f'(put-down {block})'
+            plan.append(action)
+            state = get_next_state(task, state, action)
+            break
+
+    # Clear all blocks by moving them to the table.
+    clear_actions, state = clear_blocks(task, state)
+    plan.extend(clear_actions)
+
+    # Build the desired stack(s) according to the goal configuration.
+    build_actions = build_goal_stacks(task, state, task.goal)
+    plan.extend(build_actions)
+
+    return plan

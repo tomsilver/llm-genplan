@@ -1,0 +1,13 @@
+A simple strategy to solve all problems in this domain without using search can be to follow these steps:
+
+    For each package, find the target destination type (airport or location) and the corresponding city.
+    If the package is not already at the target city, transport the package using an airplane:
+    a. Load the package onto the airplane at its current location.
+    b. Fly the airplane to the airport in the target city.
+    c. Unload the package at the destination airport.
+    If the package's target destination is a location within the city, transport the package using a truck:
+    a. Load the package onto the truck at the airport (or its current location if already in the city).
+    b. Drive the truck to the target location within the city.
+    c. Unload the package at the target location.
+
+By following this simple strategy, all packages will be delivered to their target destinations without the need for an extensive search. This method assumes that there are enough trucks and airplanes available to carry out these actions, and that the airplanes and trucks are allowed to move between different cities and locations as needed.
