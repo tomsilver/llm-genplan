@@ -1,0 +1,3 @@
+The movie-strips domain is a simplified planning problem that involves preparing for a movie night by gathering snacks and rewinding the movie. The domain has various predicates to represent the state of the movie counter and the availability of different snack items. The actions include rewinding the movie, resetting the movie counter, and getting different snacks like chips, dip, pop, cheese, and crackers.
+
+There are two example problems in the domain, with each problem consisting of a different set of objects representing various snack items. The goal in both problems is to rewind the movie, reset the counter, and have all the required snacks for a movie night.
