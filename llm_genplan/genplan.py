@@ -112,11 +112,15 @@ def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> Optional[str]:
         with open(prompt_path, "r", encoding="utf-8") as f:
             saved_prompt = f.read()
         if saved_prompt != prompt:
-            logging.info("Saved prompt:")
-            logging.info(saved_prompt)
-            logging.info("New prompt:")
-            logging.info(prompt)
-            raise RuntimeError("Loading failed.")
+            logging.warning("Saved prompt:")
+            logging.warning(saved_prompt)
+            logging.warning("New prompt:")
+            logging.warning(prompt)
+            # Special case timeouts because they can be nondeterministic.
+            if "KeyboardInterrupt" in prompt:
+                assert "KeyboardInterrupt" in saved_prompt
+            else:
+                raise RuntimeError("Loading failed.")
         # Load the saved response.
         with open(response_path, "r", encoding="utf-8") as f:
             saved_response = f.read()
