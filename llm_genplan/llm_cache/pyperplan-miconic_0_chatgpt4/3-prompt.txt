@@ -1,8 +1,0 @@
-Given the following inputs:
-objects = {('f0', 'floor'), ('f1', 'floor'), ('p0', 'passenger')}
-init = {('above', 'f0', 'f1'), ('destin', 'p0', 'f0'), ('lift-at', 'f0'), ('origin', 'p0', 'f1')}
-goal = {('served', 'p0')}
-The code returned this plan: ['(depart f0 p0)', '(up f0 f1)', '(board f1 p0)', '(down f1 f0)']
-However, the action (depart f0 p0) is invalid at step 0.
-NOTE: The action has missing preconditions: {('boarded', 'p0')}.
-Fix the code.

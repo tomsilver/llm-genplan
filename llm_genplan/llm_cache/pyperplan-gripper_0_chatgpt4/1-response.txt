@@ -1,10 +1,11 @@
-A simple strategy for solving all problems in this domain without using search involves following a sequence of steps repeatedly until all balls are moved from the source room (rooma) to the target room (roomb). The steps are as follows:
+A simple strategy for solving all problems in the gripper-strips domain without using search would be to perform the following steps:
 
-    Robby moves to the source room (rooma) if not already there.
-    Robby picks up a ball using the left gripper if it's free.
-    If the left gripper is not free and the right gripper is free, Robby picks up another ball using the right gripper.
-    Robby moves to the target room (roomb).
-    If Robby is carrying a ball with the left gripper, it drops the ball in the target room (roomb).
-    If Robby is carrying a ball with the right gripper, it drops the ball in the target room (roomb).
+    Pick up the maximum number of balls possible in the initial room (rooma) using the available grippers (left and right). In this case, since there are two grippers, the maximum number of balls picked up at once would be two.
 
-Robby repeats these steps until all balls have been moved from the source room (rooma) to the target room (roomb). This strategy is efficient because Robby can carry up to two balls at a time and doesn't require any search algorithm or planning to solve the problem.
+    Move to the destination room (roomb).
+
+    Drop the balls in the destination room (roomb).
+
+    Check if there are still balls left in the initial room (rooma). If so, go back to step 1. If not, the problem is solved.
+
+By following this strategy, you can sequentially move all the balls from the initial room (rooma) to the destination room (roomb) without the need for search.

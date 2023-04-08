@@ -1,7 +1,0 @@
-The "blocks" domain is a simplified environment where the objective is to manipulate and rearrange blocks on a table. It is defined within the framework of a planning domain, using the Planning Domain Definition Language (PDDL).
-
-In this domain, there are four types of actions: pick-up, put-down, stack, and unstack. The domain also defines a type called "block" and several predicates (conditions) such as on, ontable, clear, handempty, and holding.
-
-The pick-up action allows the agent to pick up a block if it is clear, on the table, and the agent's hand is empty. The put-down action allows the agent to put down a block it is holding, making it clear, on the table, and the agent's hand empty. The stack action allows the agent to stack one block on top of another if it is holding a block and the other block is clear. The unstack action allows the agent to unstack a block from another block if the block is on top of another block, clear, and the agent's hand is empty.
-
-Two example problems are provided to illustrate the domain. In the first problem, the initial state has four blocks (a, b, c, d) with different configurations, and the goal is to rearrange the blocks in a specific order. In the second problem, the initial state has four blocks (a, b, c, d) in another configuration, with the goal of rearranging them into a different order.

@@ -1,24 +1,36 @@
-def get_plan(objects, init, goal):
-    balls = [obj for obj in objects if obj.startswith("ball")]
-    source_room = next(atom[1] for atom in init if atom[0] == "at-robby")
-    target_room = next(atom[2] for atom in goal if atom[0] == "at")
+from llm_genplan.utils import get_next_state
 
+def get_plan(task):
     plan = []
-    for ball in balls:
-        # Move to the source room if not already there
-        if source_room != target_room:
-            plan.append(f"(move {source_room} {target_room})")
-            source_room, target_room = target_room, source_room
+    
+    balls_in_rooma = set()
+    for atom in task.init:
+        if atom[0] == "at" and atom[2] == "rooma":
+            balls_in_rooma.add(atom[1])
 
-        # Pick up the ball using the left gripper
-        plan.append(f"(pick {ball} {source_room} left)")
+    ball_gripper_mapping = {}
+    while balls_in_rooma:
+        # Pick up balls in rooma
+        for gripper in ["left", "right"]:
+            if balls_in_rooma:
+                ball = balls_in_rooma.pop()
+                plan.append(f"(pick {ball} rooma {gripper})")
+                ball_gripper_mapping[ball] = gripper
+                
+        # Move to roomb
+        plan.append("(move rooma roomb)")
 
-        # Move to the target room
-        if source_room != target_room:
-            plan.append(f"(move {source_room} {target_room})")
-            source_room, target_room = target_room, source_room
+        # Drop balls in roomb
+        for ball, gripper in ball_gripper_mapping.items():
+            plan.append(f"(drop {ball} roomb {gripper})")
 
-        # Drop the ball in the target room using the left gripper
-        plan.append(f"(drop {ball} {source_room} left)")
+        # Clear ball_gripper_mapping for next iteration
+        ball_gripper_mapping.clear()
+
+        # Move back to rooma
+        plan.append("(move roomb rooma)")
+    
+    # Remove the last "move roomb rooma" action, as it's unnecessary
+    plan.pop()
 
     return plan
