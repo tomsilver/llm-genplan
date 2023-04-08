@@ -5,6 +5,7 @@ import hashlib
 import logging
 import multiprocessing as mp
 import os
+import signal
 import subprocess
 import traceback
 import urllib.request
@@ -196,7 +197,7 @@ def _run_genplan_on_task_no_timeout(
     result_dict["success"] = False
     try:
         plan = generalized_plan.run(task)
-    except Exception as e:  # pylint: disable=broad-exception-caught
+    except BaseException as e:  # pylint: disable=broad-exception-caught
         tb = traceback.format_exception(e)
         tb_lines = [
             l.replace(str(generalized_plan.filepath), "<file-name-omitted>")
@@ -274,9 +275,11 @@ def run_genplan_on_task(
     p.join(timeout)
     # Timeout reached.
     if p.is_alive():
+        # Treated like a KeyboardInterrupt.
+        assert p.pid is not None
+        os.kill(p.pid, signal.SIGINT)
+        # Give it a few more seconds then kill for good.
+        p.join(3)
         p.kill()
-        msg = "The code did not finish in time. Possible infinite loop."
-        info = _create_genplan_error_info(task, msg)
-        return False, info
 
     return result_dict["success"], result_dict["info"]

@@ -111,7 +111,12 @@ def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> Optional[str]:
         # If already exists, assert that the prompt is unchanged.
         with open(prompt_path, "r", encoding="utf-8") as f:
             saved_prompt = f.read()
-        assert saved_prompt == prompt
+        if saved_prompt != prompt:
+            logging.info("Saved prompt:")
+            logging.info(saved_prompt)
+            logging.info("New prompt:")
+            logging.info(prompt)
+            raise RuntimeError("Loading failed.")
         # Load the saved response.
         with open(response_path, "r", encoding="utf-8") as f:
             saved_response = f.read()
