@@ -1,8 +1,0 @@
-A simple strategy for solving all problems in this domain without using search is to follow a systematic approach that involves the following steps:
-
-    If the agent is holding a block, put it down on the table.
-    Identify the target configuration (goal state) and start with the lowest block in the desired stack.
-    Check if the lowest block is in its correct position. If not, clear any block on top of it and place them on the table, then move the desired block to its correct position.
-    Continue this process for each block in the desired stack, one by one, moving from the bottom to the top.
-
-This strategy works because it systematically ensures that each block is placed in the correct order and position, starting with the lowest block and moving up the stack. It minimizes the need for search by following a linear, step-by-step process that directly addresses the goal state without exploring irrelevant actions. However, this strategy may not always be the most efficient, as it might involve unnecessary moves, especially when the initial state is close to the goal state.

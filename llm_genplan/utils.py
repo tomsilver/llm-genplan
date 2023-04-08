@@ -163,7 +163,7 @@ def get_next_state(
     if not action_op.applicable(facts):
         raise ValueError(f"Action {action} not applicable in state {atoms}")
     next_facts = (facts - action_op.del_effects) | action_op.add_effects
-    next_atoms = {tuple(f.split(" ")) for f in next_facts}
+    next_atoms = {tuple(f[1:-1].split(" ")) for f in next_facts}
     return next_atoms
 
 
