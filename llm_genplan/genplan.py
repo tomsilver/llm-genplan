@@ -65,7 +65,7 @@ where
        to `atoms` and returns the next state (set of ground atoms)"""
 
     last_error_info: Optional[str] = None
-    gen_plan_code_str = ""
+    gen_plan_code_str = "from llm_genplan.utils import get_next_state\n"
 
     for t in range(max_debug_attempts):
         # Get the prompt.
