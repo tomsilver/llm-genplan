@@ -1,0 +1,31 @@
+def get_plan(task):
+    plan = []
+    passengers, elevators, floors = extract_objects(task.objects)
+    initial_positions, desired_positions = find_passenger_positions(task.init, task.goal)
+
+    for passenger in passengers:
+        current_floor = initial_positions[passenger]
+        target_floor = desired_positions[passenger]
+
+        for elevator in elevators:
+            # Check if the elevator is a fast or slow elevator
+            elevator_type = 'fast' if 'fast-elevator' in elevator else 'slow'
+
+            # Determine if the elevator needs to move up or down
+            move_direction = 'move-up' if current_floor in task.init else 'move-down'
+
+            # Generate actions
+            move_to_passenger = f"{move_direction}-{elevator_type} {elevator} {current_floor}"
+            plan.append(move_to_passenger)
+
+            board_passenger = f"board {passenger} {elevator} {current_floor}"
+            plan.append(board_passenger)
+
+            move_direction = 'move-up' if target_floor in task.init else 'move-down'
+            move_to_target = f"{move_direction}-{elevator_type} {elevator} {target_floor}"
+            plan.append(move_to_target)
+
+            unboard_passenger = f"leave {passenger} {elevator} {target_floor}"
+            plan.append(unboard_passenger)
+
+    return plan

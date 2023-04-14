@@ -1,0 +1,14 @@
+The "elevators-sequencedstrips" domain represents a problem-solving environment involving elevators and passengers. The main objective is to transport passengers between different floors using elevators.
+
+There are three types of objects: elevators (including slow-elevator and fast-elevator), passengers, and counts (representing floor numbers). The domain has predicates to represent the location of passengers, elevators, and their capacities, as well as the floor connectivity and ordering.
+
+There are six actions available in this domain:
+
+    move-up-slow: Moves a slow elevator up one floor.
+    move-down-slow: Moves a slow elevator down one floor.
+    move-up-fast: Moves a fast elevator up one floor.
+    move-down-fast: Moves a fast elevator down one floor.
+    board: A passenger boards an elevator at a specific floor.
+    leave: A passenger leaves an elevator at a specific floor.
+
+The example problems in the domain involve using the available actions to transport passengers to their desired floors. The initial state specifies the positions of passengers, elevators, their capacity constraints, and reachable floors. The goal state lists the desired locations for each passenger.
