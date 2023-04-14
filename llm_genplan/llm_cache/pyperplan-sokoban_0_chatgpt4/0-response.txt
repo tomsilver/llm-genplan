@@ -1,5 +1,0 @@
-The Sokoban-sequential domain is a simplified version of the classic Sokoban game, where a player needs to push stones onto designated goal locations. The domain includes a few types of objects, such as things, locations, and directions. Subtypes of things include players and stones.
-
-The domain has three main actions: move, push-to-nongoal, and push-to-goal. The move action allows a player to move from one location to another, given that the target location is clear. The push-to-nongoal action enables a player to push a stone from one location to a non-goal location, while the push-to-goal action permits a player to push a stone from one location to a goal location. These actions also involve moving the player from one location to another.
-
-The example problem provided is a small Sokoban puzzle consisting of a grid with walls, stones, goal locations, and a player. The initial positions of the player and stones are specified, as well as the goal and non-goal locations. The objective of the problem is to move both stones to their respective goal locations by performing a sequence of moves and pushes.

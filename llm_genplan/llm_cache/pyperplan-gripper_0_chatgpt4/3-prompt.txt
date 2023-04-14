@@ -1,8 +1,0 @@
-Given the following inputs:
-objects = {'ball1', 'ball2', 'ball3', 'ball4', 'left', 'right', 'rooma', 'roomb'}
-init = {('at', 'ball1', 'rooma'), ('at', 'ball2', 'rooma'), ('at', 'ball3', 'rooma'), ('at', 'ball4', 'rooma'), ('at-robby', 'rooma'), ('ball', 'ball1'), ('ball', 'ball2'), ('ball', 'ball3'), ('ball', 'ball4'), ('free', 'left'), ('free', 'right'), ('gripper', 'left'), ('gripper', 'right'), ('room', 'rooma'), ('room', 'roomb')}
-goal = {('at', 'ball1', 'roomb'), ('at', 'ball2', 'roomb'), ('at', 'ball3', 'roomb'), ('at', 'ball4', 'roomb')}
-The code returned this plan: ['(pick ball4 rooma left)', '(pick ball3 rooma right)', '(move rooma roomb)', '(drop ball3 roomb right)', '(drop ball4 roomb left)', '(move roomb rooma)', '(pick ball2 rooma left)', '(pick ball1 rooma right)', '(move rooma roomb)', '(drop ball3 roomb right)', '(drop ball4 roomb left)']
-However, the action (drop ball3 roomb right) is invalid at step 9.
-NOTE: The action has missing preconditions: {('carry', 'ball3', 'right')}.
-Fix the code.

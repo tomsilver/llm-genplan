@@ -1,4 +1,0 @@
-The simple strategy for solving all problems in the gripper-strips domain without using search is to use a plan that involves a sequence of actions to move each ball from its starting room to the goal room one at a time.
-
-The strategy involves iterating over each ball in the initial state and planning a sequence of actions to move that ball to the goal state. The plan for each ball involves picking up the ball in its initial room, moving to the goal room, and dropping the ball off in the goal room. The sequence of plans for each ball is then executed in order to achieve the overall goal of moving all balls to the goal room.
-

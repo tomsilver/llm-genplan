@@ -1,9 +1,0 @@
-A simple strategy to solve all problems in this domain without using search is by following a set of predefined steps:
-
-    First, ensure that the robot hand is empty by putting down any block it might be holding.
-    Clear all blocks by moving them to the table, starting from the top of each stack and working downwards.
-    Once all blocks are on the table and clear, start building the desired stack(s) from the base to the top.
-    a. For each block in the goal configuration, pick it up and place it on the desired lower block, one at a time.
-    b. Make sure to only pick up and place blocks that are clear and satisfy the preconditions of the actions.
-
-This strategy relies on the assumption that the given problems have a single, well-defined goal configuration. It does not require any search, as it works sequentially through the goal configuration and follows a predetermined set of steps.
