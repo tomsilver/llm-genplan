@@ -5,6 +5,7 @@ from typing import List, Tuple
 import pddlgym
 
 from llm_genplan import utils
+from llm_genplan.flags import FLAGS
 from llm_genplan.structs import Task
 
 
@@ -25,6 +26,10 @@ def create_tasks(
         benchmark_name = env_name[len("pddlgym-") :]
         tasks = _get_pddlgym_tasks(benchmark_name, num_prompt + num_train)
         tasks += _get_pddlgym_tasks(benchmark_name, num_eval, test=True)
+
+    elif env_name.startswith("pg3-"):
+        benchmark_name = env_name[len("pg3-") :]
+        return _get_pg3_tasks(benchmark_name, num_prompt, num_train, num_eval)
     else:
         raise NotImplementedError(f"Unrecognized env: {env_name}.")
 
@@ -85,3 +90,42 @@ def _get_pddlgym_tasks(
         task = Task(domain_str, problem_str)
         tasks.append(task)
     return tasks
+
+
+def _get_pg3_tasks(
+    benchmark_name: str, num_prompt: int, num_train: int, num_eval: int
+) -> Tuple[List[Task], List[Task], List[Task]]:
+    """Get PDDL tasks that are stored locally, taken from the PG3 paper."""
+    pg3_pddl_dir = utils.PDDL_DIR / "pg3"
+    domain_file_path = pg3_pddl_dir / f"{benchmark_name}.pddl"
+    assert domain_file_path.exists(), f"Domain not found: {domain_file_path}"
+    train_dir = pg3_pddl_dir / benchmark_name / f"seed{FLAGS.seed}"
+    assert train_dir.exists(), f"Train dir not found: {train_dir}"
+    test_dir = pg3_pddl_dir / f"{benchmark_name}_test" / f"seed{FLAGS.seed}"
+    assert test_dir.exists(), f"Test dir not found: {test_dir}"
+    # Load the domain.
+    with open(domain_file_path, "r", encoding="utf-8") as f:
+        domain_str = f.read()
+    # Load the train problems.
+    all_train_tasks: List[Task] = []
+    for train_file_path in train_dir.glob("*.pddl"):
+        with open(train_file_path, "r", encoding="utf-8") as f:
+            problem_str = f.read()
+        task = Task(domain_str, problem_str)
+        all_train_tasks.append(task)
+    # Make sure we have enough train problems.
+    assert len(all_train_tasks) >= num_prompt + num_train
+    # Partition into prompt and train.
+    prompt_tasks = all_train_tasks[:num_prompt]
+    train_tasks = all_train_tasks[num_prompt : (num_prompt + num_train)]
+    # Load the test problems.
+    all_test_tasks: List[Task] = []
+    for test_file_path in test_dir.glob("*.pddl"):
+        with open(test_file_path, "r", encoding="utf-8") as f:
+            problem_str = f.read()
+        task = Task(domain_str, problem_str)
+        all_test_tasks.append(task)
+    # Make sure we have enough eval problems.
+    assert len(all_test_tasks) >= num_eval
+    eval_tasks = all_test_tasks[:num_eval]
+    return prompt_tasks, train_tasks, eval_tasks
