@@ -8,7 +8,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from pddlgym.parser import PDDLDomainParser, PDDLProblemParser
+from pddlgym.parser import Literal, PDDLDomainParser, PDDLProblemParser
 
 
 @dataclass(frozen=True)
@@ -64,14 +64,14 @@ class Task:
         return {o.name for o in self.problem.objects}
 
     @cached_property
-    def init(self) -> Set[str]:
+    def init(self) -> Set[Tuple[str, ...]]:
         """The initial atoms in string form."""
-        return {l.pddl_str() for l in self.problem.initial_state}
+        return {_literal_to_tuple(l) for l in self.problem.initial_state}
 
     @cached_property
-    def goal(self) -> Set[str]:
+    def goal(self) -> Set[Tuple[str, ...]]:
         """The goal in string form."""
-        return {l.pddl_str() for l in self.problem.goal.literals}
+        return {_literal_to_tuple(l) for l in self.problem.goal.literals}
 
     @cached_property
     def size(self) -> int:
@@ -136,3 +136,8 @@ class GeneralizedPlan:
         spec.loader.exec_module(module)
         # Run the generalized plan.
         return module.get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
+
+
+def _literal_to_tuple(lit: Literal) -> Tuple[str, ...]:
+    arg_strs = [v.name for v in lit.variables]
+    return (lit.predicate.name,) + tuple(arg_strs)

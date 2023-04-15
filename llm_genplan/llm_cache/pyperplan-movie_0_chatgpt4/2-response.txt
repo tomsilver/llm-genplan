@@ -1,31 +1,36 @@
 def get_plan(objects, init, goal):
     plan = []
 
-    # Step 1: Rewind movie
-    if '(counter-at-other-than-two-hours)' in init:
+    # Rewind movie
+    if ('counter-at-other-than-two-hours',) in init:
         plan.append('(rewind-movie)')
 
-    # Step 2: Reset counter
+    # Reset counter
     plan.append('(reset-counter)')
 
-    # Step 3: Get chips
-    chips = next(obj for obj in objects if obj.startswith("c"))
-    plan.append(f'(get-chips {chips})')
+    # Get chips
+    chips_objects = [obj for obj in objects if ('chips', obj) in init]
+    if chips_objects:
+        plan.append(f'(get-chips {chips_objects[0]})')
 
-    # Step 4: Get dip
-    dip = next(obj for obj in objects if obj.startswith("d"))
-    plan.append(f'(get-dip {dip})')
+    # Get dip
+    dip_objects = [obj for obj in objects if ('dip', obj) in init]
+    if dip_objects:
+        plan.append(f'(get-dip {dip_objects[0]})')
 
-    # Step 5: Get pop
-    pop = next(obj for obj in objects if obj.startswith("p"))
-    plan.append(f'(get-pop {pop})')
+    # Get pop
+    pop_objects = [obj for obj in objects if ('pop', obj) in init]
+    if pop_objects:
+        plan.append(f'(get-pop {pop_objects[0]})')
 
-    # Step 6: Get cheese
-    cheese = next(obj for obj in objects if obj.startswith("z"))
-    plan.append(f'(get-cheese {cheese})')
+    # Get cheese
+    cheese_objects = [obj for obj in objects if ('cheese', obj) in init]
+    if cheese_objects:
+        plan.append(f'(get-cheese {cheese_objects[0]})')
 
-    # Step 7: Get crackers
-    crackers = next(obj for obj in objects if obj.startswith("k"))
-    plan.append(f'(get-crackers {crackers})')
+    # Get crackers
+    crackers_objects = [obj for obj in objects if ('crackers', obj) in init]
+    if crackers_objects:
+        plan.append(f'(get-crackers {crackers_objects[0]})')
 
     return plan

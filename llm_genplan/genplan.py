@@ -54,8 +54,8 @@ def get_plan(objects, init, goal):
 
 where
     - `objects` is {objects_description}
-    - `init` is a set of ground atoms where each ground atom is a string of the
-       form '(predicate-foo object-bar ...)'
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
     - `goal` is also a set of ground atoms represented in the same way
     - `plan` is a list of actions, where each action is a ground operator
        represented as a string (e.g., '(operator-baz object-qux ...)')

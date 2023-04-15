@@ -1,4 +1,0 @@
-The code returned this plan: ['(rewind-movie)', '(reset-counter)', '(get-chips c1)', '(get-dip d2)', '(get-pop p3)', '(get-cheese z5)', '(get-crackers k1)']
-However, the action (rewind-movie) is invalid at step 0.
-NOTE: the valid operators are: (get-cheese ?x) (get-chips ?x) (get-crackers ?x) (get-dip ?x) (get-pop ?x) (reset-counter ) (rewind-movie ) (rewind-movie-2 ).
-Fix the code.
