@@ -1,0 +1,9 @@
+The "gripper-strips" domain represents a simplified environment where a robot called Robby can interact with balls and rooms using its grippers. The domain consists of predicates defining rooms, balls, grippers, and their respective states. There are three actions that Robby can perform: move, pick, and drop.
+
+The "move" action allows Robby to move from one room to another, with the precondition that both the origin and destination rooms are valid. The effect of this action is that Robby will be in the destination room, no longer occupying the origin room.
+
+The "pick" action enables Robby to pick up a ball in the same room it is in, using a free gripper. The precondition for this action is that the ball, room, and gripper are valid, and Robby is in the same room as the ball and the gripper is free. The effect of this action is that the ball is now being carried by the gripper and is no longer in the room, and the gripper is no longer free.
+
+The "drop" action allows Robby to drop a ball it is carrying in the same room it is in, freeing the gripper. The precondition for this action is that the ball, room, and gripper are valid, and Robby is in the same room and carrying the ball using the gripper. The effect of this action is that the ball is now in the room, and the gripper is free, no longer carrying the ball.
+
+The example problem "manygripper" involves a set of objects, such as balls, grippers, and rooms. The initial state defines the location of the balls, the room Robby is in, the properties of the balls and grippers, and the available rooms. The goal state requires placing specific balls in designated rooms.

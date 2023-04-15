@@ -1,0 +1,67 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    def get_obj_location(obj):
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == obj:
+                return atom[2]
+        return None
+
+    def get_goal_obj_location(obj):
+        for atom in goal:
+            if atom[0] == 'at' and atom[1] == obj:
+                return atom[2]
+        return None
+
+    def get_robby_location(init_state):
+        for atom in init_state:
+            if atom[0] == 'at-robby':
+                return atom[1]
+        return None
+
+    def get_free_gripper(init_state):
+        for atom in init_state:
+            if atom[0] == 'free':
+                return atom[1]
+        return None
+
+    balls = [obj for obj in objects if obj.startswith('ball')]
+    init_state = init.copy()
+
+    for ball in balls:
+        start_room = get_obj_location(ball)
+        dest_room = get_goal_obj_location(ball)
+
+        if dest_room is None:
+            continue
+
+        gripper = get_free_gripper(init_state)
+
+        # Move to the start_room
+        robby_room = get_robby_location(init_state)
+        while robby_room != start_room:
+            plan.append(f'(move {robby_room} {start_room})')
+            init_state.remove(('at-robby', robby_room))
+            init_state.add(('at-robby', start_room))
+            robby_room = start_room
+
+        # Pick the ball
+        plan.append(f'(pick {ball} {start_room} {gripper})')
+        init_state.remove(('at', ball, start_room))
+        init_state.remove(('free', gripper))
+        init_state.add(('carry', ball, gripper))
+
+        # Move to the dest_room
+        while robby_room != dest_room:
+            plan.append(f'(move {robby_room} {dest_room})')
+            init_state.remove(('at-robby', robby_room))
+            init_state.add(('at-robby', dest_room))
+            robby_room = dest_room
+
+        # Drop the ball
+        plan.append(f'(drop {ball} {dest_room} {gripper})')
+        init_state.add(('at', ball, dest_room))
+        init_state.add(('free', gripper))
+        init_state.remove(('carry', ball, gripper))
+
+    return plan
