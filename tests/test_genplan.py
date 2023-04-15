@@ -75,7 +75,7 @@ def get_plan(objects, init, goal):
         horizon=FLAGS.horizon,
         timeout=None,
     )
-    assert success
+    assert success, info
     assert info == "Generalized plan succeeded."
 
     # Test case where code is just garbage.
