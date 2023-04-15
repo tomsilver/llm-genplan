@@ -12,7 +12,7 @@ dependencies = [
    "PyYAML",
    "types-PyYAML",
    "numpy",
-   "pddlgym",
+   "pddlgym@git+https://github.com/tomsilver/pddlgym.git",
    "pathos",
    "pyperclip",
 ]

@@ -56,7 +56,7 @@ class Task:
     @cached_property
     def typed(self) -> bool:
         """Whether the domain is typed."""
-        return set(self.domain.types) != {"default"}
+        return self.domain.uses_typing
 
     @cached_property
     def objects(self) -> Union[Set[Tuple[str, str]], Set[str]]:
