@@ -269,35 +269,38 @@ def run_genplan_on_task(
     gen_plan: GeneralizedPlan,
     task: Task,
     horizon: int,
-    timeout: int,
+    timeout: Optional[int],
 ) -> Tuple[bool, str]:
     """Returns bool success and an info string."""
 
-    # Uncomment for debugging.
-    # result_dict = {}
-    # _run_genplan_on_task_no_timeout(gen_plan, task, horizon, result_dict, FLAGS)
+    # For debugging and tests.
+    if timeout is None:
+        result_dict: Dict = {}
+        _run_genplan_on_task_no_timeout(gen_plan, task, horizon, result_dict, FLAGS)
 
     # Handle possible timeouts.
-    manager = mp.Manager()
-    result_dict = manager.dict()
-    p = mp.Process(
-        target=_run_genplan_on_task_no_timeout,
-        args=(gen_plan, task, horizon, result_dict, FLAGS),
-    )
-    p.start()
-    p.join(timeout)
-    # Timeout reached.
-    if p.is_alive():
-        # Treated like a KeyboardInterrupt.
-        assert p.pid is not None
-        os.kill(p.pid, signal.SIGINT)
-        # Give it a few more seconds then kill for good.
-        p.join(3)
-        p.kill()
-        # Add a little more info.
-        result_dict["info"] = result_dict.get("info", "") + (
-            "\nThe code was interrupted because it timed out "
-            "(possible infinite loop)."
+    else:
+        manager = mp.Manager()
+        result_proxy_dict = manager.dict()
+        p = mp.Process(
+            target=_run_genplan_on_task_no_timeout,
+            args=(gen_plan, task, horizon, result_proxy_dict, FLAGS),
         )
+        p.start()
+        p.join(timeout)
+        # Timeout reached.
+        if p.is_alive():
+            # Treated like a KeyboardInterrupt.
+            assert p.pid is not None
+            os.kill(p.pid, signal.SIGINT)
+            # Give it a few more seconds then kill for good.
+            p.join(3)
+            p.kill()
+            # Add a little more info.
+            result_proxy_dict["info"] = result_proxy_dict.get("info", "") + (
+                "\nThe code was interrupted because it timed out "
+                "(possible infinite loop)."
+            )
+        result_dict = dict(result_proxy_dict)
 
     return result_dict["success"], result_dict["info"]

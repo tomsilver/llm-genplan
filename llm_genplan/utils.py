@@ -8,8 +8,9 @@ import sys
 import tempfile
 import urllib.request
 from pathlib import Path
-from typing import List, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
+from llm_genplan.flags import FLAGS, create_parser
 from llm_genplan.structs import Task
 
 # Global constants.
@@ -86,3 +87,22 @@ def validate_plan(task: Task, plan: List[str]) -> Tuple[bool, str]:
 def set_to_reproducible_str(s: Set) -> str:
     """Create a string representation for a set deterministically."""
     return "{" + ", ".join(map(repr, sorted(s))) + "}"
+
+
+def reset_flags(args: Optional[Dict[str, Any]] = None, default_seed: int = 123) -> None:
+    """Reset FLAGS for tests."""
+    parser = create_parser()
+    default_args = parser.parse_args(
+        [
+            "--env",
+            "default env placeholder",
+            "--seed",
+            str(default_seed),
+            "--experiment_id",
+            "default experiment_id placeholder",
+        ]
+    )
+    arg_dict = default_args.__dict__.copy()
+    if args is not None:
+        arg_dict.update(args)
+    FLAGS.__dict__.update(arg_dict)

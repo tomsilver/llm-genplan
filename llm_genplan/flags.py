@@ -6,8 +6,11 @@ import logging
 FLAGS = argparse.Namespace()  # set by parse_flags() below
 
 
-def parse_flags() -> None:
-    """Parse the command line flags and update global FLAGS."""
+def create_parser() -> argparse.ArgumentParser:
+    """Create the argument parser.
+
+    Separated out for testing.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", required=True, type=str)
     parser.add_argument("--seed", required=True, type=int)
@@ -25,5 +28,11 @@ def parse_flags() -> None:
         const=logging.DEBUG,
         default=logging.INFO,
     )
+    return parser
+
+
+def parse_flags() -> None:
+    """Parse the command line flags and update global FLAGS."""
+    parser = create_parser()
     args = parser.parse_args()
     FLAGS.__dict__.update(args.__dict__)
