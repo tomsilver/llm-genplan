@@ -1,0 +1,4 @@
+The code failed. It returned the following plan: ['(pick-up paper-1 loc-0)', '(move loc-0 loc-8)', '(deliver paper-1 loc-8)', '(pick-up paper-2 loc-0)', '(move loc-0 loc-3)', '(deliver paper-2 loc-3)', '(pick-up paper-0 loc-0)', '(move loc-0 loc-2)', '(deliver paper-0 loc-2)'].
+(pick-up paper-2 loc-0) has an unsatisfied precondition at time 3
+(Set (at loc-0) to true)
+Fix the code.
