@@ -82,10 +82,15 @@ class Task:
         """Check if the action name and arity is correct and objects exist."""
         if not (action.startswith("(") and action.endswith(")")):
             return False
-        name, remainder = action[1:-1].split(" ", 1)
+        action = action[1:-1].strip()
+        if " " not in action:
+            name = action
+            arg_names = []
+        else:
+            name, remainder = action.split(" ", 1)
+            arg_names = remainder.split(" ")
         if name not in self.domain.operators:
             return False
-        arg_names = remainder.split(" ")
         if len(arg_names) != len(self.domain.operators[name].params):
             return False
         if not set(arg_names).issubset(self.objects):
