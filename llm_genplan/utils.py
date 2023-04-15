@@ -71,6 +71,7 @@ def validate_plan(task: Task, plan: List[str]) -> Tuple[bool, str]:
     val = val_dir / platform_dir / "Validate"
     cmd_str = f'"{val}" -v "{task.domain_file}" "{task.problem_file}" ' f'"{plan_file}"'
     output = subprocess.getoutput(cmd_str)
+    print("OUTPUT:", output)
     os.remove(plan_file)
     if "Plan valid" in output:
         return True, "Plan succeeded."
