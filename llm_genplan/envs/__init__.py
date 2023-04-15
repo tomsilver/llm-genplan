@@ -78,13 +78,13 @@ def _get_pddlgym_tasks(
     env_name = f"PDDLEnv{benchmark_name.capitalize()}{test_suffix}-v0"
     env = pddlgym.make(env_name).unwrapped
     # Access the domain.
-    domain_str = env.domain.domain
+    domain_str = env.domain.domain.lower()
     # Access the problems.
     tasks = []
     for i in range(num_tasks):
         try:
             problem = env.problems[i]
-            problem_str = problem.problem
+            problem_str = problem.problem.lower()
         except IndexError:
             raise ValueError(f"Could not find PDDLGym problem {i}. " "Too many tasks?")
         task = Task(domain_str, problem_str)
@@ -105,12 +105,12 @@ def _get_pg3_tasks(
     assert test_dir.exists(), f"Test dir not found: {test_dir}"
     # Load the domain.
     with open(domain_file_path, "r", encoding="utf-8") as f:
-        domain_str = f.read()
+        domain_str = f.read().lower()
     # Load the train problems.
     all_train_tasks: List[Task] = []
     for train_file_path in train_dir.glob("*.pddl"):
         with open(train_file_path, "r", encoding="utf-8") as f:
-            problem_str = f.read()
+            problem_str = f.read().lower()
         task = Task(domain_str, problem_str)
         all_train_tasks.append(task)
     # Make sure we have enough train problems.
@@ -122,7 +122,7 @@ def _get_pg3_tasks(
     all_test_tasks: List[Task] = []
     for test_file_path in test_dir.glob("*.pddl"):
         with open(test_file_path, "r", encoding="utf-8") as f:
-            problem_str = f.read()
+            problem_str = f.read().lower()
         task = Task(domain_str, problem_str)
         all_test_tasks.append(task)
     # Make sure we have enough eval problems.
