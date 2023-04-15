@@ -70,3 +70,4 @@
 (:goal (and
 	(served p0_b0)
 ))
+)
