@@ -1,0 +1,4 @@
+The code returned this plan: ['sail l6 l0', 'board c0 l0', 'sail l0 l12', 'debark c0 l12', 'sail l12 l8', 'board c2 l8', 'sail l8 l7', 'debark c2 l7', 'sail l7 l7', 'board c3 l7', 'sail l7 l5', 'debark c3 l5']
+However, the action sail l6 l0 is invalid at step 0.
+NOTE: the valid operators are: (board ?car ?loc) (debark ?car ?loc) (sail ?from ?to).
+Fix the code.
