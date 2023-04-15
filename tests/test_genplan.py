@@ -39,6 +39,7 @@ def get_plan(objects, init, goal):
     for atom in init:
         if atom[0] == "at" and atom[2] == "rooma":
             balls_in_rooma.add(atom[1])
+    balls_in_rooma = sorted(balls_in_rooma)  # sort for determinism
 
     ball_gripper_mapping = {}
     while balls_in_rooma:
@@ -141,6 +142,7 @@ def get_plan(objects, init, goal):
     for atom in init:
         if atom[0] == "at" and atom[2] == "rooma":
             balls_in_rooma.add(atom[1])
+    balls_in_rooma = sorted(balls_in_rooma)  # sort for determinism
 
     ball_gripper_mapping = {}
     while balls_in_rooma:
@@ -182,16 +184,16 @@ def get_plan(objects, init, goal):
     assert not success
     assert info == (
         "The code failed. It returned the following plan: "
-        "['(pick ball4 rooma left)', '(pick ball8 rooma right)', '(move rooma roomb)', "
-        "'(drop ball4 roomb left)', '(drop ball8 roomb right)', '(move roomb rooma)', "
-        "'(pick ball3 rooma left)', '(pick ball1 rooma right)', '(move rooma roomb)', "
-        "'(drop ball3 roomb left)', '(drop ball1 roomb right)', '(move roomb rooma)', "
-        "'(pick ball5 rooma left)', '(pick ball7 rooma right)', '(move rooma roomb)', "
-        "'(drop ball5 roomb left)', '(drop ball7 roomb right)', '(move roomb rooma)', "
-        "'(pick ball2 rooma left)', '(pick ball6 rooma right)', '(move rooma roomb)', "
+        "['(pick ball8 rooma left)', '(pick ball7 rooma right)', '(move rooma roomb)', "
+        "'(drop ball8 roomb left)', '(drop ball7 roomb right)', '(move roomb rooma)', "
+        "'(pick ball6 rooma left)', '(pick ball5 rooma right)', '(move rooma roomb)', "
+        "'(drop ball6 roomb left)', '(drop ball5 roomb right)', '(move roomb rooma)', "
+        "'(pick ball4 rooma left)', '(pick ball3 rooma right)', '(move rooma roomb)', "
+        "'(drop ball4 roomb left)', '(drop ball3 roomb right)', '(move roomb rooma)', "
+        "'(pick ball2 rooma left)', '(pick ball1 rooma right)', '(move rooma roomb)', "
         "'(drop ball2 roomb left)'].\n"
         "The goal is not satisfied\n"
-        "(Set (at ball6 roomb) to true)"
+        "(Set (at ball1 roomb) to true)"
     )
 
     # Test case where a completely invalid action is returned.
