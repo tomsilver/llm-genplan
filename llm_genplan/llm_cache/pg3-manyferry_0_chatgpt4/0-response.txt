@@ -1,0 +1,9 @@
+The domain represents a ferry transportation system where a ferry is responsible for transporting cars between different locations. In this domain, there are various locations, cars, and a ferry. The ferry can sail between different locations, board cars at a specific location, and debark cars at another location.
+
+There are three main actions in this domain:
+
+    Sail: The ferry sails from one location to another.
+    Board: A car boards the ferry at a specific location, provided the ferry is empty.
+    Debark: A car debarks from the ferry at a specific location, and the ferry becomes empty.
+
+The example problem provided involves transporting cars between 13 different locations (l0 to l12) and 4 cars (c0 to c3). The initial state specifies the locations of the cars and the ferry, as well as the "not-eq" predicates ensuring each location is distinct. The goal state requires certain cars to be at specific locations.

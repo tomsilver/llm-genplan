@@ -1,0 +1,35 @@
+def get_plan(task):
+    initial_locations = {}
+    goal_locations = {}
+    ferry_location = None
+
+    for atom in task.init:
+        if atom[0] == 'at':
+            initial_locations[atom[1]] = atom[2]
+        elif atom[0] == 'at-ferry':
+            ferry_location = atom[1]
+
+    for atom in task.goal:
+        if atom[0] == 'at':
+            goal_locations[atom[1]] = atom[2]
+
+    plan = []
+
+    for car in initial_locations:
+        if initial_locations[car] != goal_locations[car]:
+            # Sail to car's initial location only if ferry is not there
+            if ferry_location != initial_locations[car]:
+                plan.append(f'(sail {ferry_location} {initial_locations[car]})')
+                ferry_location = initial_locations[car]
+
+            # Board the car
+            plan.append(f'(board {car} {ferry_location})')
+
+            # Sail to car's goal location
+            plan.append(f'(sail {ferry_location} {goal_locations[car]})')
+            ferry_location = goal_locations[car]
+
+            # Debark the car
+            plan.append(f'(debark {car} {ferry_location})')
+
+    return plan
