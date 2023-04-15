@@ -12,7 +12,7 @@ import time
 from llm_genplan import utils
 from llm_genplan.envs import create_tasks
 from llm_genplan.flags import FLAGS, parse_flags
-from llm_genplan.genplan import get_genplan_from_llm
+from llm_genplan.genplan import get_genplan_from_llm, run_genplan_on_task
 
 
 def _main() -> None:
@@ -56,7 +56,7 @@ def _main() -> None:
     num_successes = 0
     num_eval = len(eval_tasks)
     for i, eval_task in enumerate(eval_tasks):
-        success, info = utils.run_genplan_on_task(
+        success, info = run_genplan_on_task(
             generalized_plan, eval_task, horizon=FLAGS.horizon, timeout=FLAGS.timeout
         )
         success_str = "Solved" if success else "Failed"

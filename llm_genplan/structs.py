@@ -1,7 +1,5 @@
 """Data structures."""
 
-import importlib.util
-import sys
 import tempfile
 from dataclasses import dataclass
 from functools import cached_property
@@ -107,35 +105,6 @@ class Task:
             act_str = f"({act_name} {param_str})"
             act_strs.append(act_str)
         return " ".join(act_strs)
-
-
-@dataclass(frozen=True)
-class GeneralizedPlan:
-    """Wrapper around a generalized plan code string."""
-
-    code_str: str
-
-    @cached_property
-    def filepath(self) -> Path:
-        """Get a file with the code string implemented in it."""
-        filename = Path(tempfile.NamedTemporaryFile(delete=False, suffix=".py").name)
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.code_str)
-        return filename
-
-    def run(self, task: Task) -> List[str]:
-        """Run the generalized plan to get a plan for the task."""
-        # Import get_plan().
-        module_name = f"{self.filepath.stem}"
-        spec = importlib.util.spec_from_file_location(module_name, self.filepath)
-        assert spec is not None
-        assert spec.loader is not None
-        module = importlib.util.module_from_spec(spec)
-        assert module is not None
-        sys.modules[module_name] = module
-        spec.loader.exec_module(module)
-        # Run the generalized plan.
-        return module.get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
 
 
 def _literal_to_tuple(lit: Literal) -> Tuple[str, ...]:

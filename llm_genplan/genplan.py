@@ -1,13 +1,53 @@
 """Interact with an LLM to get a generalized plan."""
 
+import importlib.util
 import logging
+import multiprocessing as mp
+import os
+import signal
+import sys
+import tempfile
+import traceback
+from argparse import Namespace
+from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import pyperclip
 
 from llm_genplan import utils
-from llm_genplan.structs import GeneralizedPlan, Task
+from llm_genplan.flags import FLAGS
+from llm_genplan.structs import Task
+
+
+@dataclass(frozen=True)
+class GeneralizedPlan:
+    """Wrapper around a generalized plan code string."""
+
+    code_str: str
+
+    @cached_property
+    def filepath(self) -> Path:
+        """Get a file with the code string implemented in it."""
+        filename = Path(tempfile.NamedTemporaryFile(delete=False, suffix=".py").name)
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(self.code_str)
+        return filename
+
+    def run(self, task: Task) -> List[str]:
+        """Run the generalized plan to get a plan for the task."""
+        # Import get_plan().
+        module_name = f"{self.filepath.stem}"
+        spec = importlib.util.spec_from_file_location(module_name, self.filepath)
+        assert spec is not None
+        assert spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        assert module is not None
+        sys.modules[module_name] = module
+        spec.loader.exec_module(module)
+        # Run the generalized plan.
+        return module.get_plan(task.objects, task.init, task.goal)  # type: ignore  # pylint: disable=undefined-variable
 
 
 def get_genplan_from_llm(
@@ -86,7 +126,7 @@ where
         # Test the generalized plan.
         gen_plan_succeeded = True
         for task in all_train_tasks:
-            success, info = utils.run_genplan_on_task(gen_plan, task, horizon, timeout)
+            success, info = run_genplan_on_task(gen_plan, task, horizon, timeout)
             if not success:
                 gen_plan_succeeded = False
                 last_error_info = info
@@ -153,3 +193,111 @@ def _parse_python_code_from_response(response: str) -> str:
         python_response = python_remainder[:python_end]
         return python_response
     return response
+
+
+def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
+    if not flags.include_inputs_in_feedback:
+        return msg
+    sorted_obj_str = utils.set_to_reproducible_str(task.objects)
+    sorted_init_str = utils.set_to_reproducible_str(task.init)
+    sorted_goal_str = utils.set_to_reproducible_str(task.goal)
+    return "\n".join(
+        [
+            "Given the following inputs:",
+            f"objects = {sorted_obj_str}",
+            f"init = {sorted_init_str}",
+            f"goal = {sorted_goal_str}",
+            msg,
+        ]
+    )
+
+
+def _run_genplan_on_task_no_timeout(
+    generalized_plan: GeneralizedPlan,
+    task: Task,
+    horizon: int,
+    result_dict: Dict,
+    flags: Namespace,
+) -> None:
+    """Helper for run_genplan_on_task()."""
+    result_dict["success"] = False
+    try:
+        plan = generalized_plan.run(task)
+    except BaseException as e:  # pylint: disable=broad-exception-caught
+        tb = traceback.format_exception(e)
+        tb_lines = [
+            l.replace(str(generalized_plan.filepath), "<file-name-omitted>")
+            for l in tb
+            if "llm_genplan" not in l
+        ]
+        tb_str = "".join(tb_lines)
+        msg = f"The code raised the following exception:\n{tb_str}"
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+        return
+    if not isinstance(plan, list):
+        msg = f"The code returned {plan}, which is not a list of actions."  # type: ignore[unreachable] # pylint:disable=line-too-long
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+        return
+    if len(plan) > horizon:
+        msg = f"The code returned too long of a plan (horizon={horizon})."
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+        return
+
+    # Check syntax.
+    for t, action in enumerate(plan):
+        if not task.action_has_valid_syntax(action):
+            msg = (
+                f"The code returned this plan: {plan}\n"
+                f"However, the action {action} is invalid at step {t}.\n"
+                f"NOTE: the valid operators are: {task.actions_hint}."
+            )
+            result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+            return
+
+    # Check semantics.
+    plan_is_valid, info = utils.validate_plan(task, plan)
+    if plan_is_valid:
+        result_dict["success"] = True
+        result_dict["info"] = "Generalized plan succeeded."
+        return
+    msg = f"The code failed. It returned the following plan: {plan}.\n{info}"
+    result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+    return
+
+
+def run_genplan_on_task(
+    gen_plan: GeneralizedPlan,
+    task: Task,
+    horizon: int,
+    timeout: int,
+) -> Tuple[bool, str]:
+    """Returns bool success and an info string."""
+
+    # Uncomment for debugging.
+    # result_dict = {}
+    # _run_genplan_on_task_no_timeout(gen_plan, task, horizon, result_dict, FLAGS)
+
+    # Handle possible timeouts.
+    manager = mp.Manager()
+    result_dict = manager.dict()
+    p = mp.Process(
+        target=_run_genplan_on_task_no_timeout,
+        args=(gen_plan, task, horizon, result_dict, FLAGS),
+    )
+    p.start()
+    p.join(timeout)
+    # Timeout reached.
+    if p.is_alive():
+        # Treated like a KeyboardInterrupt.
+        assert p.pid is not None
+        os.kill(p.pid, signal.SIGINT)
+        # Give it a few more seconds then kill for good.
+        p.join(3)
+        p.kill()
+        # Add a little more info.
+        result_dict["info"] = result_dict.get("info", "") + (
+            "\nThe code was interrupted because it timed out "
+            "(possible infinite loop)."
+        )
+
+    return result_dict["success"], result_dict["info"]

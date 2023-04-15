@@ -2,23 +2,15 @@
 
 import functools
 import logging
-import multiprocessing as mp
 import os
-import signal
 import subprocess
 import sys
 import tempfile
-import traceback
 import urllib.request
-from argparse import Namespace
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import List, Set, Tuple
 
-from llm_genplan.flags import FLAGS
-from llm_genplan.structs import (
-    GeneralizedPlan,
-    Task,
-)
+from llm_genplan.structs import Task
 
 # Global constants.
 _DIR = Path(__file__).parent
@@ -91,113 +83,6 @@ def validate_plan(task: Task, plan: List[str]) -> Tuple[bool, str]:
     return False, msg
 
 
-def _set_to_reproducible_str(s: Set) -> str:
+def set_to_reproducible_str(s: Set) -> str:
+    """Create a string representation for a set deterministically."""
     return "{" + ", ".join(map(repr, sorted(s))) + "}"
-
-
-def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
-    if not flags.include_inputs_in_feedback:
-        return msg
-    sorted_obj_str = _set_to_reproducible_str(task.objects)
-    sorted_init_str = _set_to_reproducible_str(task.init)
-    sorted_goal_str = _set_to_reproducible_str(task.goal)
-    return "\n".join(
-        [
-            "Given the following inputs:",
-            f"objects = {sorted_obj_str}",
-            f"init = {sorted_init_str}",
-            f"goal = {sorted_goal_str}",
-            msg,
-        ]
-    )
-
-
-def _run_genplan_on_task_no_timeout(
-    generalized_plan: GeneralizedPlan,
-    task: Task,
-    horizon: int,
-    result_dict: Dict,
-    flags: Namespace,
-) -> None:
-    """Helper for run_genplan_on_task()."""
-    result_dict["success"] = False
-    try:
-        plan = generalized_plan.run(task)
-    except BaseException as e:  # pylint: disable=broad-exception-caught
-        tb = traceback.format_exception(e)
-        tb_lines = [
-            l.replace(str(generalized_plan.filepath), "<file-name-omitted>")
-            for l in tb
-            if "llm_genplan" not in l
-        ]
-        tb_str = "".join(tb_lines)
-        msg = f"The code raised the following exception:\n{tb_str}"
-        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-        return
-    if not isinstance(plan, list):
-        msg = f"The code returned {plan}, which is not a list of actions."  # type: ignore[unreachable] # pylint:disable=line-too-long
-        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-        return
-    if len(plan) > horizon:
-        msg = f"The code returned too long of a plan (horizon={horizon})."
-        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-        return
-
-    # Check syntax.
-    for t, action in enumerate(plan):
-        if not task.action_has_valid_syntax(action):
-            msg = (
-                f"The code returned this plan: {plan}\n"
-                f"However, the action {action} is invalid at step {t}.\n"
-                f"NOTE: the valid operators are: {task.actions_hint}."
-            )
-            result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-            return
-
-    # Check semantics.
-    plan_is_valid, info = validate_plan(task, plan)
-    if plan_is_valid:
-        result_dict["success"] = True
-        result_dict["info"] = "Generalized plan succeeded."
-        return
-    msg = f"The code failed. It returned the following plan: {plan}.\n{info}"
-    result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-    return
-
-
-def run_genplan_on_task(
-    gen_plan: GeneralizedPlan,
-    task: Task,
-    horizon: int,
-    timeout: int,
-) -> Tuple[bool, str]:
-    """Returns bool success and an info string."""
-
-    # Uncomment for debugging.
-    # result_dict = {}
-    # _run_genplan_on_task_no_timeout(gen_plan, task, horizon, result_dict, FLAGS)
-
-    # Handle possible timeouts.
-    manager = mp.Manager()
-    result_dict = manager.dict()
-    p = mp.Process(
-        target=_run_genplan_on_task_no_timeout,
-        args=(gen_plan, task, horizon, result_dict, FLAGS),
-    )
-    p.start()
-    p.join(timeout)
-    # Timeout reached.
-    if p.is_alive():
-        # Treated like a KeyboardInterrupt.
-        assert p.pid is not None
-        os.kill(p.pid, signal.SIGINT)
-        # Give it a few more seconds then kill for good.
-        p.join(3)
-        p.kill()
-        # Add a little more info.
-        result_dict["info"] = result_dict.get("info", "") + (
-            "\nThe code was interrupted because it timed out "
-            "(possible infinite loop)."
-        )
-
-    return result_dict["success"], result_dict["info"]
