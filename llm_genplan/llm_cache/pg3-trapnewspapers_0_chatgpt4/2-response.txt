@@ -1,0 +1,32 @@
+def get_plan(task):
+    # Extract relevant information
+    home_base = None
+    locations_wanting_paper = set()
+    available_papers = set()
+
+    for atom in task.init:
+        if atom[0] == "ishomebase":
+            home_base = atom[1]
+        elif atom[0] == "wantspaper":
+            locations_wanting_paper.add(atom[1])
+        elif atom[0] == "unpacked":
+            available_papers.add(atom[1])
+
+    # Implement the simple strategy
+    plan = []
+    for location in locations_wanting_paper:
+        paper = available_papers.pop()
+
+        # 1. Pick up a paper from the home base location
+        plan.append(f"(pick-up {paper} {home_base})")
+
+        # 2. Move to the location that wants the paper
+        plan.append(f"(move {home_base} {location})")
+
+        # 3. Deliver the paper to the location
+        plan.append(f"(deliver {paper} {location})")
+
+        # Return to the home base after delivering the paper (optional)
+        plan.append(f"(move {location} {home_base})")
+
+    return plan

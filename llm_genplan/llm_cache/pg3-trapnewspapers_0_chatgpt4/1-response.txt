@@ -1,0 +1,10 @@
+A simple strategy to solve all problems in this domain without using search is as follows:
+
+    Identify the home base location and the locations that want a paper.
+    For each location that wants a paper, perform these steps:
+    a. Pick up a paper from the home base location.
+    b. Move to the location that wants the paper.
+    c. Deliver the paper to the location.
+    Repeat this process for all locations that want a paper.
+
+This strategy assumes that there are enough papers at the home base for each location that wants a paper. It also assumes that there is a clear, safe path between the home base location and each location that wants a paper.
