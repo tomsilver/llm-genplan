@@ -18,6 +18,7 @@ def parse_flags() -> None:
     parser.add_argument("--horizon", default=1000000, type=int)
     parser.add_argument("--timeout", default=30, type=int)
     parser.add_argument("--use_helpers", action="store_true")
+    parser.add_argument("--include_inputs_in_feedback", action="store_true")
     parser.add_argument(
         "--debug",
         action="store_const",

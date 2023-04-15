@@ -9,6 +9,7 @@ import signal
 import subprocess
 import traceback
 import urllib.request
+from argparse import Namespace
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
@@ -172,7 +173,9 @@ def _set_to_reproducible_str(s: Set) -> str:
     return "{" + ", ".join(map(repr, sorted(s))) + "}"
 
 
-def _create_genplan_error_info(task: Task, msg: str) -> str:
+def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
+    if not flags.include_inputs_in_feedback:
+        return msg
     sorted_obj_str = _set_to_reproducible_str(task.objects)
     sorted_init_str = _set_to_reproducible_str(task.init)
     sorted_goal_str = _set_to_reproducible_str(task.goal)
@@ -192,6 +195,7 @@ def _run_genplan_on_task_no_timeout(
     task: Task,
     horizon: int,
     result_dict: Dict,
+    flags: Namespace,
 ) -> None:
     """Helper for run_genplan_on_task()."""
     result_dict["success"] = False
@@ -206,15 +210,15 @@ def _run_genplan_on_task_no_timeout(
         ]
         tb_str = "".join(tb_lines)
         msg = f"The code raised the following exception:\n{tb_str}"
-        result_dict["info"] = _create_genplan_error_info(task, msg)
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
         return
     if not isinstance(plan, list):
         msg = f"The code returned {plan}, which is not a list of actions."  # type: ignore[unreachable] # pylint:disable=line-too-long
-        result_dict["info"] = _create_genplan_error_info(task, msg)
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
         return
     if len(plan) > horizon:
         msg = f"The code returned too long of a plan (horizon={horizon})."
-        result_dict["info"] = _create_genplan_error_info(task, msg)
+        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
         return
     facts = set(task.pyperplan_task.initial_state)
     for t, action in enumerate(plan):
@@ -226,7 +230,7 @@ def _run_genplan_on_task_no_timeout(
                 f"However, the action {action} is invalid at step {t}.\n"
                 f"NOTE: the valid operators are: {task.actions_hint}."
             )
-            result_dict["info"] = _create_genplan_error_info(task, msg)
+            result_dict["info"] = _create_genplan_error_info(task, msg, flags)
             return
         if not action_op.applicable(facts):
             missing_precond_facts = set(action_op.preconditions - facts)
@@ -239,7 +243,7 @@ def _run_genplan_on_task_no_timeout(
                 f"However, the action {action} is invalid at step {t}.\n"
                 f"NOTE: The action has missing preconditions: {missing_preconds_str}."
             )
-            result_dict["info"] = _create_genplan_error_info(task, msg)
+            result_dict["info"] = _create_genplan_error_info(task, msg, flags)
             return
         facts = (facts - action_op.del_effects) | action_op.add_effects
     # Check if goal achieved.
@@ -251,7 +255,7 @@ def _run_genplan_on_task_no_timeout(
         "The code returned the following plan, which did not achieve the "
         f"goal: {plan}"
     )
-    result_dict["info"] = _create_genplan_error_info(task, msg)
+    result_dict["info"] = _create_genplan_error_info(task, msg, flags)
     return
 
 
@@ -273,7 +277,7 @@ def run_genplan_on_task(
     result_dict = manager.dict()
     p = mp.Process(
         target=_run_genplan_on_task_no_timeout,
-        args=(generalized_plan, task, horizon, result_dict),
+        args=(generalized_plan, task, horizon, result_dict, FLAGS),
     )
     p.start()
     p.join(timeout)
