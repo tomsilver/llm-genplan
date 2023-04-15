@@ -1,2 +1,0 @@
-The code returned None, which is not a list of actions.
-Fix the code.

@@ -1,4 +1,0 @@
-The code returned this plan: ['(sail l2 l2)', '(board c1 l2)', '(sail l2 l1)', '(debark c1 l1)', '(sail l1 l8)', '(board c0 l8)', '(sail l8 l12)', '(debark c0 l12)', '(sail l12 l4)', '(board c2 l4)', '(sail l4 l9)', '(debark c2 l9)']
-However, the action (sail l2 l2) is invalid at step 0.
-NOTE: The action has missing preconditions: {('not-eq', 'l2', 'l2')}.
-Fix the code.

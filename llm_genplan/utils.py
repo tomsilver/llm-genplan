@@ -1,25 +1,22 @@
 """Utilities."""
 
 import functools
-import hashlib
 import logging
 import multiprocessing as mp
 import os
 import signal
 import subprocess
+import sys
+import tempfile
 import traceback
 import urllib.request
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Dict, List, Set, Tuple
 
 from llm_genplan.flags import FLAGS
 from llm_genplan.structs import (
     GeneralizedPlan,
-    PyperplanObject,
-    PyperplanOperator,
-    PyperplanPredicate,
-    PyperplanType,
     Task,
 )
 
@@ -64,109 +61,34 @@ def get_pddl_from_url(url: str, cache_dir: Path = PDDL_DIR) -> str:
     return pddl
 
 
-def pred_to_str(pred: PyperplanPredicate) -> str:
-    """Create a string representation of a Pyperplan predicate (atom)."""
-    if not pred.signature:
-        return f"({pred.name})"
-    arg_str = " ".join(str(o) for o, _ in pred.signature)
-    return f"({pred.name} {arg_str})"
-
-
-def get_objects_str(task: Task) -> str:
-    """Returns a PDDL encoding of the objects in the task."""
-    # Create the objects string.
-    type_to_objs: Dict[PyperplanType, List[PyperplanObject]] = {
-        t: [] for t in task.domain.types.values()
-    }
-    for obj in sorted(task.problem.objects):
-        obj_type = task.problem.objects[obj]
-        type_to_objs[obj_type].append(obj)
-    # Construct the object list for the prompt.
-    objects_strs: List[str] = []
-    for typ, objs in type_to_objs.items():
-        if not objs:
-            continue
-        typ_str = " ".join(objs) + " - " + str(typ)
-        objects_strs.append(typ_str)
-    return "\n  ".join(objects_strs)
-
-
-def get_init_strs(task: Task) -> List[str]:
-    """Returns the init strings of a PDDL task."""
-    init_strs = [pred_to_str(p) for p in task.problem.initial_state]
-    return init_strs
-
-
-def get_init_str(task: Task) -> str:
-    """Returns the init string of a PDDL task."""
-    init_strs = get_init_strs(task)
-    return "\n".join(init_strs)
-
-
-def get_goal_str(task: Task) -> str:
-    """Returns the goal string of a PDDL task."""
-    goal_strs = [pred_to_str(p) for p in task.problem.goal]
-    goal_str = "\n".join(goal_strs)
-    return goal_str
-
-
-def str_to_identifier(x: str) -> str:
-    """Convert a string to a small string with negligible collision probability
-    and where the smaller string can be used to identifier the larger string in
-    file names.
-
-    Importantly, this function is deterministic between runs and between
-    platforms, unlike python's built-in hash function.
-    References:
-        https://stackoverflow.com/questions/45015180
-        https://stackoverflow.com/questions/5297448
-    """
-    return hashlib.md5(x.encode("utf-8")).hexdigest()
-
-
-def is_subtype(type1: PyperplanType, type2: PyperplanType) -> bool:
-    """Checks whether type1 inherits from type2."""
-    while type1 is not None:
-        if type1 == type2:
-            return True
-        type1 = type1.parent
-    return False
-
-
-def reset_flags(args: Dict[str, Any], default_seed: int = 123) -> None:
-    """Resets FLAGS for use in unit tests.
-
-    Unless seed is specified, we use a default for testing.
-    """
-    FLAGS.__dict__.clear()
-    FLAGS.__dict__.update(args)
-    if "seed" not in FLAGS:
-        FLAGS.__dict__["seed"] = default_seed
-
-
-def action_to_task_operator(task: Task, action: str) -> PyperplanOperator:
-    """Look up operator for action and raise ValueError if not found."""
-    pyperplan_task = task.pyperplan_task
-    for op in pyperplan_task.operators:
-        if op.name == action:
-            action_op = op
-            break
+def validate_plan(task: Task, plan: List[str]) -> Tuple[bool, str]:
+    """Use VAL to check if a plan solves a PDDL problem."""
+    plan_str = ""
+    for t, action in enumerate(plan):
+        plan_str += f"{t}: {action}\n"
+    plan_file = tempfile.NamedTemporaryFile(delete=False).name
+    with open(plan_file, "w", encoding="utf-8") as f:
+        f.write(plan_str)
+    val_dir = Path(__file__).parent / "third_party" / "val"
+    if sys.platform == "darwin":  # pragma: no cover
+        platform_dir = "darwin"
     else:  # pragma: no cover
-        raise ValueError(f"Invalid action for task: {action}")
-    return action_op
-
-
-def get_next_state(
-    task: Task, atoms: Set[Tuple[str, ...]], action: str
-) -> Set[Tuple[str, ...]]:
-    """Helper function for genplan."""
-    facts = {"(" + " ".join(a) + ")" for a in atoms}
-    action_op = action_to_task_operator(task, action)
-    if not action_op.applicable(facts):
-        raise ValueError(f"Action {action} not applicable in state {atoms}")
-    next_facts = (facts - action_op.del_effects) | action_op.add_effects
-    next_atoms = {tuple(f[1:-1].split(" ")) for f in next_facts}
-    return next_atoms
+        assert sys.platform.startswith("linux")
+        platform_dir = "linux64"
+    val = val_dir / platform_dir / "Validate"
+    cmd_str = f'"{val}" -v "{task.domain_file}" "{task.problem_file}" ' f'"{plan_file}"'
+    output = subprocess.getoutput(cmd_str)
+    os.remove(plan_file)
+    if "Plan valid" in output:
+        return True, "Plan succeeded."
+    repair_phrase = "Plan Repair Advice:"
+    if repair_phrase in output:
+        msg = output[output.index(repair_phrase) + len(repair_phrase) :]
+        msg, _ = msg.split("Failed plans:")
+        msg = msg.strip()
+    else:
+        msg = "The plan did not achieve the goal."
+    return False, msg
 
 
 def _set_to_reproducible_str(s: Set) -> str:
@@ -220,11 +142,10 @@ def _run_genplan_on_task_no_timeout(
         msg = f"The code returned too long of a plan (horizon={horizon})."
         result_dict["info"] = _create_genplan_error_info(task, msg, flags)
         return
-    facts = set(task.pyperplan_task.initial_state)
+
+    # Check syntax.
     for t, action in enumerate(plan):
-        try:
-            action_op = action_to_task_operator(task, action)
-        except ValueError:
+        if not task.action_has_valid_syntax(action):
             msg = (
                 f"The code returned this plan: {plan}\n"
                 f"However, the action {action} is invalid at step {t}.\n"
@@ -232,35 +153,20 @@ def _run_genplan_on_task_no_timeout(
             )
             result_dict["info"] = _create_genplan_error_info(task, msg, flags)
             return
-        if not action_op.applicable(facts):
-            missing_precond_facts = set(action_op.preconditions - facts)
-            missing_preconds = {
-                tuple(f[1:-1].split(" ")) for f in missing_precond_facts
-            }
-            missing_preconds_str = _set_to_reproducible_str(missing_preconds)
-            msg = (
-                f"The code returned this plan: {plan}\n"
-                f"However, the action {action} is invalid at step {t}.\n"
-                f"NOTE: The action has missing preconditions: {missing_preconds_str}."
-            )
-            result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-            return
-        facts = (facts - action_op.del_effects) | action_op.add_effects
-    # Check if goal achieved.
-    if task.pyperplan_task.goal_reached(facts):
+
+    # Check semantics.
+    plan_is_valid, info = validate_plan(task, plan)
+    if plan_is_valid:
         result_dict["success"] = True
         result_dict["info"] = "Generalized plan succeeded."
         return
-    msg = (
-        "The code returned the following plan, which did not achieve the "
-        f"goal: {plan}"
-    )
+    msg = f"The code failed. It returned the following plan: {plan}.\n{info}"
     result_dict["info"] = _create_genplan_error_info(task, msg, flags)
     return
 
 
 def run_genplan_on_task(
-    generalized_plan: GeneralizedPlan,
+    gen_plan: GeneralizedPlan,
     task: Task,
     horizon: int,
     timeout: int,
@@ -269,15 +175,14 @@ def run_genplan_on_task(
 
     # Uncomment for debugging.
     # result_dict = {}
-    # _run_genplan_on_task_no_timeout(generalized_plan, task, horizon, result_dict)
-    # import ipdb; ipdb.set_trace()
+    # _run_genplan_on_task_no_timeout(gen_plan, task, horizon, result_dict, FLAGS)
 
     # Handle possible timeouts.
     manager = mp.Manager()
     result_dict = manager.dict()
     p = mp.Process(
         target=_run_genplan_on_task_no_timeout,
-        args=(generalized_plan, task, horizon, result_dict, FLAGS),
+        args=(gen_plan, task, horizon, result_dict, FLAGS),
     )
     p.start()
     p.join(timeout)

@@ -13,7 +13,6 @@ dependencies = [
    "types-PyYAML",
    "numpy",
    "pddlgym",
-   "pyperplan@git+https://github.com/tomsilver/pyperplan.git",
    "pathos",
    "pyperclip",
 ]
@@ -57,7 +56,6 @@ follow_imports = "skip"
 [[tool.mypy.overrides]]
 module = [
     "pddlgym.*",
-    "pyperplan.*",
     "pyperclip.*",
 ]
 ignore_missing_imports = true

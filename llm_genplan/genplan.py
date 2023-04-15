@@ -7,7 +7,6 @@ from typing import List, Optional
 import pyperclip
 
 from llm_genplan import utils
-from llm_genplan.flags import FLAGS
 from llm_genplan.structs import GeneralizedPlan, Task
 
 
@@ -45,38 +44,25 @@ def get_genplan_from_llm(
     else:
         objects_description = "a set of objects (string names)"
 
-    # Toggle based on whether we're going to include helper functions.
-    if FLAGS.use_helpers:
-        helper_import_str = """
-
-# Optional helper functions
-from llm_genplan.utils import get_next_state"""
-        helper_doc_str = """
-    - `get_next_state(task, atoms, action)` applies the PDDL operator for `action`
-       to `atoms` and returns the next state (set of ground atoms)"""
-    else:
-        helper_import_str = ""
-        helper_doc_str = ""
-
     first_genplan_prompt = f"""Implement the strategy as a Python function.
 
-The code should should be of the form{helper_import_str}
+The code should should be of the form
 
-def get_plan(task):
+def get_plan(objects, init, goal):
     # Your code here
     return plan
 
 where
-    - `task.objects` is {objects_description}
-    - `task.init` is a set of ground atoms represented as tuples of predicate
-       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
-    - `task.goal` is also a set of ground atoms represented in the same way
+    - `objects` is {objects_description}
+    - `init` is a set of ground atoms where each ground atom is a string of the
+       form '(predicate-foo object-bar ...)'
+    - `goal` is also a set of ground atoms represented in the same way
     - `plan` is a list of actions, where each action is a ground operator
-       represented as a string (e.g., '(operator-baz object-qux ...)'){helper_doc_str}
+       represented as a string (e.g., '(operator-baz object-qux ...)')
 """
 
     last_error_info: Optional[str] = None
-    gen_plan_code_str = helper_import_str
+    gen_plan_code_str = ""
 
     for t in range(max_debug_attempts):
         # Get the prompt.

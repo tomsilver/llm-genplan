@@ -1,4 +1,0 @@
-The code returned this plan: ['(walk shed gate bob)', '(tighten_nut gate spanner3 bob nut1)', '(walk gate location1 bob)', '(pickup_spanner location1 spanner3 bob)', '(walk location1 location4 bob)', '(pickup_spanner location4 spanner2 bob)']
-However, the action (walk shed gate bob) is invalid at step 0.
-NOTE: The action has missing preconditions: {('link', 'shed', 'gate')}.
-Fix the code.

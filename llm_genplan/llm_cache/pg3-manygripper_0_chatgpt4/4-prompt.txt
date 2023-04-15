@@ -1,4 +1,0 @@
-The code returned this plan: ['(move room0 room18)', '(pick ball6 room18 gripper1)', '(move room18 room8)', '(drop ball6 room8 gripper1)', '(move room0 room4)', '(pick ball7 room4 gripper1)', '(move room4 room13)', '(drop ball7 room13 gripper1)']
-However, the action (move room0 room4) is invalid at step 4.
-NOTE: The action has missing preconditions: {('at-robby', 'room0')}.
-Fix the code.
