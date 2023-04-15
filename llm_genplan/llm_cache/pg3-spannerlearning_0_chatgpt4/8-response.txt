@@ -1,0 +1,60 @@
+def get_plan(task):
+    plan = []
+
+    # Extract information from task
+    locations = [loc for loc, loc_type in task.objects if loc_type == 'location']
+    spanners = [sp for sp, sp_type in task.objects if sp_type == 'spanner']
+    nuts = [nut for nut, nut_type in task.objects if nut_type == 'nut']
+    man = [man_obj for man_obj, man_type in task.objects if man_type == 'man'][0]
+    links = [link for link in task.init if link[0] == 'link']
+    man_location = [at for at in task.init if at[0] == 'at' and at[1] == man][0][2]
+
+    # Helper function to find the next location
+    def find_next_location(current, links):
+        next_locs = [link[2] if link[1] == current else link[1] for link in links if link[1] == current or link[2] == current]
+        return next_locs
+
+    # Helper function to build a direct path
+    def build_path(start, end, links, path=None):
+        if path is None:
+            path = [start]
+
+        if start == end:
+            return path
+
+        next_locs = find_next_location(start, links)
+        for loc in next_locs:
+            if loc not in path:
+                new_path = path.copy()
+                new_path.append(loc)
+                result = build_path(loc, end, links, new_path)
+                if result:
+                    return result
+
+    # Iterate through all nuts locations
+    for nut in nuts:
+        nut_location = [at[2] for at in task.init if at[0] == 'at' and at[1] == nut][0]
+
+        # Find a direct path to the nut's location
+        path_to_nut = build_path(man_location, nut_location, links)
+
+        # Walk through the path and perform actions
+        for i in range(len(path_to_nut) - 1):
+            current_loc = path_to_nut[i]
+            next_loc = path_to_nut[i + 1]
+
+            # Walk to the next location
+            plan.append(f'(walk {current_loc} {next_loc} {man})')
+
+            # Pick up spanner if present at the current location
+            spanner_at_location = [sp for sp, at_loc in [(at[1], at[2]) for at in task.init if at[0] == 'at' and at[1] in spanners] if at_loc == next_loc]
+            if spanner_at_location:
+                plan.append(f'(pickup_spanner {next_loc} {spanner_at_location[0]} {man})')
+
+            # Tighten nut if present at the current location and the man is carrying a useable spanner
+            nut_at_location = [nut for nut, at_loc in [(at[1], at[2]) for at in task.init if at[0] == 'at' and at[1] in nuts] if at_loc == next_loc]
+            useable_spanners = [sp for sp in spanners if ('useable', sp) in task.init and ('carrying', man, sp) not in plan]
+            if nut_at_location and useable_spanners:
+                plan.append(f'(tighten_nut {next_loc} {useable_spanners[0]} {man} {nut_at_location[0]})')
+
+   

@@ -1,0 +1,37 @@
+def get_plan(task):
+    plan = []
+    
+    # Extract information from task
+    locations = [loc for loc, loc_type in task.objects if loc_type == 'location']
+    spanners = [sp for sp, sp_type in task.objects if sp_type == 'spanner']
+    nuts = [nut for nut, nut_type in task.objects if nut_type == 'nut']
+    man = [man_obj for man_obj, man_type in task.objects if man_type == 'man'][0]
+    links = [link for link in task.init if link[0] == 'link']
+    man_location = [at for at in task.init if at[0] == 'at' and at[1] == man][0][2]
+
+    # Build a path to visit all locations with spanners and nuts
+    path = [man_location]
+    for loc in locations:
+        if any(init_atom for init_atom in task.init if init_atom[0] == 'at' and init_atom[2] == loc and (init_atom[1] in spanners or init_atom[1] in nuts)):
+            path.append(loc)
+
+    # Traverse the path and execute actions
+    for i in range(len(path) - 1):
+        current_loc = path[i]
+        next_loc = path[i + 1]
+
+        # Walk to the next location
+        plan.append(f'(walk {current_loc} {next_loc} {man})')
+
+        # Pick up spanner if present at the current location
+        spanner_at_location = [sp for sp, at_loc in [(at[1], at[2]) for at in task.init if at[0] == 'at' and at[1] in spanners] if at_loc == next_loc]
+        if spanner_at_location:
+            plan.append(f'(pickup_spanner {next_loc} {spanner_at_location[0]} {man})')
+
+        # Tighten nut if present at the current location and the man is carrying a useable spanner
+        nut_at_location = [nut for nut, at_loc in [(at[1], at[2]) for at in task.init if at[0] == 'at' and at[1] in nuts] if at_loc == next_loc]
+        useable_spanners = [sp for sp in spanners if ('useable', sp) in task.init and ('carrying', man, sp) not in plan]
+        if nut_at_location and useable_spanners:
+            plan.append(f'(tighten_nut {next_loc} {useable_spanners[0]} {man} {nut_at_location[0]})')
+
+    return plan
