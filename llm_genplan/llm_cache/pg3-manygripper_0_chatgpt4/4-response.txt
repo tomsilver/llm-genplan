@@ -27,6 +27,8 @@ def get_plan(task):
 
         if robby_room != ball_room:
             plan.append(f"(move {robby_room} {ball_room})")
+            task.init.remove(('at-robby', robby_room))
+            task.init.add(('at-robby', ball_room))
             robby_room = ball_room
 
         gripper = None
@@ -38,6 +40,8 @@ def get_plan(task):
         plan.append(f"(pick {ball} {ball_room} {gripper})")
         plan.append(f"(move {ball_room} {target_room})")
         plan.append(f"(drop {ball} {target_room} {gripper})")
+        task.init.remove(('at-robby', robby_room))
+        task.init.add(('at-robby', target_room))
         robby_room = target_room
 
     return plan
