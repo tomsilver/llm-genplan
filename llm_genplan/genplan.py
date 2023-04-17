@@ -64,11 +64,10 @@ def get_genplan_from_llm(
     domain_str = all_train_tasks[0].domain_str
     assert all(t.domain_str == domain_str for t in all_train_tasks)
     problems_str = "\n".join([t.problem_str for t in prompt_tasks])
-    prompt0 = (
-        f"Domain:\n{domain_str.strip()}\n\n"
-        f"Example problems:\n{problems_str.strip()}\n"
-        "Write a short summary of this domain in words."
-    )
+    prompt0 = f"Domain:\n{domain_str.strip()}\n\n"
+    if problems_str:
+        prompt0 += f"Example problems:\n{problems_str.strip()}\n"
+    prompt0 += "Write a short summary of this domain in words."
     run_prompt(prompt0, save_path, prompt_num=0)
 
     # Simple strategy without search.

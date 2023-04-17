@@ -1,4 +1,0 @@
-The code failed. It returned the following plan: ['(move room0 room18)', '(pick ball6 room18 gripper1)', '(move room18 room8)', '(drop ball6 room8 gripper1)', '(move room0 room4)', '(pick ball7 room4 gripper1)', '(move room4 room13)', '(drop ball7 room13 gripper1)'].
-(move room0 room4) has an unsatisfied precondition at time 4
-(Set (at-robby room0) to true)
-Fix the code.
