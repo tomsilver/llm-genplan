@@ -19,6 +19,13 @@ class Task:
     domain_str: str
     problem_str: str
 
+    def __postinit__(self) -> None:
+        # In addition to sanity checking, this serves the purpose of parsing
+        # the domain once up front, since the properties are cached after.
+        assert isinstance(self.objects, set)
+        assert isinstance(self.init, set)
+        assert isinstance(self.goal, set)
+
     @cached_property
     def domain_file(self) -> Path:
         """A file that contains the domain str."""
