@@ -181,8 +181,6 @@ class Task:
             return False
         if len(arg_names) != len(self.domain.operators[name].params):
             return False
-        if not set(arg_names).issubset(self.objects):
-            return False
         return True
 
     @cached_property
