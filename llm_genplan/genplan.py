@@ -215,7 +215,7 @@ def _parse_python_code_from_response(response: str) -> str:
 def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
     if flags.exclude_inputs_in_feedback:
         return msg
-    if FLAGS.abbreviate_problem_strs:
+    if flags.abbreviate_problem_strs:
         problem_str = task.abbreviated_problem_str
     else:
         problem_str = task.problem_str
