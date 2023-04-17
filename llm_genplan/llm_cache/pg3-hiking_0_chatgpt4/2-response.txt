@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to follow the trail while avoiding water and traversing hills by using the appropriate actions. As the trail represents the valid path, you can iteratively perform the following steps:
+
+    Check the current location and its adjacent locations.
+    If an adjacent location is on the trail and not visited yet, proceed to that location.
+    a. If the destination is a hill, use the "climb" action.
+    b. If the destination is not a hill, use the "walk" action.
+    Repeat steps 1 and 2 until you reach the goal location.
+
+This strategy assumes that the trail is well-defined and connects the starting and goal locations without loops or dead ends. By following the trail, you can avoid searching through the grid and reach the goal efficiently.
