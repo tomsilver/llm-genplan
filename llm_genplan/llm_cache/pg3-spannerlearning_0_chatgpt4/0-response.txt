@@ -1,0 +1,5 @@
+The domain is called "spanner" and represents a scenario where a man named Bob needs to tighten loose nuts at a gate using spanners. The domain consists of different locations, including a shed, gate, and some intermediate locations, which are connected through links. There are various objects such as man, nut, and spanner. Bob can carry spanners and can walk between locations using links.
+
+The domain includes three actions: walk, pickup_spanner, and tighten_nut. Bob can walk between two locations, pick up a spanner at a location, and use the spanner to tighten a loose nut at a location. A spanner becomes unusable after tightening a nut.
+
+There are two example problems, prob0 and prob1, both of which require Bob to tighten all three nuts. The main difference between these two problems lies in the initial locations of the spanners.

@@ -1,0 +1,9 @@
+A simple strategy to solve all problems in this domain without using search would be to follow these steps:
+
+    Identify the shortest path from Bob's initial location to the locations of all the spanners.
+    Determine the order in which the spanners should be picked up based on the shortest path.
+    After picking up the spanner, identify the shortest path to the gate where the loose nuts are.
+    Tighten a nut using the spanner, making the spanner unusable.
+    Repeat steps 3 and 4 until all nuts are tightened.
+
+By following this strategy, Bob can systematically pick up the spanners in the shortest path order and tighten all the nuts without needing to search through different possible action sequences.

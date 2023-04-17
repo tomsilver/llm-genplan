@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    plan = []
+    bob_location = get_bob_location(init)
+    spanner_locations = get_spanner_locations(init)
+    nuts_to_tighten = {n for pred, *args in goal if pred == 'tightened' for n in args}
+
+    while nuts_to_tighten:
+        closest_spanner = None
+        min_distance = float('inf')
+
+        for loc, spanner in spanner_locations.items():
+            distance = get_shortest_path(init, bob_location, loc)
+            if distance < min_distance:
+                min_distance = distance
+                closest_spanner = spanner
+                closest_spanner_loc = loc
+
+        # Move Bob to the closest spanner
+        path_to_spanner = get_shortest_path(init, bob_location, closest_spanner_loc)
+        for _ in range(path_to_spanner):
+            plan.append(f'(walk {bob_location} {closest_spanner_loc} bob)')
+            bob_location = closest_spanner_loc
+
+        # Pick up the spanner
+        plan.append(f'(pickup_spanner {closest_spanner_loc} {closest_spanner} bob)')
+
+        # Move Bob to the gate
+        gate = 'gate'
+        path_to_gate = get_shortest_path(init, bob_location, gate)
+        for _ in range(path_to_gate):
+            plan.append(f'(walk {bob_location} {gate} bob)')
+            bob_location = gate
+
+        # Tighten a nut using the spanner
+        nut = nuts_to_tighten.pop()
+        plan.append(f'(tighten_nut {gate} {closest_spanner} bob {nut})')
+
+        # Remove the used spanner from the available spanners
+        if closest_spanner_loc in spanner_locations:
+            del spanner_locations[closest_spanner_loc]
+
+    return plan
