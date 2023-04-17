@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper function to find a car's location
+    def get_location(car, state):
+        for atom in state:
+            if atom[0] == 'at' and atom[1] == car:
+                return atom[2]
+        return None
+
+    cars = [obj for obj in objects if obj.startswith('c')]
+    ferry_location = [atom[1] for atom in init if atom[0] == 'at-ferry'][0]
+
+    for car in cars:
+        initial_location = get_location(car, init)
+        goal_location = get_location(car, goal)
+
+        # Sail to the car's initial location
+        if ferry_location != initial_location:
+            plan.append(f'(sail {ferry_location} {initial_location})')
+            ferry_location = initial_location
+
+        # Board the car onto the ferry
+        plan.append(f'(board {car} {initial_location})')
+
+        # Sail to the car's goal location
+        if ferry_location != goal_location:
+            plan.append(f'(sail {ferry_location} {goal_location})')
+            ferry_location = goal_location
+
+        # Debark the car at the goal location
+        plan.append(f'(debark {car} {goal_location})')
+
+    return plan

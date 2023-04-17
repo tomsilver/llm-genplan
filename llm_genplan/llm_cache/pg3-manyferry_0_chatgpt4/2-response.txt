@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to follow a systematic, sequential approach. Since there is only one ferry and it can carry one car at a time, the strategy can be broken down into the following steps:
+
+    Identify the initial and goal locations of each car.
+    For each car, perform the following sequence of actions:
+    a. Sail the ferry to the car's initial location.
+    b. Board the car onto the ferry.
+    c. Sail the ferry to the car's goal location.
+    d. Debark the car at the goal location.
+    Repeat steps 2a to 2d for all cars, in any order.
+
+This strategy ensures that each car is transported from its initial location to the goal location using the ferry. Since the ferry can only carry one car at a time, the steps for each car must be performed sequentially, ensuring that the ferry is empty before loading the next car. By following this approach, all problems in the domain can be solved without the need for complex search algorithms.
