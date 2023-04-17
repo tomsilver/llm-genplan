@@ -1,0 +1,9 @@
+The "trapnewspapers" domain models a newspaper delivery problem. There are two types of objects: locations (loc) and newspapers (paper). The domain has several predicates to describe the state of locations and newspapers, such as whether a location is a home base, if a location is satisfied (has received a newspaper), if a location wants a paper, if a location is safe, if a newspaper is unpacked, and if a newspaper is being carried.
+
+There are three actions in this domain:
+
+    pick-up: A newspaper is picked up from the home base if it's unpacked. After this action, the newspaper is considered carried.
+    move: A location is moved to another location if the current location is safe.
+    deliver: A newspaper is delivered to a location, making it satisfied and no longer in need of a newspaper.
+
+The example problems provided involve delivering newspapers to specified locations that are safe and want a paper, with the goal of satisfying all these locations.

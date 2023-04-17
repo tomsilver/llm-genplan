@@ -1,0 +1,42 @@
+Given this task:
+(define (problem newspaper (:domain trapnewspapers)
+  (:objects
+    loc-0 - loc
+    loc-1 - loc
+    loc-2 - loc
+    loc-3 - loc
+    loc-4 - loc
+    loc-5 - loc
+    loc-6 - loc
+    loc-7 - loc
+    loc-8 - loc
+    paper-0 - paper
+    paper-1 - paper
+    paper-2 - paper
+  )
+  (:init
+    (at loc-0)
+    (ishomebase loc-0)
+    (safe loc-0)
+    (safe loc-2)
+    (safe loc-3)
+    (safe loc-8)
+    (unpacked paper-0)
+    (unpacked paper-1)
+    (unpacked paper-2)
+    (wantspaper loc-2)
+    (wantspaper loc-3)
+    (wantspaper loc-8)
+  )
+  (:goal (and
+    (satisfied loc-2)
+    (satisfied loc-3)
+    (satisfied loc-8)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pick-up paper-1 loc-0)', '(move loc-0 loc-3)', '(deliver paper-1 loc-3)', '(pick-up paper-0 loc-0)', '(move loc-0 loc-2)', '(deliver paper-0 loc-2)', '(pick-up paper-2 loc-0)', '(move loc-0 loc-8)', '(deliver paper-2 loc-8)'].
+NOTE: (pick-up paper-0 loc-0) has an unsatisfied precondition at time 3
+(Set (at loc-0) to true)
+Fix the code.

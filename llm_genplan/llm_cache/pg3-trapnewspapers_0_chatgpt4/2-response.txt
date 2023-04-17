@@ -1,0 +1,10 @@
+A simple strategy for solving all problems in this domain without using search is to perform the following steps sequentially:
+
+    Start at the home base (ishomebase).
+    Pick up a newspaper (using the pick-up action).
+    Move to a safe location that wants a newspaper (using the move action).
+    Deliver the newspaper to the location (using the deliver action).
+    Repeat steps 2-4 until all locations that want a newspaper are satisfied.
+    The goal is achieved when all locations that initially wanted a newspaper are satisfied.
+
+This strategy works because the domain only consists of safe locations that want newspapers, and the actions are deterministic. By following this straightforward plan, the newspaper delivery problem can be solved without the need for complex search algorithms.
