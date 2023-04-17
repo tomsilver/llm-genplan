@@ -64,7 +64,14 @@ def get_genplan_from_llm(
     all_train_tasks = prompt_tasks + extra_train_tasks
     domain_str = all_train_tasks[0].domain_str
     assert all(t.domain_str == domain_str for t in all_train_tasks)
-    problems_str = "\n".join([t.problem_str for t in prompt_tasks])
+    problem_strs: List[str] = []
+    for task in prompt_tasks:
+        if FLAGS.abbreviate_problem_strs:
+            problem_str = task.abbreviated_problem_str
+        else:
+            problem_str = task.problem_str
+        problem_strs.append(problem_str)
+    problems_str = "\n".join(problem_strs)
     prompt0 = f"Domain:\n{domain_str.strip()}\n\n"
     if problems_str:
         prompt0 += f"Example problems:\n{problems_str.strip()}\n"
@@ -208,18 +215,11 @@ def _parse_python_code_from_response(response: str) -> str:
 def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
     if flags.exclude_inputs_in_feedback:
         return msg
-    sorted_obj_str = utils.set_to_reproducible_str(task.objects)
-    sorted_init_str = utils.set_to_reproducible_str(task.init)
-    sorted_goal_str = utils.set_to_reproducible_str(task.goal)
-    return "\n".join(
-        [
-            "Given the following inputs:",
-            f"objects = {sorted_obj_str}",
-            f"init = {sorted_init_str}",
-            f"goal = {sorted_goal_str}",
-            msg,
-        ]
-    )
+    if FLAGS.abbreviate_problem_strs:
+        problem_str = task.abbreviated_problem_str
+    else:
+        problem_str = task.problem_str
+    return f"Given this task:\n{problem_str}\n{msg}"
 
 
 def _run_genplan_on_task_no_timeout(
