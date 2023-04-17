@@ -21,6 +21,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument("--horizon", default=1000000, type=int)
     parser.add_argument("--timeout", default=30, type=int)
     parser.add_argument("--exclude_inputs_in_feedback", action="store_true")
+    parser.add_argument("--prompt_problem_distribution", default="none", type=str)
     parser.add_argument(
         "--debug",
         action="store_const",

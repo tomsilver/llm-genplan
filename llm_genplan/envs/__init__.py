@@ -129,3 +129,11 @@ def _get_pg3_tasks(
     assert len(all_test_tasks) >= num_eval
     eval_tasks = all_test_tasks[:num_eval]
     return prompt_tasks, train_tasks, eval_tasks
+
+
+def get_prompt_problem_distribution(env_name: str, dist_type: str) -> str:
+    """Get a representation of the problem distribution for this env."""
+    filepath = utils.PDDL_DIR / "prompt_problem_dists" / dist_type / f"{env_name}.txt"
+    with open(filepath, "r", encoding="utf-8") as f:
+        dist_str = f.read()
+    return dist_str

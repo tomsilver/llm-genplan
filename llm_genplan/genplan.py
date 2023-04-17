@@ -17,6 +17,7 @@ from typing import Dict, List, Optional, Tuple
 import pyperclip
 
 from llm_genplan import utils
+from llm_genplan.envs import get_prompt_problem_distribution
 from llm_genplan.flags import FLAGS
 from llm_genplan.structs import Task
 
@@ -70,12 +71,22 @@ def get_genplan_from_llm(
     prompt0 += "Write a short summary of this domain in words."
     run_prompt(prompt0, save_path, prompt_num=0)
 
+    # Optionally show some representation of the problem distribution, like
+    # (partial) code that generates problems.
+    if FLAGS.prompt_problem_distribution != "none":
+        dist_str = get_prompt_problem_distribution(
+            FLAGS.env, FLAGS.prompt_problem_distribution
+        )
+        prompt1 = f"Problem distribution:\n{dist_str.strip()}\n\n"
+        prompt1 += "Write a short summary of the problem distribution in words."
+        run_prompt(prompt1, save_path, prompt_num=1)
+
     # Simple strategy without search.
-    prompt1 = (
+    prompt2 = (
         "There is a simple strategy for solving all problems in this domain "
         "without using search. What is that strategy?"
     )
-    run_prompt(prompt1, save_path, prompt_num=1)
+    run_prompt(prompt2, save_path, prompt_num=2)
 
     # Python function.
     if all_train_tasks[0].typed:
@@ -112,7 +123,7 @@ where
             prompt = f"{last_error_info}\nFix the code."
 
         # Query.
-        response = run_prompt(prompt, save_path, prompt_num=2 + t)
+        response = run_prompt(prompt, save_path, prompt_num=3 + t)
         if response is None:
             break
 
