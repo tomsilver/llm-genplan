@@ -1,0 +1,10 @@
+A simple strategy for solving all problems in this domain without using search involves the following steps:
+
+    Identify the initial positions of the balls and the goal positions.
+    Move Robby to the room containing a ball that needs to be relocated.
+    Pick up the ball using a free gripper.
+    Move Robby to the goal room for that ball.
+    Drop the ball in the goal room, freeing the gripper.
+    Repeat steps 2-5 for all balls that need to be relocated.
+
+This strategy relies on the assumption that there are no constraints or obstacles in the domain that would prevent Robby from moving between rooms or carrying balls. Additionally, it assumes that there is always a free gripper available for picking up and dropping balls. This sequential, greedy approach allows Robby to solve problems in the domain without needing to search through different possible paths or actions.

@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    plan = []
+    at_robby = [atom for atom in init if atom[0] == 'at-robby'][0][1]
+    balls = [atom for atom in init if atom[0] == 'ball']
+    balls_init = [(atom[1], atom[2]) for atom in init if atom[0] == 'at']
+    balls_goal = [(atom[1], atom[2]) for atom in goal if atom[0] == 'at']
+
+    for ball_goal in balls_goal:
+        ball, target_room = ball_goal
+        current_room = next((room for ball_init, room in balls_init if ball_init == ball), None)
+        if current_room != target_room:
+            # Move Robby to the current room of the ball
+            if at_robby != current_room:
+                plan.append(f'(move {at_robby} {current_room})')
+                at_robby = current_room
+
+            # Pick up the ball
+            free_gripper = next((atom[1] for atom in init if atom[0] == 'free' and atom[1] not in [act.split()[2] for act in plan]), None)
+            plan.append(f'(pick {ball} {current_room} {free_gripper})')
+
+            # Move Robby to the target room
+            plan.append(f'(move {at_robby} {target_room})')
+            at_robby = target_room
+
+            # Drop the ball
+            plan.append(f'(drop {ball} {target_room} {free_gripper})')
+
+    return plan
