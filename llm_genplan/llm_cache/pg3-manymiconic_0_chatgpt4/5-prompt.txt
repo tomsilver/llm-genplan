@@ -1,0 +1,55 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f0_b1 - floor
+    f1_b0 - floor
+    f1_b1 - floor
+    f2_b0 - floor
+    f2_b1 - floor
+    f3_b0 - floor
+    f3_b1 - floor
+    f4_b0 - floor
+    f4_b1 - floor
+    ...
+    p0_b0 - passenger
+    p0_b1 - passenger
+    p1_b0 - passenger
+    p1_b1 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f0_b0 f5_b0)
+    (above f0_b0 f6_b0)
+    (above f0_b0 f7_b0)
+    (above f0_b0 f8_b0)
+    (above f0_b1 f1_b1)
+    (above f0_b1 f2_b1)
+    ...
+    (destin p0_b0 f1_b0)
+    (destin p0_b1 f1_b1)
+    (destin p1_b0 f2_b0)
+    (destin p1_b1 f6_b1)
+    (lift-at f7_b0)
+    (lift-at f8_b1)
+    (origin p0_b0 f2_b0)
+    (origin p0_b1 f4_b1)
+    (origin p1_b0 f5_b0)
+    (origin p1_b1 f1_b1)
+  )
+  (:goal (and
+    (served p0_b0)
+    (served p0_b1)
+    (served p1_b0)
+    (served p1_b1)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(down f8_b1 f0_b0)', '(up f0_b0 f0_b1)', '(up f0_b1 f1_b0)', '(up f1_b0 f1_b1)', '(board f1_b1 p1_b1)', '(up f1_b1 f2_b0)', '(board f2_b0 p0_b0)', '(up f2_b0 f2_b1)', '(up f2_b1 f3_b0)', '(up f3_b0 f3_b1)', '(up f3_b1 f4_b0)', '(up f4_b0 f4_b1)', '(board f4_b1 p0_b1)', '(up f4_b1 f5_b0)', '(board f5_b0 p1_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(depart f6_b1 p1_b1)', '(up f6_b1 f7_b0)', '(up f7_b0 f7_b1)', '(up f7_b1 f8_b0)', '(up f8_b0 f8_b1)', '(down f8_b1 f8_b0)', '(down f8_b0 f7_b1)', '(down f7_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(board f5_b0 p1_b0)', '(down f5_b0 f4_b1)', '(board f4_b1 p0_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(depart f2_b0 p1_b0)', '(board f2_b0 p0_b0)', '(down f2_b0 f1_b1)', '(board f1_b1 p1_b1)', '(depart f1_b1 p0_b1)', '(down f1_b1 f1_b0)', '(depart f1_b0 p0_b0)', '(down f1_b0 f0_b1)', '(down f0_b1 f0_b0)'].
+NOTE: (down f8_b1 f0_b0) has an unsatisfied precondition at time 0
+(Set (above f0_b0 f8_b1) to true)
+Fix the code.

@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    floors = sorted([obj for obj, obj_type in objects if obj_type == "floor"])
+    passengers = [obj for obj, obj_type in objects if obj_type == "passenger"]
+
+    origins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "origin")}
+    destins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "destin")}
+    lift_at = next(atom[1] for atom in init if atom[0] == "lift-at")
+
+    plan = []
+
+    for floor in floors + list(reversed(floors)):
+        if lift_at != floor:
+            if lift_at < floor:
+                plan.append(f"(up {lift_at} {floor})")
+            else:
+                plan.append(f"(down {lift_at} {floor})")
+            lift_at = floor
+
+        for passenger in passengers:
+            if origins.get(passenger) == floor:
+                plan.append(f"(board {floor} {passenger})")
+
+            if destins.get(passenger) == floor:
+                plan.append(f"(depart {floor} {passenger})")
+
+    return plan
