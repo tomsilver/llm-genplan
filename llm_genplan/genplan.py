@@ -196,7 +196,7 @@ def _parse_python_code_from_response(response: str) -> str:
 
 
 def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
-    if not flags.include_inputs_in_feedback:
+    if flags.exclude_inputs_in_feedback:
         return msg
     sorted_obj_str = utils.set_to_reproducible_str(task.objects)
     sorted_init_str = utils.set_to_reproducible_str(task.init)

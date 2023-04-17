@@ -20,7 +20,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument("--num_eval_tasks", default=10, type=int)
     parser.add_argument("--horizon", default=1000000, type=int)
     parser.add_argument("--timeout", default=30, type=int)
-    parser.add_argument("--include_inputs_in_feedback", action="store_true")
+    parser.add_argument("--exclude_inputs_in_feedback", action="store_true")
     parser.add_argument(
         "--debug",
         action="store_const",

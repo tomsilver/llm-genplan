@@ -78,9 +78,9 @@ def validate_plan(task: Task, plan: List[str]) -> Tuple[bool, str]:
     if repair_phrase in output:
         msg = output[output.index(repair_phrase) + len(repair_phrase) :]
         msg, _ = msg.split("Failed plans:")
-        msg = msg.strip()
+        msg = "NOTE: " + msg.strip()
     else:
-        msg = "The plan did not achieve the goal."
+        msg = "NOTE: The plan did not achieve the goal."
     return False, msg
 
 
