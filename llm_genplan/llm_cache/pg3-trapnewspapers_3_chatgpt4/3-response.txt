@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Extract home base and locations that want papers
+    home_base = None
+    locations = set()
+    papers = set()
+    for atom in init:
+        if atom[0] == 'ishomebase':
+            home_base = atom[1]
+        elif atom[0] == 'wantspaper':
+            locations.add(atom[1])
+        elif atom[0] == 'unpacked':
+            papers.add(atom[1])
+    
+    # Iterate through locations and deliver papers
+    for loc in locations:
+        # Find a paper
+        paper = papers.pop()
+        
+        # Pick up the paper
+        plan.append(f"(pick-up {paper} {home_base})")
+        
+        # Move to the location
+        plan.append(f"(move {home_base} {loc})")
+        
+        # Deliver the paper
+        plan.append(f"(deliver {paper} {loc})")
+        
+        # Move back to home base
+        plan.append(f"(move {loc} {home_base})")
+    
+    return plan
+
+# Test the function with the provided example problems
+objects1 = {('loc-0', 'loc'), ('loc-1', 'loc'), ('loc-2', 'loc'), ('loc-3', 'loc'), ('loc-4', 'loc'), ('loc-5', 'loc'), ('loc-6', 'loc'), ('paper-0', 'paper'), ('paper-1', 'paper')}
+init1 = {('at', 'loc-0'), ('ishomebase', 'loc-0'), ('safe', 'loc-0'), ('safe', 'loc-3'), ('safe', 'loc-6'), ('unpacked', 'paper-0'), ('unpacked', 'paper-1'), ('wantspaper', 'loc-3'), ('wantspaper', 'loc-6')}
+goal1 = {('satisfied', 'loc-3'), ('satisfied', 'loc-6')}
+print(get_plan(objects1, init1, goal1))
+
+objects2 = {('loc-0', 'loc'), ('loc-1', 'loc'), ('loc-2', 'loc'), ('loc-3', 'loc'), ('loc-4', 'loc'), ('loc-5', 'loc'), ('loc-6', 'loc'), ('loc-7', 'loc'), ('paper-0', 'paper'), ('paper-1', 'paper'), ('paper-2', 'paper'), ('paper-3', 'paper')}
+init2 = {('at', 'loc-0'), ('ishomebase', 'loc-0'), ('safe', 'loc-0'), ('safe', 'loc-1'), ('safe', 'loc-3'), ('safe', 'loc-5'), ('safe', 'loc-7'), ('unpacked', 'paper-0'), ('unpacked', 'paper-1'), ('unpacked', 'paper-2'), ('unpacked', 'paper-3'), ('wantspaper', 'loc-1'), ('wantspaper', 'loc-3'), ('wantspaper', 'loc-5'), ('wantspaper', 'loc-7')}
+goal2 = {('satisfied', 'loc-1'), ('satisfied', 'loc-3'), ('satisfied', 'loc-5'), ('satisfied', 'loc-7')}
+print(get_plan(objects2, init2, goal2))

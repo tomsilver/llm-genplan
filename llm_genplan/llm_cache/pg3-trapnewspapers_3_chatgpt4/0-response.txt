@@ -1,0 +1,5 @@
+The "trapnewspapers" domain is designed to simulate the delivery of newspapers to specific locations. In this domain, there are two types of objects: locations (loc) and papers (paper). The domain has several predicates to define the state of these objects and locations.
+
+The domain consists of three actions: pick-up, move, and deliver. The "pick-up" action is used to pick up a paper at a location, with the precondition that the agent is at the home base and the paper is unpacked. The "move" action allows the agent to move from one location to another, as long as the starting location is safe. Lastly, the "deliver" action is used to deliver a paper to a location, with the precondition that the agent is at the location and carrying the paper.
+
+There are two example problems provided, both involving the delivery of newspapers to multiple locations. The first problem involves delivering papers to two locations, loc-3 and loc-6, and the second problem involves delivering papers to four locations, loc-1, loc-3, loc-5, and loc-7. The goal of each problem is to satisfy the paper delivery requirements for each specified location.

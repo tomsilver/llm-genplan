@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in this domain without using search is to follow a systematic, sequential approach:
+
+Start at the home base (ishomebase location).
+Pick up a paper (using the "pick-up" action).
+Move to a safe location that wants a paper (using the "move" action).
+Deliver the paper to that location (using the "deliver" action).
+Repeat steps 2-4 for each location that wants a paper.
+Finish when all locations have their papers delivered and are satisfied.
+This strategy ensures that the agent picks up and delivers papers one by one, following a linear path through the locations. As long as the agent only moves to safe locations and delivers papers to locations that want them, it will successfully solve any problem in this domain without needing to search or backtrack.
