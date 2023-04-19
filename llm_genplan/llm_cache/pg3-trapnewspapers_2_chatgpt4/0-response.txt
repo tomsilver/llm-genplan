@@ -1,0 +1,5 @@
+The "trapnewspapers" domain represents a simplified newspaper delivery problem. In this domain, there are locations (loc) and newspapers (paper). The predicates describe various properties of locations and newspapers, such as whether a location is a home base, whether a location is satisfied (i.e., has received its newspaper), and whether a newspaper is being carried by the delivery agent.
+
+There are three actions defined in the domain: pick-up, move, and deliver. The "pick-up" action is used to pick up a newspaper from the home base, the "move" action allows the agent to move from one location to another, and the "deliver" action is used to deliver a newspaper to a location that wants it. The goal is to satisfy all locations that want a newspaper by delivering the correct paper to each of them.
+
+Two example problems are provided, each with a different set of locations and newspapers. The problems require the agent to plan the sequence of actions necessary to deliver newspapers to all locations that want them, while ensuring that the agent moves through safe locations.

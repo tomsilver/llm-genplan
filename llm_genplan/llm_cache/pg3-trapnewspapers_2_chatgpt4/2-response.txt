@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in this domain without using search is to follow a systematic approach. Since there are no explicit constraints on the order of delivering newspapers or which newspaper to deliver, you can perform the following steps:
+
+Start at the home base (loc-0).
+Pick up an unpacked newspaper (using the "pick-up" action).
+Move to the next location that wants a newspaper and is safe, following a pre-defined order (e.g., ascending order of location names or any other consistent order).
+Deliver the newspaper to that location (using the "deliver" action).
+Repeat steps 2-4 until all locations that want a newspaper are satisfied.
+If there are still unpacked newspapers, go back to step 2, else the problem is solved.
+By following this systematic approach, you can ensure that all locations receive a newspaper without the need for an explicit search algorithm. However, this strategy might not be the most efficient in terms of the number of actions, as it does not take into account potential shortcuts or optimal order of visiting locations.

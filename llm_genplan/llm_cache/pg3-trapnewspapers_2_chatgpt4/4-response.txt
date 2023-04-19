@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    plan = []
+    home_base = None
+    safe_locations = []
+    wanted_papers = {}
+    unpacked_papers = set()
+
+    for atom in init:
+        predicate = atom[0]
+        if predicate == "at":
+            home_base = atom[1]
+        elif predicate == "safe":
+            safe_locations.append(atom[1])
+        elif predicate == "wantspaper":
+            wanted_papers[atom[1]] = True
+        elif predicate == "unpacked":
+            unpacked_papers.add(atom[1])
+
+    safe_locations.sort()
+    sorted_unpacked_papers = sorted(list(unpacked_papers))
+
+    for loc in safe_locations:
+        if loc in wanted_papers:
+            paper = sorted_unpacked_papers.pop(0)
+            plan.append(f'(pick-up {paper} {home_base})')
+            if loc != home_base:
+                plan.append(f'(move {home_base} {loc})')
+            plan.append(f'(deliver {paper} {loc})')
+            home_base = loc
+
+            # Move back to the home base location for the next pick-up action
+            if sorted_unpacked_papers:
+                plan.append(f'(move {loc} {home_base})')
+
+    return plan
