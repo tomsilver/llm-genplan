@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is to follow a sequential approach for each car that needs to be moved:
+
+Sail the ferry to the location where the car is.
+Board the car onto the ferry.
+Sail the ferry to the desired destination location.
+Debark the car from the ferry.
+This strategy works for all problems in this domain since the ferry can only carry one car at a time, and there are no additional constraints or requirements. Repeat this process for each car that needs to be moved, and you will achieve the goal configuration.

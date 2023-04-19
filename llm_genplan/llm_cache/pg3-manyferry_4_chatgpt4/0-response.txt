@@ -1,0 +1,17 @@
+The ferry domain represents a simplified scenario where a ferry transports cars between different locations. The domain includes three main actions: sail, board, and debark.
+
+The predicates in the domain are:
+
+not-eq: To ensure that two locations are not equal.
+car: To identify a car object.
+location: To identify a location object.
+at-ferry: To specify the location of the ferry.
+at: To indicate the location of a car.
+empty-ferry: To state that the ferry is empty.
+on: To indicate that a car is on the ferry.
+The actions are:
+
+sail: The ferry sails from one location to another. Preconditions: the locations must be different, and the ferry must be at the starting location. Effects: the ferry is at the destination location and not at the starting location.
+board: A car boards the ferry at a specific location. Preconditions: the car and location objects must exist, the car must be at the location, the ferry must be at the same location, and the ferry must be empty. Effects: the car is on the ferry, the car is no longer at the location, and the ferry is no longer empty.
+debark: A car debarks from the ferry at a specific location. Preconditions: the car and location objects must exist, the car must be on the ferry, and the ferry must be at the location. Effects: the car is at the location, the ferry is empty, and the car is no longer on the ferry.
+The example problems provided require the ferry to transport cars between different locations to achieve specific goal configurations, such as moving car c1 from location l6 to l0 and car c3 from location l2 to l8 in the first example problem.
