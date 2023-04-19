@@ -64,19 +64,19 @@ class Task:
         """Whether the domain is typed."""
         return self.domain.uses_typing
 
-    @cached_property
+    @property
     def objects(self) -> Union[Set[Tuple[str, str]], Set[str]]:
         """The objects (not including constants) and their types."""
         if not self.typed:
             return {o.name for o in self.problem.objects}
         return {(o.name, str(o.var_type)) for o in self.problem.objects}
 
-    @cached_property
+    @property
     def init(self) -> Set[Tuple[str, ...]]:
         """The initial atoms in string form."""
         return {_literal_to_tuple(l) for l in self.problem.initial_state}
 
-    @cached_property
+    @property
     def goal(self) -> Set[Tuple[str, ...]]:
         """The goal in string form."""
         return {_literal_to_tuple(l) for l in self.problem.goal.literals}
