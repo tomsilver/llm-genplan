@@ -1,0 +1,65 @@
+Given this task:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    c3
+    c4
+    l0
+    l1
+    l10
+    l2
+    l3
+    ...
+  )
+  (:init
+    (at c0 l8)
+    (at c1 l2)
+    (at c2 l5)
+    (at c3 l9)
+    (at c4 l7)
+    (at-ferry l10)
+    (car c0)
+    (car c1)
+    (car c2)
+    (car c3)
+    (car c4)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l10)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    ...
+    (not-eq l0 l1)
+    (not-eq l0 l10)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    ...
+  )
+  (:goal (and
+    (at c0 l9)
+    (at c1 l1)
+    (at c2 l9)
+    (at c3 l0)
+    (at c4 l7)
+    )
+  )    
+)
+        
+The code returned this plan: ['sail l10 l4', 'sail l4 l9', 'board c3 l9', 'sail l9 l0', 'debark c3 l0', 'sail l0 l5', 'board c2 l5', 'sail l5 l9', 'debark c2 l9', 'sail l9 l2', 'board c1 l2', 'sail l2 l1', 'debark c1 l1', 'sail l1 l8', 'board c0 l8', 'sail l8 l9', 'debark c0 l9']
+However, the action sail l10 l4 is invalid at step 0.
+NOTE: the valid operators are: (board ?car ?loc) (debark ?car ?loc) (sail ?from ?to).
+Fix the code.

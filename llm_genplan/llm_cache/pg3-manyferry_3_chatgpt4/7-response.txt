@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    cars = {c for c in objects if c.startswith('c')}
+    locations = {l for l in objects if l.startswith('l')}
+
+    at_car_location = {predicate[1]: predicate[2] for predicate in init if predicate[0] == 'at'}
+    ferry_location = next(predicate[1] for predicate in init if predicate[0] == 'at-ferry')
+    not_eq_locations = {(predicate[1], predicate[2]) for predicate in init if predicate[0] == 'not-eq'}
+
+    plan = []
+
+    for goal_atom in goal:
+        if goal_atom[0] == 'at':
+            car, target_location = goal_atom[1], goal_atom[2]
+            current_location = at_car_location[car]
+
+            if current_location != target_location:
+                # Sail to the car's location if not already there and if the locations are different
+                if ferry_location != current_location:
+                    if ferry_location == 'l10':
+                        # Find the first available location that is not equal to the current_location
+                        temp_location = next(l for l in locations if (l, current_location) in not_eq_locations and l != current_location and l.startswith('l') and l != 'l10')
+                        plan.append(f'sail {ferry_location} {temp_location}')
+                        ferry_location = temp_location
+                    plan.append(f'sail {ferry_location} {current_location}')
+                    ferry_location = current_location
+
+                # Board the car onto the ferry
+                plan.append(f'board {car} {current_location}')
+
+                # Sail to the target location
+                plan.append(f'sail {ferry_location} {target_location}')
+                ferry_location = target_location
+
+                # Debark the car at the target location
+                plan.append(f'debark {car} {target_location}')
+                at_car_location[car] = target_location
+
+    return plan

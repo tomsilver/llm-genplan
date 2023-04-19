@@ -1,0 +1,7 @@
+A simple strategy to solve all problems in this domain without using search is to perform the following steps iteratively for each car that needs to be transported to a different location:
+
+Sail the ferry to the location where the car is.
+Board the car onto the ferry.
+Sail the ferry to the target location for the car.
+Debark the car at the target location.
+This strategy ensures that each car is moved individually to its desired location. Although it may not be the most efficient solution in some cases, it guarantees that all cars will reach their target locations without the need for any search algorithm.
