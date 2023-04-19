@@ -1,0 +1,31 @@
+def get_plan(objects, init, goal):
+    location_map = {}
+    at_location = None
+    goal_location = None
+    
+    for predicate in init:
+        if predicate[0] == 'ontrail':
+            location_map[predicate[1]] = predicate[2]
+        elif predicate[0] == 'at':
+            at_location = predicate[1]
+        elif predicate[0] == 'iswater' or predicate[0] == 'ishill':
+            objects.add((predicate[1], predicate[0]))
+
+    for predicate in goal:
+        if predicate[0] == 'at':
+            goal_location = predicate[1]
+
+    plan = []
+
+    while at_location != goal_location:
+        next_location = location_map[at_location]
+
+        if (next_location, 'ishill') in objects:
+            action = f'(climb {at_location} {next_location})'
+        else:
+            action = f'(walk {at_location} {next_location})'
+
+        plan.append(action)
+        at_location = next_location
+
+    return plan

@@ -1,0 +1,14 @@
+The hiking domain is designed to represent a grid-based environment where a hiker can walk or climb through various terrain types like hills and water. The domain uses STRIPS and typing for its representation. The primary object type in the domain is 'loc,' which represents a location on the grid.
+
+There are five predicates in this domain:
+
+at: Indicates the hiker's current location.
+iswater: Specifies if a location contains water.
+ishill: Specifies if a location is a hill.
+adjacent: Specifies if two locations are adjacent to each other.
+ontrail: Specifies if there is a trail between two locations.
+The domain includes two actions:
+
+walk: Allows the hiker to walk between two adjacent locations if the destination is not a hill and the starting location is not water.
+climb: Allows the hiker to climb from one location to another if the destination is a hill and the starting location is not water.
+The example problems provided consist of a grid with different types of terrain, water bodies, and hills, as well as a trail system. The initial state defines the adjacency between locations, the hiker's starting position, and the terrain types. The goal is to move the hiker from the starting position to a specific destination on the grid.

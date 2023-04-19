@@ -1,0 +1,5 @@
+In this domain, the hiker can move through the grid using the walk and climb actions, while avoiding water and following the trail system. The simple strategy to solve all problems in this domain without using search is to leverage the "ontrail" predicate.
+
+Since the trail system (specified by the ontrail predicate) already outlines the path connecting different locations, the hiker can follow the trail without needing to search for a solution. The hiker can iterate through the ontrail predicates from the starting location and perform the appropriate action (walk or climb) based on the terrain type (hill or non-hill) in the destination location.
+
+By following this approach, the hiker can reach the destination location specified in the goal without needing to perform any search or exploration.
