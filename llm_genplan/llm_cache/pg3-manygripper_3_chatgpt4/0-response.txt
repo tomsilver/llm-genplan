@@ -1,0 +1,7 @@
+The gripper-strips domain is a simplified version of the blocks world, where the focus is on manipulating balls in different rooms using grippers. The domain consists of a set of predicates and actions that define the state and possible transitions between states.
+
+The predicates are used to define the objects and their properties in the domain, such as rooms, balls, grippers, and the position of the robot (Robby). The actions define the possible interactions between objects and the robot, such as moving between rooms, picking up a ball using a gripper, and dropping a ball in a room.
+
+The domain includes three main actions: move, pick, and drop. The move action allows Robby to move from one room to another, the pick action allows Robby to pick up a ball in a room using a free gripper, and the drop action allows Robby to drop a ball it is carrying into a room.
+
+Two example problems are provided that define different scenarios and goals for Robby to achieve using the actions and predicates defined in the domain. The problems involve moving balls to specific rooms using grippers, and the goals are described as a conjunction of predicates that define the desired positions of the balls in various rooms.

@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to iteratively execute the following steps for each goal condition (i.e., placing a ball in a specific room):
+
+Move Robby to the room where the target ball is located.
+If Robby is carrying a ball with any gripper, drop the ball in the current room to free the gripper.
+Pick up the target ball with the now free gripper.
+Move Robby to the room where the target ball needs to be placed.
+Drop the target ball in the destination room.
+This strategy is a greedy algorithm that does not consider the most efficient way to achieve the goal, but it guarantees that the goal will be reached. It does not use search, and simply follows the steps for each target ball until all the goal conditions are satisfied.

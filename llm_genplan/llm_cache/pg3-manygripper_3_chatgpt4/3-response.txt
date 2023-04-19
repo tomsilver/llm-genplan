@@ -1,0 +1,67 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    def find_obj_location(obj):
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == obj:
+                return atom[2]
+        return None
+
+    def find_free_gripper():
+        for atom in init:
+            if atom[0] == 'free' and atom[1].startswith('gripper'):
+                return atom[1]
+        return None
+
+    def move_robby(room):
+        nonlocal plan
+        for atom in init:
+            if atom[0] == 'at-robby':
+                current_room = atom[1]
+                break
+        plan.append(f'move {current_room} {room}')
+        init.remove(('at-robby', current_room))
+        init.add(('at-robby', room))
+
+    def pick_up_ball(ball, gripper):
+        nonlocal plan
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == ball:
+                room = atom[2]
+                break
+        plan.append(f'pick {ball} {room} {gripper}')
+        init.remove(('at', ball, room))
+        init.remove(('free', gripper))
+        init.add(('carry', ball, gripper))
+
+    def drop_ball(ball, room, gripper):
+        nonlocal plan
+        plan.append(f'drop {ball} {room} {gripper}')
+        init.remove(('carry', ball, gripper))
+        init.add(('at', ball, room))
+        init.add(('free', gripper))
+
+    init = set(init)
+    goal = set(goal)
+
+    for g in goal:
+        if g[0] == 'at':
+            ball, target_room = g[1], g[2]
+            ball_room = find_obj_location(ball)
+            gripper = find_free_gripper()
+
+            if not gripper:
+                for atom in init:
+                    if atom[0] == 'carry':
+                        carried_ball, gripper = atom[1], atom[2]
+                        break
+                carried_ball_room = find_obj_location(carried_ball)
+                move_robby(carried_ball_room)
+                drop_ball(carried_ball, carried_ball_room, gripper)
+
+            move_robby(ball_room)
+            pick_up_ball(ball, gripper)
+            move_robby(target_room)
+            drop_ball(ball, target_room, gripper)
+
+    return plan
