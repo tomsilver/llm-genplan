@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    floors = get_floors(objects)
+    passengers = get_passengers(objects)
+    origin, destination = get_origin_destination(init, passengers)
+    lift_location = get_lift_location(init)
+    plan = []
+
+    # Sweep strategy
+    while passengers:
+        # Move up
+        for i in range(len(floors) - 1):
+            current_floor = floors[i]
+            next_floor = floors[i + 1]
+
+            if current_floor == lift_location:
+                plan.append(f'(up {current_floor} {next_floor})')
+                lift_location = next_floor
+
+            # Board passengers at origin floors
+            passengers_to_board = [p for p in passengers if origin[p] == lift_location]
+            for p in passengers_to_board:
+                plan.append(f'(board {lift_location} {p})')
+
+            # Depart passengers at destination floors
+            passengers_to_depart = [p for p in passengers if destination[p] == lift_location]
+            for p in passengers_to_depart:
+                plan.append(f'(depart {lift_location} {p})')
+                passengers.remove(p)
+
+        # Move down
+        for i in range(len(floors) - 1, 0, -1):
+            current_floor = floors[i]
+            next_floor = floors[i - 1]
+
+            if current_floor == lift_location:
+                plan.append(f'(down {current_floor} {next_floor})')
+                lift_location = next_floor
+
+            # Board passengers at origin floors
+            passengers_to_board = [p for p in passengers if origin[p] == lift_location]
+            for p in passengers_to_board:
+                plan.append(f'(board {lift_location} {p})')
+
+            # Depart passengers at destination floors
+            passengers_to_depart = [p for p in passengers if destination[p] == lift_location]
+            for p in passengers_to_depart:
+                plan.append(f'(depart {lift_location} {p})')
+                passengers.remove(p)
+
+    return plan

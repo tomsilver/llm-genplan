@@ -1,0 +1,60 @@
+def get_floors(objects):
+    return sorted([obj[0] for obj in objects if obj[1] == 'floor'])
+
+def get_passengers(objects):
+    return [obj[0] for obj in objects if obj[1] == 'passenger']
+
+def get_origin_destination(init, passengers):
+    origin = {atom[1]: atom[2] for atom in init if atom[0] == 'origin' and atom[1] in passengers}
+    destination = {atom[1]: atom[2] for atom in init if atom[0] == 'destin' and atom[1] in passengers}
+    return origin, destination
+
+def get_lift_location(init):
+    for atom in init:
+        if atom[0] == 'lift-at':
+            return atom[1]
+
+def get_plan(objects, init, goal):
+    floors = get_floors(objects)
+    passengers = get_passengers(objects)
+    origin, destination = get_origin_destination(init, passengers)
+    lift_location = get_lift_location(init)
+    plan = []
+
+    # Sweep strategy
+    while passengers:
+        # Move up
+        for floor in floors:
+            if floor == lift_location:
+                continue
+            plan.append(f'(up {lift_location} {floor})')
+            lift_location = floor
+
+            # Board passengers at origin floors
+            passengers_to_board = [p for p in passengers if origin[p] == floor]
+            for p in passengers_to_board:
+                plan.append(f'(board {floor} {p})')
+
+            # Depart passengers at destination floors
+            passengers_to_depart = [p for p in passengers if destination[p] == floor]
+            for p in passengers_to_depart:
+                plan.append(f'(depart {floor} {p})')
+                passengers.remove(p)
+
+        # Move down
+        for floor in reversed(floors[:-1]):
+            plan.append(f'(down {lift_location} {floor})')
+            lift_location = floor
+
+            # Board passengers at origin floors
+            passengers_to_board = [p for p in passengers if origin[p] == floor]
+            for p in passengers_to_board:
+                plan.append(f'(board {floor} {p})')
+
+            # Depart passengers at destination floors
+            passengers_to_depart = [p for p in passengers if destination[p] == floor]
+            for p in passengers_to_depart:
+                plan.append(f'(depart {floor} {p})')
+                passengers.remove(p)
+
+    return plan
