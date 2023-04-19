@@ -1,0 +1,8 @@
+The "trapnewspapers" domain is a planning domain that involves delivering newspapers to various locations. In this domain, there are two types of objects: locations (loc) and papers (paper). There are several predicates defined to describe the states and properties of these objects, such as the current location, whether a location is a home base, whether a location is safe, and whether a paper is unpacked or being carried.
+
+Three actions are defined in this domain:
+
+pick-up: This action allows a paper to be picked up from a home base location if it is unpacked.
+move: This action allows movement from one location to another, provided that the initial location is safe.
+deliver: This action allows a carried paper to be delivered to a location, making the location satisfied.
+Two example problems are provided, with different sets of locations and papers, where the goal is to satisfy all locations that want a newspaper. The domain primarily focuses on the tasks of picking up, moving, and delivering newspapers to specific locations while ensuring safety.

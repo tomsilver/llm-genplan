@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+Start at the home base location.
+Pick up a newspaper.
+Move to the next safe location that wants a newspaper.
+Deliver the newspaper to that location.
+Repeat steps 2-4 for all the remaining locations that want a newspaper.
+When all locations are satisfied, the task is complete.
+This strategy does not require searching through different possible paths, as it relies on sequential steps that ensure a newspaper is picked up, moved to a safe location, and delivered, satisfying all locations in the process.

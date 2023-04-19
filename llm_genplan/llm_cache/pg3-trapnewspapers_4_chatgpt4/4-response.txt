@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    locations = sorted([obj[0] for obj in objects if obj[1] == 'loc'])
+    home_base = [predicate[1] for predicate in init if predicate[0] == 'ishomebase'][0]
+    papers = sorted([obj[0] for obj in objects if obj[1] == 'paper'])
+    wants_paper = [predicate[1] for predicate in init if predicate[0] == 'wantspaper']
+
+    current_location = home_base
+    
+    for loc in locations:
+        if loc in wants_paper:
+            # Pick up a paper at home base
+            paper = papers.pop(0)
+            plan.append(f'(pick-up {paper} {home_base})')
+
+            # Move to the location that wants a paper
+            plan.append(f'(move {current_location} {loc})')
+
+            # Deliver the paper
+            plan.append(f'(deliver {paper} {loc})')
+
+            # Move back to the home base
+            plan.append(f'(move {loc} {home_base})')
+
+            # Update current location to home base
+            current_location = home_base
+
+    return plan
