@@ -1,0 +1,45 @@
+def get_plan(objects, init, goal):
+    home_base = None
+    paper_locations = {}
+    locations_wanting_paper = set()
+    safe_locations = set()
+
+    for atom in init:
+        if atom[0] == 'ishomebase':
+            home_base = atom[1]
+        elif atom[0] == 'unpacked':
+            paper_locations[atom[1]] = home_base
+        elif atom[0] == 'wantspaper':
+            locations_wanting_paper.add(atom[1])
+        elif atom[0] == 'safe':
+            safe_locations.add(atom[1])
+
+    plan = []
+    while locations_wanting_paper:
+        location_to_deliver = locations_wanting_paper.pop()
+        if location_to_deliver not in safe_locations:
+            raise ValueError(f"Cannot deliver paper to unsafe location {location_to_deliver}")
+
+        paper_to_pick_up = None
+        for paper, location in paper_locations.items():
+            if location == home_base:
+                paper_to_pick_up = paper
+                break
+
+        if paper_to_pick_up is None:
+            raise ValueError("No more papers available to pick up")
+
+        # Pick up the paper
+        plan.append(f"(pick-up {paper_to_pick_up} {home_base})")
+        paper_locations[paper_to_pick_up] = None
+
+        # Move to the location
+        plan.append(f"(move {home_base} {location_to_deliver})")
+
+        # Deliver the paper
+        plan.append(f"(deliver {paper_to_pick_up} {location_to_deliver})")
+
+        # Move back to home base
+        plan.append(f"(move {location_to_deliver} {home_base})")
+
+    return plan

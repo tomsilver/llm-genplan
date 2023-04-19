@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+Start at the home base location (loc-0).
+Pick up a newspaper (paper-0 or paper-1) using the "pick-up" action.
+Move to a safe location that wants a newspaper using the "move" action.
+Deliver the carried newspaper to that location using the "deliver" action, satisfying the newspaper demand for that location.
+If there are more locations that want a newspaper, go back to step 2 and repeat the process for the remaining locations.
+This strategy assumes that there are enough newspapers available for each location that wants one and that there is a safe path to reach each location that wants a newspaper. By following this strategy, the agent can satisfy the newspaper demands of all specified locations without the need for search.
