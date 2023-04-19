@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    locations = sorted([obj for obj in objects if obj[1] == "location"])
+    spanners = sorted([obj for obj in objects if obj[1] == "spanner"])
+    man = [obj for obj in objects if obj[1] == "man"][0]
+
+    man_initial_position = [atom[2] for atom in init if atom[0] == "at" and atom[1] == man[0]][0]
+    spanner_positions = {atom[1]: atom[2] for atom in init if atom[0] == "at" and atom[1] in [s[0] for s in spanners]}
+
+    gate = [loc for loc in locations if any(atom for atom in init if atom[0] == "at" and atom[2] == loc[0] and atom[1].startswith("nut"))][0]
+
+    links = {(atom[1], atom[2]) for atom in init if atom[0] == "link"}
+
+    def find_next_location(current, remaining):
+        if not remaining:
+            return []
+
+        next_locations = [loc for loc in remaining if (current, loc[0]) in links or (loc[0], current) in links]
+        return next_locations + find_next_location(next_locations[0][0], remaining - set(next_locations))
+
+    route = [man_initial_position] + find_next_location(man_initial_position, set(locations) - {man_initial_position, gate}) + [gate[0]]
+
+    plan = []
+    for i in range(len(route) - 1):
+        current = route[i]
+        next_loc = route[i + 1]
+
+        plan.append(f"(walk {current} {next_loc} {man[0]})")
+
+        for spanner, position in spanner_positions.items():
+            if position == current:
+                plan.append(f"(pickup_spanner {current} {spanner} {man[0]})")
+
+    for nut in sorted([atom[1] for atom in goal]):
+        for spanner in [s[0] for s in spanners]:
+            if f"(carrying {man[0]} {spanner})" in plan:
+                plan.append(f"(tighten_nut {gate[0]} {spanner} {man[0]} {nut})")
+                break
+
+    return plan

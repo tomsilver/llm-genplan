@@ -1,0 +1,5 @@
+The "spanner" domain is a planning problem that involves a man, named Bob, who needs to tighten a number of loose nuts using spanners. The domain is structured around different types of objects, such as locations, locatable objects (man, nut, and spanner), and predicates that describe the relationships and properties of these objects.
+
+The domain includes actions such as walking between locations, picking up spanners, and tightening nuts. The actions have parameters and preconditions that must be met before the actions can be performed, and they also have effects that change the state of the world.
+
+Two example problems are provided in the domain. In both problems, Bob needs to tighten loose nuts at a gate by first walking from his starting location (shed) to various other locations to pick up useable spanners and then using the spanners to tighten the nuts. The goal is to have all the nuts tightened. The problems differ in the number of nuts to be tightened and the locations of the spanners.

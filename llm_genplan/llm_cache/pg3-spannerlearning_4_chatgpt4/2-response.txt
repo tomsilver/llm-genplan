@@ -1,0 +1,10 @@
+The simple strategy for solving all problems in this domain without using search is a systematic approach that involves Bob performing the following steps:
+
+Identify the locations of all the useable spanners.
+Plan a route that visits each spanner location and the gate sequentially, preferably minimizing the distance traveled.
+Starting from the shed, walk to the first spanner location along the planned route.
+Pick up the spanner at the current location.
+Continue walking to each subsequent spanner location and picking up the spanners along the planned route.
+Once all the spanners are collected, walk to the gate where the loose nuts are located.
+Tighten each nut using the collected spanners, one at a time, until all nuts are tightened.
+By following this strategy, Bob can systematically collect all the necessary spanners and tighten all the loose nuts at the gate without the need for search. However, this strategy assumes that Bob can carry multiple spanners at once. If this is not the case, the strategy would need to be adjusted to account for the constraint of carrying only one spanner at a time.
