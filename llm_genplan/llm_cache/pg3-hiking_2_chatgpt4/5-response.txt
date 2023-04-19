@@ -1,0 +1,36 @@
+from typing import List, Set, Tuple
+import math
+
+def get_plan(objects: Set[Tuple[str, str]], init: Set[Tuple[str, ...]], goal: Set[Tuple[str, ...]]) -> List[str]:
+    def get_location(predicate, loc):
+        return any(x[1] == loc for x in init if x[0] == predicate)
+    
+    def manhattan_distance(loc1, loc2):
+        r1, c1 = loc1.split("_")
+        r2, c2 = loc2.split("_")
+        return abs(int(r1[1:]) - int(r2[1:])) + abs(int(c1[1:]) - int(c2[1:]))
+    
+    def get_adjacent(loc):
+        return [x[2] for x in init if x[0] == "adjacent" and x[1] == loc and not get_location("iswater", x[2]) and
+                any(y[0] == "ontrail" and y[1] == loc and y[2] == x[2] for y in init)]
+
+    def get_action(from_loc, to_loc):
+        return "climb" if get_location("ishill", to_loc) else "walk"
+
+    start = next((x[1] for x in init if x[0] == "at"), None)
+    end = next(iter(goal))[1]
+    visited = set()
+    plan = []
+
+    while start != end:
+        visited.add(start)
+        adjacent = get_adjacent(start)
+        candidates = [(manhattan_distance(a, end), a) for a in adjacent if a not in visited]
+        if not candidates:
+            return []  # No solution found
+        _, next_loc = min(candidates)
+        action = get_action(start, next_loc)
+        plan.append(f"({action} {start} {next_loc})")
+        start = next_loc
+
+    return plan

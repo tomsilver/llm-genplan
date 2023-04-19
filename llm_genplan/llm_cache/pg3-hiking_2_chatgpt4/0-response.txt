@@ -1,0 +1,5 @@
+The hiking domain is designed to model a hiking environment with different types of terrain like hills and water bodies. It consists of a grid with locations (loc), each of which can have specific characteristics such as being a hill (ishill), water (iswater), or being adjacent to other locations (adjacent). There are also trails (ontrail) connecting some of the locations.
+
+The domain has two main actions: "walk" and "climb". The "walk" action allows moving between adjacent locations that are not hills and are not water. The "climb" action allows moving between adjacent locations where the destination is a hill. In both cases, movement is not allowed from a location that is water.
+
+The example problems provided involve moving a hiker from a starting location to a goal location on the grid while avoiding water and using the appropriate action for traversing hills.
