@@ -1,0 +1,8 @@
+A simple strategy for solving all problems in this domain without using search would involve following these steps:
+
+Start by identifying the initial location of Bob, the nuts, and the usable spanners in the given problem.
+Create a list of all loose nuts that need to be tightened.
+For each loose nut, find the nearest usable spanner by calculating the shortest distance (number of links) between the nut's location and the spanner's location.
+Have Bob walk to the closest spanner, pick it up, walk to the nut's location, and then tighten the nut using the picked-up spanner.
+Repeat steps 3 and 4 for each remaining loose nut in the list until all of them are tightened.
+This strategy should work for all problems in the domain as it systematically ensures that Bob picks up the nearest spanner and tightens each loose nut one by one. It may not necessarily produce the optimal solution with the least number of actions, but it will always find a solution to the given problem.

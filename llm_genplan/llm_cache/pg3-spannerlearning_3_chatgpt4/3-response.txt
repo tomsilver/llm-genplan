@@ -1,0 +1,81 @@
+def get_plan(objects, init, goal):
+    locations, spanners, nuts, links = process_objects(objects, init)
+    loose_nuts = get_loose_nuts(init)
+    bob_location = get_bob_location(init)
+    
+    plan = []
+    for nut in loose_nuts:
+        nearest_spanner, spanner_location = find_nearest_spanner(bob_location, nut, locations, spanners, links)
+        walk_to_spanner_plan = walk_plan(bob_location, spanner_location, links)
+        plan.extend(walk_to_spanner_plan)
+        plan.append(f'(pickup_spanner {spanner_location} {nearest_spanner} bob)')
+        
+        walk_to_nut_plan = walk_plan(spanner_location, nuts[nut], links)
+        plan.extend(walk_to_nut_plan)
+        plan.append(f'(tighten_nut {nuts[nut]} {nearest_spanner} bob {nut})')
+        
+        bob_location = nuts[nut]
+        
+    return plan
+
+def process_objects(objects, init):
+    locations = set()
+    spanners = set()
+    nuts = dict()
+    links = dict()
+    
+    for obj, obj_type in objects:
+        if obj_type == 'location':
+            locations.add(obj)
+        elif obj_type == 'spanner':
+            spanners.add(obj)
+        elif obj_type == 'nut':
+            nuts[obj] = None
+            
+    for atom in init:
+        if atom[0] == 'link':
+            links.setdefault(atom[1], []).append(atom[2])
+            links.setdefault(atom[2], []).append(atom[1])
+        elif atom[0] == 'at' and atom[1] in nuts:
+            nuts[atom[1]] = atom[2]
+            
+    return locations, spanners, nuts, links
+
+def get_loose_nuts(init):
+    return [atom[1] for atom in init if atom[0] == 'loose']
+
+def get_bob_location(init):
+    return next(atom[2] for atom in init if atom[0] == 'at' and atom[1] == 'bob')
+
+def find_nearest_spanner(bob_location, nut, locations, spanners, links):
+    nut_location = locations[nut]
+    min_distance = float('inf')
+    nearest_spanner = None
+    spanner_location = None
+    
+    for spanner in spanners:
+        distance = len(walk_plan(bob_location, locations[spanner], links)) + \
+                   len(walk_plan(locations[spanner], nut_location, links))
+        if distance < min_distance:
+            min_distance = distance
+            nearest_spanner = spanner
+            spanner_location = locations[spanner]
+            
+    return nearest_spanner, spanner_location
+
+def walk_plan(start, end, links):
+    plan = []
+    visited = set()
+    stack = [(start, [])]
+    
+    while stack:
+        node, path = stack.pop()
+        if node == end:
+            return [f'(walk {path[i]} {path[i+1]} bob)' for i in range(len(path) - 1)]
+        
+        if node not in visited:
+            visited.add(node)
+            for neighbor in links[node]:
+                stack.append((neighbor, path + [node, neighbor]))
+                
+    return []
