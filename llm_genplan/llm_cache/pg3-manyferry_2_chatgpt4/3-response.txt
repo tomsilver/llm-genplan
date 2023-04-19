@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Extract car, location, and ferry information from init and goal
+    cars = [x[1] for x in init if x[0] == 'car']
+    locations = [x[1] for x in init if x[0] == 'location']
+    ferry_location = [x[1] for x in init if x[0] == 'at-ferry'][0]
+    
+    car_initial_locations = {x[1]: x[2] for x in init if x[0] == 'at'}
+    car_goal_locations = {x[1]: x[2] for x in goal if x[0] == 'at'}
+    
+    for car in cars:
+        # Sail to car's current location
+        if ferry_location != car_initial_locations[car]:
+            plan.append(f'(sail {ferry_location} {car_initial_locations[car]})')
+            ferry_location = car_initial_locations[car]
+        
+        # Board the car onto the ferry
+        plan.append(f'(board {car} {ferry_location})')
+        
+        # Sail to car's goal location
+        if ferry_location != car_goal_locations[car]:
+            plan.append(f'(sail {ferry_location} {car_goal_locations[car]})')
+            ferry_location = car_goal_locations[car]
+        
+        # Debark the car at the goal location
+        plan.append(f'(debark {car} {ferry_location})')
+
+    return plan

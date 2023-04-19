@@ -1,0 +1,8 @@
+The "ferry" domain represents a simplified model of a ferry service that transports cars between different locations. The domain has three main actions: sail, board, and debark.
+
+Sail action allows the ferry to move between two different locations.
+Board action allows a car to board the ferry at a particular location, given that the ferry is at that location and is empty.
+Debark action allows a car to leave the ferry and be placed at a specific location, assuming the car is on the ferry and the ferry is at the desired location.
+The domain has several predicates such as car, location, at-ferry, at, on, empty-ferry, and not-eq. These predicates help define the properties and relationships of the objects in the domain, such as cars and locations.
+
+Two example problems are provided, each with a different initial state and goal state. Both problems involve moving cars from one location to another using the ferry, and the goal is to have the cars at specific locations. The domain and problems can be used to generate plans for moving cars between different locations using the ferry service.
