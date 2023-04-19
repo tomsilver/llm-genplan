@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is a systematic approach as follows:
+
+Move Robby to the room containing the ball that needs to be relocated.
+Use a free gripper to pick up the ball.
+Move Robby to the destination room where the ball should be placed.
+Drop the ball using the gripper that is carrying it.
+Repeat these steps for each ball that needs to be relocated until the goal state is reached. This strategy relies on the explicit knowledge of the problem's initial state and goal state, allowing Robby to directly follow the steps in sequence without searching for a solution.
