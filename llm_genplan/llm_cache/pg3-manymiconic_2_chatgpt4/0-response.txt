@@ -1,0 +1,11 @@
+The Miconic domain represents a simplified elevator control problem. It consists of a set of floors and passengers. The objective is to move the elevator in such a way that all passengers are served, meaning they are picked up from their origin floor and dropped off at their destination floor.
+
+The domain defines four actions:
+
+board: A passenger can board the elevator if it is at their origin floor.
+depart: A passenger can leave the elevator if it is at their destination floor and they are on board.
+up: The elevator can move up to a floor above its current position.
+down: The elevator can move down to a floor below its current position.
+The domain also includes predicates to describe the state of the system, such as the origin and destination floors of passengers, the relative positions of floors (above or below), whether a passenger is on board, and whether a passenger has been served.
+
+Two example problems are provided, each with a different set of floors and passengers. The goal of each problem is to serve all passengers in the system. The first example problem has five floors and one passenger, while the second example problem has seven floors and five passengers.
