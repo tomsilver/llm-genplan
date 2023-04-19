@@ -1,0 +1,10 @@
+In the gripper-strips domain, a simple strategy to solve all problems without search is to follow these steps:
+
+Identify the goal positions of the balls.
+For each ball, perform the following actions in order:
+a. Move Robby to the room where the ball is currently located.
+b. Pick up the ball using a free gripper.
+c. Move Robby to the goal room where the ball needs to be placed.
+d. Drop the ball in the goal room.
+Repeat steps 2a to 2d for all balls until all the goals are satisfied.
+This strategy ensures that all the balls are placed in their goal positions by sequentially moving, picking, and dropping them. Since the actions are deterministic and there are no obstacles, this straightforward approach should work for all problems in this domain without requiring any search or planning algorithms.

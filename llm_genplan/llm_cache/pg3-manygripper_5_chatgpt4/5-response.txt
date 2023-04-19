@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    def find_location(obj):
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == obj:
+                return atom[2]
+        return None
+
+    def find_free_gripper():
+        for atom in init:
+            if atom[0] == 'free':
+                return atom[1]
+        return None
+
+    def find_robby_location():
+        for atom in init:
+            if atom[0] == 'at-robby':
+                return atom[1]
+        return None
+
+    plan = []
+
+    for atom in goal:
+        if atom[0] == 'at':
+            ball, target_room = atom[1], atom[2]
+            current_room = find_location(ball)
+
+            # Move Robby to the room where the ball is located
+            robby_room = find_robby_location()
+            plan.append(f'(move {robby_room} {current_room})')
+            init.remove(('at-robby', robby_room))
+            init.add(('at-robby', current_room))
+
+            # Pick up the ball using a free gripper
+            free_gripper = find_free_gripper()
+            plan.append(f'(pick {ball} {current_room} {free_gripper})')
+            init.remove(('at', ball, current_room))
+            init.add(('carry', ball, free_gripper))
+
+            # Move Robby to the goal room where the ball needs to be placed
+            plan.append(f'(move {current_room} {target_room})')
+            init.remove(('at-robby', current_room))
+            init.add(('at-robby', target_room))
+
+            # Drop the ball in the goal room
+            plan.append(f'(drop {ball} {target_room} {free_gripper})')
+            init.remove(('carry', ball, free_gripper))
+            init.add(('at', ball, target_room))
+            init.add(('free', free_gripper))
+
+    return plan
