@@ -1,0 +1,41 @@
+def get_plan(objects, init, goal):
+    locations = [obj[0] for obj in objects if obj[1] == 'location']
+    spanners = [obj[0] for obj in objects if obj[1] == 'spanner']
+    nuts = [obj[0] for obj in objects if obj[1] == 'nut']
+    man = [obj[0] for obj in objects if obj[1] == 'man'][0]
+
+    links = [tuple(atom[1:]) for atom in init if atom[0] == 'link']
+    loose_nuts = [atom[1] for atom in init if atom[0] == 'loose']
+    spanner_locations = [(atom[1], atom[2]) for atom in init if atom[0] == 'at' and atom[1] in spanners]
+    man_location = [atom[1] for atom in init if atom[0] == 'at' and atom[1] == man][0]
+
+    tightened_nuts = set()
+    plan = []
+
+    while len(tightened_nuts) < len(nuts):
+        current_location = man_location
+        visited_locations = set()
+        while not any(span_loc[1] == current_location for span_loc in spanner_locations) and len(visited_locations) < len(locations):
+            visited_locations.add(current_location)
+            next_location = None
+            for link in links:
+                if link[0] == current_location and link[1] not in visited_locations:
+                    next_location = link[1]
+                    break
+            if next_location and next_location != current_location:
+                plan.append(f"(walk {current_location} {next_location} {man})")
+                current_location = next_location
+            else:
+                break
+
+        spanner = next((span_loc[0] for span_loc in spanner_locations if span_loc[1] == current_location), None)
+        if spanner:
+            plan.append(f"(pickup_spanner {current_location} {spanner} {man})")
+            spanner_locations.remove((spanner, current_location))
+            man_location = current_location
+
+        visited_locations = set()
+        while 'gate' not in man_location:
+            visited_locations.add(man_location)
+            next_location = None
+            for link in

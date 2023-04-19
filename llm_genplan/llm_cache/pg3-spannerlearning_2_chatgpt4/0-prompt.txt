@@ -1,0 +1,130 @@
+Domain:
+(define (domain spanner)                    
+(:requirements :typing :strips)                
+(:types 
+	location locatable - object
+	man nut spanner - locatable	
+)                                           
+                                                                               
+(:predicates 
+	(at ?m - locatable ?l - location)
+	(carrying ?m - man ?s - spanner)
+	(useable ?s - spanner)
+	(link ?l1 - location ?l2 - location)
+	(tightened ?n - nut)
+	(loose ?n - nut))                                                                                           
+
+(:action walk 
+        :parameters (?start - location ?end - location ?m - man)
+        :precondition (and (at ?m ?start) 
+                           (link ?start ?end))                                                          
+        :effect (and (not (at ?m ?start)) (at ?m ?end)))
+
+(:action pickup_spanner 
+        :parameters (?l - location ?s - spanner ?m - man)
+        :precondition (and (at ?m ?l) 
+                           (at ?s ?l))
+        :effect (and (not (at ?s ?l))
+                     (carrying ?m ?s)))
+
+(:action tighten_nut 
+        :parameters (?l - location ?s - spanner ?m - man ?n - nut)
+        :precondition (and (at ?m ?l) 
+		      	   (at ?n ?l)
+			   (carrying ?m ?s)
+			   (useable ?s)
+			   (loose ?n))
+        :effect (and (not (loose ?n))(not (useable ?s)) (tightened ?n)))
+)
+
+Example problems:
+(define (problem prob0 (:domain spanner)
+  (:objects
+    gate - location
+    location1 - location
+    location2 - location
+    location3 - location
+    location4 - location
+    shed - location
+    bob - man
+    nut1 - nut
+    nut2 - nut
+    nut3 - nut
+    spanner1 - spanner
+    spanner2 - spanner
+    spanner3 - spanner
+  )
+  (:init
+    (at bob shed)
+    (at nut1 gate)
+    (at nut2 gate)
+    (at nut3 gate)
+    (at spanner1 location1)
+    (at spanner2 location1)
+    (at spanner3 location1)
+    (link location1 location2)
+    (link location2 location3)
+    (link location3 location4)
+    (link location4 gate)
+    (link shed location1)
+    (loose nut1)
+    (loose nut2)
+    (loose nut3)
+    (useable spanner1)
+    (useable spanner2)
+    (useable spanner3)
+  )
+  (:goal (and
+    (tightened nut1)
+    (tightened nut2)
+    (tightened nut3)
+    )
+  )    
+)
+        
+(define (problem prob1 (:domain spanner)
+  (:objects
+    gate - location
+    location1 - location
+    location2 - location
+    location3 - location
+    location4 - location
+    location5 - location
+    shed - location
+    bob - man
+    nut1 - nut
+    nut2 - nut
+    nut3 - nut
+    spanner1 - spanner
+    spanner2 - spanner
+    spanner3 - spanner
+  )
+  (:init
+    (at bob shed)
+    (at nut1 gate)
+    (at nut2 gate)
+    (at nut3 gate)
+    (at spanner1 location3)
+    (at spanner2 location2)
+    (at spanner3 location3)
+    (link location1 location2)
+    (link location2 location3)
+    (link location3 location4)
+    (link location4 location5)
+    (link location5 gate)
+    (link shed location1)
+    (loose nut1)
+    (loose nut2)
+    (loose nut3)
+    (useable spanner1)
+    (useable spanner2)
+    (useable spanner3)
+  )
+  (:goal (and
+    (tightened nut1)
+    (tightened nut2)
+    (tightened nut3)
+    )
+  )    
+)
+Write a short summary of this domain in words.

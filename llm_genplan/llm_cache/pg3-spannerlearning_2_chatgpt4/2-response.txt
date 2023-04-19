@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+Start at the initial location (shed) where Bob is located.
+Follow the linked locations until you reach a location with a usable spanner.
+Pick up the spanner.
+Continue following the linked locations until you reach the gate with the loose nuts.
+Tighten all the loose nuts at the gate using the spanner. If the spanner becomes unusable after tightening a nut, return to step 2 and repeat the process to find another usable spanner.
+Repeat steps 2 to 5 until all nuts are tightened.
+This strategy assumes that there will always be enough usable spanners available to tighten all the loose nuts. Since the domain is simple and deterministic, this strategy will work for all problems without needing a search algorithm.

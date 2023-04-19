@@ -1,0 +1,64 @@
+def get_plan(objects, init, goal):
+    # Extract relevant information
+    locations = [obj[0] for obj in objects if obj[1] == 'location']
+    spanners = [obj[0] for obj in objects if obj[1] == 'spanner']
+    nuts = [obj[0] for obj in objects if obj[1] == 'nut']
+    man = [obj[0] for obj in objects if obj[1] == 'man'][0]
+    
+    links = [tuple(atom[1:]) for atom in init if atom[0] == 'link']
+    loose_nuts = [atom[1] for atom in init if atom[0] == 'loose']
+    spanner_locations = [(atom[1], atom[2]) for atom in init if atom[0] == 'at' and atom[1] in spanners]
+    man_location = [atom[1] for atom in init if atom[0] == 'at' and atom[1] == man][0]
+
+    tightened_nuts = set()
+    plan = []
+
+    while len(tightened_nuts) < len(nuts):
+        # Walk to the nearest location with a spanner
+        current_location = man_location
+        visited_locations = set()
+        while not any(span_loc[1] == current_location for span_loc in spanner_locations) and len(visited_locations) < len(locations):
+            visited_locations.add(current_location)
+            next_location = None
+            for link in links:
+                if link[0] == current_location and link[1] not in visited_locations:
+                    next_location = link[1]
+                    break
+            if next_location:
+                plan.append(f"(walk {current_location} {next_location} {man})")
+                current_location = next_location
+            else:
+                break
+
+        # Pick up the spanner at the current location if it exists
+        spanner = next((span_loc[0] for span_loc in spanner_locations if span_loc[1] == current_location), None)
+        if spanner:
+            plan.append(f"(pickup_spanner {current_location} {spanner} {man})")
+            spanner_locations.remove((spanner, current_location))
+        else:
+            # If there's no spanner at the current location, continue to the next location
+            continue
+
+        # Walk to the gate
+        man_location = current_location
+        visited_locations = set()
+        while 'gate' not in man_location:
+            visited_locations.add(man_location)
+            next_location = None
+            for link in links:
+                if link[0] == man_location and link[1] not in visited_locations:
+                    next_location = link[1]
+                    break
+            if next_location:
+                plan.append(f"(walk {man_location} {next_location} {man})")
+                man_location = next_location
+            else:
+                break
+
+        # Tighten all loose nuts at the gate
+        for nut in loose_nuts:
+            if nut not in tightened_nuts:
+                plan.append(f"(tighten_nut gate {spanner} {man} {nut})")
+                tightened_nuts.add(nut)
+
+    return plan
