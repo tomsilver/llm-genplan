@@ -1,0 +1,1 @@
+nearest_spanner, spanner_location = find_nearest_spanner(bob_location, nut, objects_info, links, init)

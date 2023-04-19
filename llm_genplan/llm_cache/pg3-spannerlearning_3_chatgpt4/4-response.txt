@@ -1,0 +1,62 @@
+def get_plan(objects, init, goal):
+    objects_info, links = process_objects(objects, init)
+    loose_nuts = get_loose_nuts(init)
+    bob_location = get_bob_location(init)
+    
+    plan = []
+    for nut in loose_nuts:
+        nearest_spanner, spanner_location = find_nearest_spanner(bob_location, nut, objects_info, links)
+        walk_to_spanner_plan = walk_plan(bob_location, spanner_location, links)
+        plan.extend(walk_to_spanner_plan)
+        plan.append(f'(pickup_spanner {spanner_location} {nearest_spanner} bob)')
+        
+        walk_to_nut_plan = walk_plan(spanner_location, objects_info['nuts'][nut], links)
+        plan.extend(walk_to_nut_plan)
+        plan.append(f'(tighten_nut {objects_info["nuts"][nut]} {nearest_spanner} bob {nut})')
+        
+        bob_location = objects_info['nuts'][nut]
+        
+    return plan
+
+def process_objects(objects, init):
+    objects_info = {
+        'locations': set(),
+        'spanners': set(),
+        'nuts': dict(),
+    }
+    links = dict()
+    
+    for obj, obj_type in objects:
+        if obj_type == 'location':
+            objects_info['locations'].add(obj)
+        elif obj_type == 'spanner':
+            objects_info['spanners'].add(obj)
+        elif obj_type == 'nut':
+            objects_info['nuts'][obj] = None
+            
+    for atom in init:
+        if atom[0] == 'link':
+            links.setdefault(atom[1], []).append(atom[2])
+            links.setdefault(atom[2], []).append(atom[1])
+        elif atom[0] == 'at' and atom[1] in objects_info['nuts']:
+            objects_info['nuts'][atom[1]] = atom[2]
+            
+    return objects_info, links
+
+def find_nearest_spanner(bob_location, nut, objects_info, links):
+    nut_location = objects_info['nuts'][nut]
+    min_distance = float('inf')
+    nearest_spanner = None
+    spanner_location = None
+    
+    for spanner in objects_info['spanners']:
+        distance = len(walk_plan(bob_location, objects_info['spanners'][spanner], links)) + \
+                   len(walk_plan(objects_info['spanners'][spanner], nut_location, links))
+        if distance < min_distance:
+            min_distance = distance
+            nearest_spanner = spanner
+            spanner_location = objects_info['spanners'][spanner]
+            
+    return nearest_spanner, spanner_location
+
+# The remaining code is the same as before.

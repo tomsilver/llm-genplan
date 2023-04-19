@@ -1,0 +1,18 @@
+def find_nearest_spanner(bob_location, nut, objects_info, links, init):
+    nut_location = objects_info['nuts'][nut]
+    min_distance = float('inf')
+    nearest_spanner = None
+    spanner_location = None
+    
+    for atom in init:
+        if atom[0] == 'at' and atom[1] in objects_info['spanners']:
+            spanner = atom[1]
+            spanner_loc = atom[2]
+            distance = len(walk_plan(bob_location, spanner_loc, links)) + \
+                       len(walk_plan(spanner_loc, nut_location, links))
+            if distance < min_distance:
+                min_distance = distance
+                nearest_spanner = spanner
+                spanner_location = spanner_loc
+                
+    return nearest_spanner, spanner_location
