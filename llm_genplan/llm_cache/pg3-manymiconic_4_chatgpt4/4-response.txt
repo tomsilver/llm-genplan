@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    floors = sorted([obj for obj, typ in objects if typ == 'floor'], key=lambda x: int(x.split('_')[1].split('b')[0]))
+    passengers = [obj for obj, typ in objects if typ == 'passenger']
+
+    origins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == 'origin')}
+    destins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == 'destin')}
+    lift_at = [f for atom in init if atom[0] == 'lift-at' for f in atom[1:]][0]
+
+    plan = []
+
+    while lift_at != floors[0]:  # Move to the bottom floor
+        idx = floors.index(lift_at)
+        lift_at = floors[idx - 1]
+        plan.append(f"(down {floors[idx]} {lift_at})")
+
+    for direction in ('up', 'down'):
+        for floor in (floors if direction == 'up' else reversed(floors)):
+            if lift_at != floor:
+                if direction == 'up':
+                    plan.append(f"(up {lift_at} {floor})")
+                else:
+                    plan.append(f"(down {lift_at} {floor})")
+                lift_at = floor
+
+            for passenger, origin in origins.items():
+                if origin == lift_at:
+                    plan.append(f"(board {lift_at} {passenger})")
+                    origins[passenger] = None
+
+            for passenger, destin in destins.items():
+                if destin == lift_at and ('boarded', passenger) in init:
+                    plan.append(f"(depart {lift_at} {passenger})")
+                    destins[passenger] = None
+                    init.remove(('boarded', passenger))
+                    init.add(('served', passenger))
+
+            if all(atom in init for atom in goal):
+                break
+
+    return plan
