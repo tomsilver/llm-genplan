@@ -1,0 +1,35 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f1_b0 - floor
+    f2_b0 - floor
+    f3_b0 - floor
+    f4_b0 - floor
+    p0_b0 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f1_b0 f2_b0)
+    (above f1_b0 f3_b0)
+    (above f1_b0 f4_b0)
+    (above f2_b0 f3_b0)
+    (above f2_b0 f4_b0)
+    (above f3_b0 f4_b0)
+    (destin p0_b0 f1_b0)
+    (lift-at f2_b0)
+    (origin p0_b0 f2_b0)
+  )
+  (:goal (and
+    (served p0_b0)
+    )
+  )    
+)
+        
+The code returned this plan: ['down f4_b0 f0_b0', 'down f3_b0 f4_b0', 'board f2_b0 p0_b0', 'down f2_b0 f3_b0', 'depart f1_b0 p0_b0', 'down f1_b0 f2_b0', 'down f0_b0 f1_b0']
+However, the action down f4_b0 f0_b0 is invalid at step 0.
+NOTE: the valid operators are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2).
+Fix the code.

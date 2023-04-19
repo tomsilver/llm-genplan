@@ -1,0 +1,32 @@
+def get_plan(objects, init, goal):
+    floors = sorted([f for f, t in objects if t == 'floor'], reverse=True)
+    passengers = [p for p, t in objects if t == 'passenger']
+    init_state = dict(init)
+    goal_state = dict(goal)
+
+    plan = []
+    direction = 'down'
+
+    while not all(goal_state[f'served {p}'] for p in passengers):
+        for floor in (floors if direction == 'down' else reversed(floors)):
+            lift_at_floor = f'lift-at {floor}'
+
+            for p in passengers:
+                if not goal_state[f'served {p}']:
+                    if init_state[f'origin {p}'] == floor:
+                        plan.append(f'board {floor} {p}')
+                        init_state[f'boarded {p}'] = True
+
+                    if init_state[f'destin {p}'] == floor and init_state[f'boarded {p}']:
+                        plan.append(f'depart {floor} {p}')
+                        goal_state[f'served {p}'] = True
+                        init_state[f'boarded {p}'] = False
+
+            if direction == 'down':
+                plan.append(f'down {floor} {floors[floors.index(floor) - 1]}')
+            else:
+                plan.append(f'up {floor} {floors[floors.index(floor) - 1]}')
+
+        direction = 'up' if direction == 'down' else 'down'
+
+    return plan
