@@ -1,0 +1,5 @@
+The "gripper-strips" domain is a problem-solving environment in which an agent, Robby, has to manipulate balls in different rooms using its grippers. There are three main actions available to the agent: move, pick, and drop.
+
+The "move" action allows Robby to move between rooms, given a starting room and a destination room. The "pick" action enables Robby to pick up a ball in a room, provided the ball is present in the room, Robby is also in the same room, and the gripper is free. The "drop" action allows Robby to drop a ball in a room, provided it is carrying the ball and it is in the same room where it wants to drop the ball.
+
+The example problems require Robby to move balls from their initial positions to specific target positions across different rooms using its grippers. To achieve the goal state, Robby must utilize its actions to manipulate the balls and navigate the rooms effectively.

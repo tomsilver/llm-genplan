@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Extract relevant information from the input
+    balls = {obj for obj in objects if obj.startswith('ball')}
+    rooms = {obj for obj in objects if obj.startswith('room')}
+    grippers = {obj for obj in objects if obj.startswith('gripper')}
+    
+    ball_positions = {atom[1]: atom[2] for atom in init if atom[0] == 'at'}
+    robby_position = next(atom[1] for atom in init if atom[0] == 'at-robby')
+    gripper_status = {gripper: next(atom[1] for atom in init if atom[0] == 'free' and atom[1] == gripper) for gripper in grippers}
+    
+    # Iterate over the goal state and generate the plan
+    for g in goal:
+        if g[0] == 'at':
+            ball, target_room = g[1], g[2]
+            initial_room = ball_positions[ball]
+
+            # Move Robby to the ball's initial room
+            if initial_room != robby_position:
+                plan.append(f'(move {robby_position} {initial_room})')
+                robby_position = initial_room
+
+            # Pick up the ball with a free gripper
+            free_gripper = gripper_status.popitem()[0]
+            plan.append(f'(pick {ball} {initial_room} {free_gripper})')
+
+            # Move Robby to the target room
+            if target_room != robby_position:
+                plan.append(f'(move {robby_position} {target_room})')
+                robby_position = target_room
+
+            # Drop the ball in the target room
+            plan.append(f'(drop {ball} {target_room} {free_gripper})')
+
+            # Update ball_positions and gripper_status
+            ball_positions[ball] = target_room
+            gripper_status[free_gripper] = free_gripper
+
+    return plan

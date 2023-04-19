@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in this domain without using search is to sequentially pick up and drop balls as per the goal state. Here's the step-by-step approach:
+
+Look at the goal state and identify the desired positions of the balls.
+Move Robby to the room where the first ball in the goal state is located.
+Pick up the ball using one of the free grippers.
+Move Robby to the room where the ball should be placed according to the goal state.
+Drop the ball in the room.
+Repeat steps 2-5 for each ball specified in the goal state.
+This approach does not require any search or planning algorithms. It's a straightforward strategy that works in this domain since there are no complex constraints or interactions between actions, and there's always a free gripper to pick up and drop balls. However, this strategy may not be the most efficient, as it doesn't optimize for the shortest or quickest solution.
