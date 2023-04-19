@@ -1,0 +1,56 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Extract locations, nuts, spanners, and Bob's initial position from the problem
+    locations = [loc for loc, type_name in objects if type_name == 'location']
+    nuts = [nut for nut, type_name in objects if type_name == 'nut']
+    spanners = [spanner for spanner, type_name in objects if type_name == 'spanner']
+    bob_initial_location = [loc for loc in locations if ('at', 'bob', loc) in init][0]
+
+    # Sort the lists of nuts and spanners based on their locations
+    nuts.sort(key=lambda nut: [loc for loc in locations if ('at', nut, loc) in init][0])
+    spanners.sort(key=lambda spanner: [loc for loc in locations if ('at', spanner, loc) in init][0])
+
+    # Helper function to find the next location linked to the current location
+    def find_next_location(current, destination):
+        next_locations = [loc for loc in locations if
+                          (('link', current, loc) in init or ('link', loc, current) in init) and loc != destination]
+        if next_locations:
+            return next_locations[0]
+        return None
+
+    # Implement the strategy
+    current_location = bob_initial_location
+    while nuts:
+        # Find the closest spanner location and walk to it
+        spanner_location = [loc for loc in locations if ('at', spanners[0], loc) in init][0]
+        while current_location != spanner_location:
+            next_location = find_next_location(current_location, spanner_location)
+            if next_location is None:
+                break
+            plan.append(f'(walk {current_location} {next_location} bob)')
+            current_location = next_location
+
+        # Pick up the first available spanner
+        plan.append(f'(pickup_spanner {current_location} {spanners[0]} bob)')
+
+        # Walk to the location of the first loose nut
+        nut_location = [loc for loc in locations if ('at', nuts[0], loc) in init][0]
+        while current_location != nut_location:
+            next_location = find_next_location(current_location, nut_location)
+            if next_location is None:
+                break
+            plan.append(f'(walk {current_location} {next_location} bob)')
+            current_location = next_location
+
+        # Tighten the nut using the carried spanner
+        plan.append(f'(tighten_nut {current_location} {spanners[0]} bob {nuts[0]})')
+
+        # Remove the tightened nut from the list of loose nuts
+        nuts.pop(0)
+
+        # Check if the carried spanner is still useable
+        if ('useable', spanners[0]) not in goal:
+            spanners.pop(0)
+
+    return plan

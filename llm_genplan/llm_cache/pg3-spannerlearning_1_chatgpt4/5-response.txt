@@ -1,0 +1,53 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    locations = [loc for loc, type_name in objects if type_name == 'location']
+    nuts = [nut for nut, type_name in objects if type_name == 'nut']
+    spanners = [spanner for spanner, type_name in objects if type_name == 'spanner']
+    bob_initial_location = [loc for loc in locations if ('at', 'bob', loc) in init][0]
+
+    nuts.sort(key=lambda nut: [loc for loc in locations if ('at', nut, loc) in init][0])
+    spanners.sort(key=lambda spanner: [loc for loc in locations if ('at', spanner, loc) in init][0])
+
+    visited = set()
+
+    def find_next_location(current, destination):
+        if current in visited:
+            return None
+        visited.add(current)
+        next_locations = [loc for loc in locations if
+                          (('link', current, loc) in init or ('link', loc, current) in init) and loc != destination]
+        if not next_locations:
+            return None
+        return next_locations[0]
+
+    current_location = bob_initial_location
+    while nuts:
+        spanner_location = [loc for loc in locations if ('at', spanners[0], loc) in init][0]
+        while current_location != spanner_location:
+            visited = set()
+            next_location = find_next_location(current_location, spanner_location)
+            if next_location is None:
+                break
+            plan.append(f'(walk {current_location} {next_location} bob)')
+            current_location = next_location
+
+        plan.append(f'(pickup_spanner {current_location} {spanners[0]} bob)')
+
+        nut_location = [loc for loc in locations if ('at', nuts[0], loc) in init][0]
+        while current_location != nut_location:
+            visited = set()
+            next_location = find_next_location(current_location, nut_location)
+            if next_location is None:
+                break
+            plan.append(f'(walk {current_location} {next_location} bob)')
+            current_location = next_location
+
+        plan.append(f'(tighten_nut {current_location} {spanners[0]} bob {nuts[0]})')
+
+        nuts.pop(0)
+
+        if ('useable', spanners[0]) not in goal:
+            spanners.pop(0)
+
+    return plan

@@ -1,0 +1,62 @@
+from collections import deque
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    locations = [loc for loc, type_name in objects if type_name == 'location']
+    nuts = [nut for nut, type_name in objects if type_name == 'nut']
+    spanners = [spanner for spanner, type_name in objects if type_name == 'spanner']
+    bob_initial_location = [loc for loc in locations if ('at', 'bob', loc) in init][0]
+
+    nuts.sort(key=lambda nut: [loc for loc in locations if ('at', nut, loc) in init][0])
+    spanners.sort(key=lambda spanner: [loc for loc in locations if ('at', spanner, loc) in init][0])
+
+    def find_shortest_path(start, destination):
+        visited = set()
+        queue = deque([[start]])
+
+        while queue:
+            path = queue.popleft()
+            current = path[-1]
+
+            if current == destination:
+                return path
+
+            if current not in visited:
+                visited.add(current)
+
+                neighbors = [loc for loc in locations if (('link', current, loc) in init or ('link', loc, current) in init) and loc not in visited]
+
+                for neighbor in neighbors:
+                    new_path = list(path)
+                    new_path.append(neighbor)
+                    queue.append(new_path)
+
+        return None
+
+    current_location = bob_initial_location
+    while nuts:
+        spanner_location = [loc for loc in locations if ('at', spanners[0], loc) in init][0]
+        path_to_spanner = find_shortest_path(current_location, spanner_location)
+        if path_to_spanner:
+            for i in range(1, len(path_to_spanner)):
+                plan.append(f'(walk {path_to_spanner[i-1]} {path_to_spanner[i]} bob)')
+                current_location = path_to_spanner[-1]
+
+        plan.append(f'(pickup_spanner {current_location} {spanners[0]} bob)')
+
+        nut_location = [loc for loc in locations if ('at', nuts[0], loc) in init][0]
+        path_to_nut = find_shortest_path(current_location, nut_location)
+        if path_to_nut:
+            for i in range(1, len(path_to_nut)):
+                plan.append(f'(walk {path_to_nut[i-1]} {path_to_nut[i]} bob)')
+                current_location = path_to_nut[-1]
+
+        plan.append(f'(tighten_nut {current_location} {spanners[0]} bob {nuts[0]})')
+
+        nuts.pop(0)
+
+        if ('useable', spanners[0]) not in goal:
+            spanners.pop(0)
+
+    return plan
