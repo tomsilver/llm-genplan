@@ -1,0 +1,67 @@
+Given this task:
+(define (problem manygripper (:domain gripper-strips)
+  (:objects
+    ball0
+    ball1
+    ball2
+    ball3
+    ball4
+    ball5
+    ball6
+    ball7
+    ball8
+    ball9
+    ...
+  )
+  (:init
+    (at ball0 room12)
+    (at ball1 room8)
+    (at ball2 room9)
+    (at ball3 room11)
+    (at ball4 room5)
+    (at ball5 room15)
+    (at ball6 room0)
+    (at ball7 room16)
+    (at ball8 room1)
+    (at ball9 room12)
+    (at-robby room0)
+    (ball ball0)
+    (ball ball1)
+    (ball ball2)
+    (ball ball3)
+    (ball ball4)
+    (ball ball5)
+    (ball ball6)
+    (ball ball7)
+    (ball ball8)
+    (ball ball9)
+    (free gripper0)
+    (free gripper1)
+    (gripper gripper0)
+    (gripper gripper1)
+    (room room0)
+    (room room1)
+    (room room10)
+    (room room11)
+    (room room12)
+    (room room13)
+    (room room14)
+    (room room15)
+    (room room16)
+    (room room17)
+    ...
+  )
+  (:goal (and
+    (at ball0 room17)
+    (at ball1 room14)
+    (at ball3 room9)
+    (at ball7 room4)
+    (at ball8 room0)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(move room0 room8)', '(pick ball1 room8 gripper0)', '(move room8 room14)', '(drop ball1 room14 gripper0)', '(move room14 room0)', '(pick ball6 room0 gripper0)', '(move room0 None)', '(drop ball6 None gripper0)', '(move None room12)', '(pick ball0 room12 gripper0)', '(move room12 room17)', '(drop ball0 room17 gripper0)', '(move room17 room15)', '(pick ball5 room15 gripper0)', '(move room15 None)', '(drop ball5 None gripper0)', '(move None room16)', '(pick ball7 room16 gripper0)', '(move room16 room4)', '(drop ball7 room4 gripper0)', '(move room4 room5)', '(pick ball4 room5 gripper0)', '(move room5 None)', '(drop ball4 None gripper0)', '(move None room1)', '(pick ball8 room1 gripper0)', '(move room1 room0)', '(drop ball8 room0 gripper0)', '(move room0 room11)', '(pick ball3 room11 gripper0)', '(move room11 room9)', '(drop ball3 room9 gripper0)', '(move room9 room12)', '(pick ball9 room12 gripper0)', '(move room12 None)', '(drop ball9 None gripper0)', '(move None room9)', '(pick ball2 room9 gripper0)', '(move room9 None)', '(drop ball2 None gripper0)'].
+NOTE: (move room0 none) has an unsatisfied precondition at time 6
+(Set (room none) to true)
+Fix the code.

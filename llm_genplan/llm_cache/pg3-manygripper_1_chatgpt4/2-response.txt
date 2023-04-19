@@ -1,0 +1,11 @@
+A simple strategy for solving all problems in this domain without using search is the following:
+
+Read the initial state of the problem and identify the locations of all balls and the goal state.
+Sequentially work through the list of balls that need to be moved to reach the goal state.
+For each ball that needs to be moved:
+a. Move Robby to the room where the ball is currently located.
+b. Pick up the ball using an available gripper.
+c. Move Robby to the room where the ball needs to be placed, according to the goal state.
+d. Drop the ball in the target room using the gripper that is carrying the ball.
+Repeat steps 3a to 3d for all balls that need to be moved.
+This strategy ensures that the robot moves from one ball to another, picking them up and dropping them off in the required rooms as specified in the goal state. The robot will sequentially handle each ball, ensuring it reaches the desired configuration without the need for search algorithms.

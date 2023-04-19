@@ -1,0 +1,5 @@
+The gripper-strips domain represents a simplified robotic manipulation environment. The domain includes rooms, balls, and grippers. The robot, Robby, can perform three main actions: move, pick, and drop.
+
+The 'move' action allows Robby to move between different rooms, given that the 'from' and 'to' rooms are defined. The 'pick' action allows Robby to pick up a ball from a room using a gripper, given that the ball is present in the room, Robby is in the same room, and the gripper is free. Lastly, the 'drop' action enables Robby to drop a ball from a gripper into a room, given that the ball is carried by the gripper and Robby is in the room.
+
+The example problems provided in this domain involve moving Robby and manipulating balls with grippers in various room configurations to achieve specific goal states.
