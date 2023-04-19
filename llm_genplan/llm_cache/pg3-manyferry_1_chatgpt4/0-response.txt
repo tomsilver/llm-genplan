@@ -1,0 +1,7 @@
+This domain represents a ferry transportation system where the ferry is responsible for moving cars between different locations. The domain has three main actions: sail, board, and debark.
+
+The sail action moves the ferry from one location to another, given that the two locations are different. The board action allows a car to board the ferry from a specific location, given that the car and the ferry are at the same location and the ferry is empty. The debark action unloads a car from the ferry at a given location, provided the car is on the ferry and the ferry is at the specified location.
+
+There are several predicates, including car, location, at, at-ferry, on, empty-ferry, and not-eq. These predicates define properties like the presence of a car, the location of the car or ferry, whether a car is on the ferry, and whether the ferry is empty or not.
+
+The example problems provided involve a set of cars and locations with initial and goal states. The goal states specify the desired locations for each car, and the task is to determine the sequence of actions required to reach the goal state using the ferry transportation system.
