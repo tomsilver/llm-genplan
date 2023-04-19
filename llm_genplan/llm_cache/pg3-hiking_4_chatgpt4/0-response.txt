@@ -1,0 +1,7 @@
+The "hiking" domain is designed to model the problem of navigating a hiker through a grid of locations with different terrain types like hills and water bodies. It consists of two actions: walk and climb, and several predicates that represent the current location of the hiker, the type of terrain at each location, and the adjacency of locations.
+
+The "walk" action allows the hiker to move from one location to another, as long as the destination is not a hill and is adjacent to the current location. The "climb" action allows the hiker to move to a hill location, as long as it is adjacent to the current location.
+
+The predicates include "at" to represent the hiker's current location, "iswater" and "ishill" to indicate if a location is a water body or a hill, respectively, "adjacent" to indicate if two locations are adjacent, and "ontrail" to represent a trail connection between two locations.
+
+The example problems provide an initial state of the grid with specific locations for hills, water, and the hiker's starting point. The goal state is defined as reaching a specific location on the grid.

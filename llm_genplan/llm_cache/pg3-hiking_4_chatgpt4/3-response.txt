@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    # Find the hiker's initial location
+    initial_location = next(atom[1] for atom in init if atom[0] == 'at')
+
+    # Create a dictionary to store the trail connections
+    trail_connections = {atom[1]: atom[2] for atom in init if atom[0] == 'ontrail'}
+
+    # Initialize the plan as an empty list
+    plan = []
+
+    # Initialize the current location as the initial location
+    current_location = initial_location
+
+    # Iterate until the goal is reached
+    while True:
+        # Get the next location from the trail connections dictionary
+        next_location = trail_connections[current_location]
+
+        # Check if the next location is a hill
+        if ('ishill', next_location) in init:
+            action = 'climb'
+        else:
+            action = 'walk'
+
+        # Add the action to the plan
+        plan.append(f"({action} {current_location} {next_location})")
+
+        # Update the current location to the next location
+        current_location = next_location
+
+        # Break the loop if the goal is reached
+        if ('at', current_location) in goal:
+            break
+
+    return plan

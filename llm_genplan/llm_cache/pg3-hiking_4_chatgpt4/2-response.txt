@@ -1,0 +1,3 @@
+The strategy to solve all problems in this domain without using search is to follow the trail marked by the "ontrail" predicate. Since the "ontrail" predicate is explicitly given for the connections between locations, you can simply move the hiker from one location to another by following the trail.
+
+For each current location, find the next location connected by the "ontrail" predicate, and then perform the appropriate action (either "walk" or "climb") to move the hiker to that location. Continue this process until the hiker reaches the desired goal location. This way, the hiker follows the pre-defined trail, avoiding any need for search or exploration.
