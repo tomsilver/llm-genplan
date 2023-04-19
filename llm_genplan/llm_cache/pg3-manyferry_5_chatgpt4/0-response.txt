@@ -1,0 +1,5 @@
+The ferry domain is a planning problem in which a ferry transports cars between different locations. The domain includes three actions: sail, board, and debark.
+
+The sail action allows the ferry to move between two different locations, given that the locations are not the same and the ferry is at the starting location. The board action allows a car to board the ferry at a specific location, provided that the car is at the location, the ferry is at the location, and the ferry is empty. The debark action allows a car to leave the ferry at a specific location, provided that the car is on the ferry and the ferry is at the location.
+
+The example problems specify the initial states of the cars and the ferry, the locations, and the goal states, which are the desired locations of the cars. The objective is to find a sequence of actions that will achieve the goal state while respecting the constraints of the domain.
