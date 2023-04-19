@@ -1,0 +1,4 @@
+The hiking domain models the problem of navigating a grid-like terrain while avoiding obstacles like water and hills. In this domain, there are two actions: walk and climb. The walk action allows movement between two adjacent locations, provided that the destination is not a hill and the source location is not water. The climb action enables movement between two adjacent locations when the destination is a hill, and the source location is not water. The terrain is represented by a grid with specific locations being hills or water. The objective is to navigate from the starting location to the goal location while adhering to the constraints of the walk and climb actions. Example problems provide specific grid configurations with different starting points, hill and water locations, and goals.
+
+
+

@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    plan = []
+    location = None
+    goal_location = None
+
+    # Find the starting location and goal location
+    for atom in init:
+        if atom[0] == 'at':
+            location = atom[1]
+    for atom in goal:
+        if atom[0] == 'at':
+            goal_location = atom[1]
+
+    # Follow the ontrail predicates to construct the plan
+    while location != goal_location:
+        for atom in init:
+            if atom[0] == 'ontrail' and atom[1] == location:
+                next_location = atom[2]
+                if ('ishill', next_location) in init:
+                    action = f'(climb {location} {next_location})'
+                else:
+                    action = f'(walk {location} {next_location})'
+                plan.append(action)
+                location = next_location
+                break
+
+    return plan

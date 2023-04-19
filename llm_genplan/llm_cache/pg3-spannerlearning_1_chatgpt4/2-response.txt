@@ -1,0 +1,12 @@
+A simple strategy to solve all problems in this domain without using search is to follow these steps:
+
+Create a list of all loose nuts, and sort it based on their locations.
+Create a list of all useable spanners, and sort it based on their locations.
+Starting from Bob's initial location (shed), find the closest spanner location and walk to it.
+Pick up the first available spanner from the sorted spanner list.
+Walk to the location of the first loose nut in the sorted nuts list.
+Tighten the nut using the carried spanner.
+Remove the tightened nut from the list of loose nuts.
+If there are still loose nuts left, check if the carried spanner is still useable. If not, find the closest spanner location, walk to it, and pick up a new spanner.
+Repeat steps 5 to 8 until all nuts in the list are tightened.
+This strategy assumes that there are enough useable spanners available to tighten all loose nuts and that the walking distance between locations is not a concern. It also assumes that each location is connected to at least one other location, allowing Bob to walk between them.
