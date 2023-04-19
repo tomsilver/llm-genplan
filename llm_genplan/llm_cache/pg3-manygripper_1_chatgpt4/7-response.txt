@@ -1,0 +1,59 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def get_location(atom_set, obj):
+        for atom in atom_set:
+            if obj == 'robby':
+                if atom[0] == 'at-robby':
+                    return atom[1]
+            else:
+                if atom[0] == 'at' and atom[1] == obj:
+                    return atom[2]
+        return None
+
+    current_room = get_location(init, 'robby')
+    grippers = [g for g in objects if g.startswith('gripper')]
+    balls_to_move = {ball for ball in objects if ball.startswith('ball') and get_location(goal, ball) != get_location(init, ball)}
+
+    while balls_to_move:
+        ball = balls_to_move.pop()
+        target_room = get_location(goal, ball)
+        ball_room = get_location(init, ball)
+
+        if current_room != ball_room:
+            plan.append(f'(move {current_room} {ball_room})')
+            current_room = ball_room
+
+        free_gripper = None
+        for gripper in grippers:
+            if ('free', gripper) in init:
+                free_gripper = gripper
+                break
+
+        if not free_gripper:
+            gripper = grippers[0]
+            ball_to_drop = None
+            for atom in init:
+                if atom[0] == 'carry' and atom[2] == gripper:
+                    ball_to_drop = atom[1]
+                    break
+            init.remove(('carry', ball_to_drop, gripper))
+            init.add(('at', ball_to_drop, current_room))
+            plan.append(f'(drop {ball_to_drop} {current_room} {gripper})')
+            free_gripper = gripper
+
+        init.remove(('at', ball, current_room))
+        init.add(('carry', ball, free_gripper))
+        init.remove(('free', free_gripper))
+        plan.append(f'(pick {ball} {current_room} {free_gripper})')
+
+        if current_room != target_room:
+            plan.append(f'(move {current_room} {target_room})')
+            current_room = target_room
+
+        init.remove(('carry', ball, free_gripper))
+        init.add(('at', ball, current_room))
+        init.add(('free', free_gripper))
+        plan.append(f'(drop {ball} {current_room} {free_gripper})')
+
+    return plan

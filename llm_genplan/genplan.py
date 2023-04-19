@@ -57,7 +57,7 @@ def get_genplan_from_llm(
     save_path: Path,
     horizon: int,
     timeout: int,
-    max_debug_attempts: int = 8,
+    max_debug_attempts: int = 5,
 ) -> GeneralizedPlan:
     """Interact with an LLM to get a generalized plan."""
     # Initial prompt with domain and example problems.
@@ -67,7 +67,7 @@ def get_genplan_from_llm(
     problem_strs: List[str] = []
     for task in prompt_tasks:
         if FLAGS.abbreviate_problem_strs:
-            problem_str = task.abbreviated_problem_str
+            problem_str = task.get_abbreviated_problem_str()
         else:
             problem_str = task.problem_str
         problem_strs.append(problem_str)
@@ -216,7 +216,7 @@ def _create_genplan_error_info(task: Task, msg: str, flags: Namespace) -> str:
     if flags.exclude_inputs_in_feedback:
         return msg
     if flags.abbreviate_problem_strs:
-        problem_str = task.abbreviated_problem_str
+        problem_str = task.get_abbreviated_problem_str()
     else:
         problem_str = task.problem_str
     return f"Given this task:\n{problem_str}\n{msg}"
@@ -307,6 +307,7 @@ def run_genplan_on_task(
             p.join(3)
             p.kill()
             # Add a little more info.
+            result_proxy_dict["success"] = False
             result_proxy_dict["info"] = result_proxy_dict.get("info", "") + (
                 "\nThe code was interrupted because it timed out "
                 "(possible infinite loop)."

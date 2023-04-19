@@ -9,8 +9,6 @@ from typing import DefaultDict, List, Set, Tuple, Union
 
 from pddlgym.parser import Literal, PDDLDomainParser, PDDLProblemParser
 
-from llm_genplan.flags import FLAGS
-
 
 @dataclass(frozen=True)
 class Task:
@@ -104,8 +102,12 @@ class Task:
         e = self.domain_str[s:].index(")")
         return self.domain_str[s + len(key) : s + e]
 
-    @cached_property
-    def abbreviated_problem_str(self) -> str:
+    def get_abbreviated_problem_str(
+        self,
+        max_objects_per_type: int = 10,
+        max_init_atoms_per_type: int = 10,
+        max_goal_atoms_per_type: int = 10,
+    ) -> str:
         """A shortened version of the problem string."""
         # Build objects.
         object_type_to_strs: DefaultDict[str, List[str]] = defaultdict(list)
@@ -123,8 +125,8 @@ class Task:
         object_strs: List[str] = []
         for obj_type in sorted(object_type_to_strs):
             type_obj_strs = object_type_to_strs[obj_type]
-            if len(type_obj_strs) > FLAGS.abbreviate_max_objects_per_type:
-                type_obj_strs = type_obj_strs[: FLAGS.abbreviate_max_objects_per_type]
+            if len(type_obj_strs) > max_objects_per_type:
+                type_obj_strs = type_obj_strs[:max_objects_per_type]
                 type_obj_strs.append("...")
             object_strs.extend(type_obj_strs)
         objects_str = "\n    ".join(object_strs)
@@ -138,8 +140,8 @@ class Task:
         init_strs: List[str] = []
         for pred in sorted(pred_to_init_strs):
             pred_strs = pred_to_init_strs[pred]
-            if len(pred_strs) > FLAGS.abbreviate_max_init_atoms_per_type:
-                pred_strs = pred_strs[: FLAGS.abbreviate_max_init_atoms_per_type]
+            if len(pred_strs) > max_init_atoms_per_type:
+                pred_strs = pred_strs[:max_init_atoms_per_type]
                 pred_strs.append("...")
             init_strs.extend(pred_strs)
         init_str = "\n    ".join(init_strs)
@@ -153,8 +155,8 @@ class Task:
         goal_strs: List[str] = []
         for pred in sorted(pred_to_goal_strs):
             pred_strs = pred_to_goal_strs[pred]
-            if len(pred_strs) > FLAGS.abbreviate_max_goal_atoms_per_type:
-                pred_strs = pred_strs[: FLAGS.abbreviate_max_goal_atoms_per_type]
+            if len(pred_strs) > max_goal_atoms_per_type:
+                pred_strs = pred_strs[:max_goal_atoms_per_type]
                 pred_strs.append("...")
             goal_strs.extend(pred_strs)
         goal_str = "\n    ".join(goal_strs)
