@@ -1,0 +1,10 @@
+The gripper-strips domain represents a simplified robotics environment in which an agent, Robby, moves through a series of rooms, interacts with balls using grippers, and repositions the balls to specific rooms as part of its goal.
+
+The domain is defined by three actions:
+
+"move" allows Robby to move from one room to another.
+"pick" lets Robby pick up a ball in the current room using a free gripper.
+"drop" enables Robby to drop a ball in the current room, freeing up the gripper.
+The environment includes objects like balls, grippers, and rooms. Predicates such as "room," "ball," "gripper," "at-robby," "at," "free," and "carry" are used to describe the initial state and conditions for actions.
+
+Two example problems are provided, with varying initial placements of balls in rooms and different goal states specifying the desired positions of certain balls. The agent's objective is to move Robby and utilize the grippers to rearrange the balls according to the specified goal conditions.
