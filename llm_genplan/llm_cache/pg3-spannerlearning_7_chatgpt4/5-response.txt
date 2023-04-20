@@ -1,0 +1,57 @@
+def get_plan(objects, init, goal):
+    locations = sorted([obj for obj, obj_type in objects if obj_type == "location"])
+    spanners = [obj for obj, obj_type in objects if obj_type == "spanner"]
+    nuts = [obj for obj, obj_type in objects if obj_type == "nut"]
+    man = [obj for obj, obj_type in objects if obj_type == "man"][0]
+
+    plan = []
+
+    # Get the location traversal order
+    traversal_order = [locations[0]]
+    remaining_locations = set(locations[1:])
+    while remaining_locations:
+        for link in init:
+            if link[0] == "link" and link[1] == traversal_order[-1]:
+                next_location = link[2]
+            elif link[0] == "link" and link[2] == traversal_order[-1]:
+                next_location = link[1]
+            else:
+                continue
+
+            if next_location in remaining_locations:
+                traversal_order.append(next_location)
+                remaining_locations.remove(next_location)
+                break
+
+    # Step 1: Visit all locations
+    current_location = [loc for loc in locations if ('at', man, loc) in init][0]
+    for location in traversal_order:
+        while current_location != location:
+            for link in init:
+                if link[0] == "link" and (link[1] == current_location or link[2] == current_location):
+                    next_location = link[1] if link[2] == current_location else link[2]
+                    break
+            plan.append(f"(walk {current_location} {next_location} {man})")
+            current_location = next_location
+
+        # Step 2: Pick up spanner at each location
+        for spanner in spanners:
+            if ('at', spanner, location) in init:
+                plan.append(f"(pickup_spanner {location} {spanner} {man})")
+
+    # Step 3: Reach the gate and tighten nuts using carried spanners
+    gate = "gate"
+    while current_location != gate:
+        for link in init:
+            if link[0] == "link" and (link[1] == current_location or link[2] == current_location):
+                next_location = link[1] if link[2] == current_location else link[2]
+                break
+        plan.append(f"(walk {current_location} {next_location} {man})")
+        current_location = next_location
+
+    for nut in nuts:
+        for spanner in spanners:
+            if ('useable', spanner) in init and ('loose', nut) in init:
+                plan.append(f"(tighten_nut {gate} {spanner} {man} {nut})")
+
+    return plan

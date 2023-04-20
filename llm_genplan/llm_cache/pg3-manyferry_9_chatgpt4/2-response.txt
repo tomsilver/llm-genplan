@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is a greedy approach that involves repeatedly performing the following steps:
+
+Identify the car that needs to be moved to a different location (i.e., the car's current location does not match its goal location).
+Move the ferry to the car's current location, if it's not already there.
+Board the car onto the ferry.
+Move the ferry to the car's goal location.
+Debark the car at the goal location.
+Repeat these steps for each car that needs to be moved until all cars are at their goal locations. This strategy does not require search as it tackles the problem one car at a time, moving them to their respective goal locations in a sequential manner.

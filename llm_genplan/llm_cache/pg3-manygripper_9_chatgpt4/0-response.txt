@@ -1,0 +1,8 @@
+This domain represents a simplified robotic manipulation problem called Gripper-Strips. The domain involves a robot named Robby, which can move between rooms, pick up balls, and drop them off in different rooms. The robot has multiple grippers to carry the balls.
+
+The domain consists of three primary actions:
+
+Move: Allows Robby to move from one room to another, given that it's in the originating room.
+Pick: Allows Robby to pick up a ball in a room using a gripper, as long as the ball is in the room, Robby is also in the room, and the gripper is free.
+Drop: Allows Robby to drop a ball in a room using a gripper, as long as Robby is carrying the ball in the gripper and is in the room.
+The example problems provided involve moving balls to specific rooms. The initial state specifies the positions of the balls, Robby, and the grippers, while the goal state defines the desired locations for some of the balls.
