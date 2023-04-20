@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    passengers = {p for p, t in objects if t == "passenger"}
+    floors = {f for f, t in objects if t == "floor"}
+
+    origins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "origin")}
+    destinations = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "destin")}
+    above_floors = {f2: f1 for f1, f2 in (atom[1:] for atom in init if atom[0] == "above")}
+    lift_at = next(f for atom in init if atom[0] == "lift-at" for f in atom[1:])
+
+    plan = []
+    served = set()
+    boarded = set()
+
+    while served != passengers:
+        # Check for passengers to board or depart at the current floor
+        for p in passengers:
+            if lift_at == origins[p] and p not in boarded:
+                plan.append(f'(board {lift_at} {p})')
+                boarded.add(p)
+            elif lift_at == destinations[p] and p in boarded:
+                plan.append(f'(depart {lift_at} {p})')
+                served.add(p)
+
+        # If there are no passengers to board or depart, find the next floor
+        if lift_at not in (origins[p] for p in passengers - boarded) and lift_at not in (destinations[p] for p in boarded - served):
+            next_floor = None
+            for p in passengers - served:
+                if p not in boarded:
+                    next_floor = origins[p]
+                    break
+                else:
+                    next_floor = destinations[p]
+                    break
+
+            if next_floor is not None:
+                while lift_at != next_floor:
+                    if lift_at in above_floors and above_floors[lift_at] == next_floor:
+                        plan.append(f'(up {lift_at} {next_floor})')
+                        lift_at = next_floor
+                    elif lift_at in above_floors.values() and next(iter(f for f in above_floors if above_floors[f] == lift_at)) == next_floor:
+                        plan.append(f'(down {lift_at} {next_floor})')
+                        lift_at = next_floor
+                    else:
+                        break
+
+    return plan

@@ -1,0 +1,8 @@
+A simple strategy for solving all problems in this domain without using search is to use the "next-stop" approach. The elevator always goes to the next floor with a waiting passenger or the next floor with a passenger that needs to depart. This strategy is straightforward and does not require any search algorithms. Here are the steps for the next-stop approach:
+
+If there is a passenger on the current floor who needs to board the elevator and the elevator is at their origin floor, board the passenger.
+If there is a passenger in the elevator whose destination floor is the current floor, let the passenger depart.
+If there are no passengers waiting to board or depart on the current floor, check the floors above and below the current floor for any waiting passengers or passengers who need to depart.
+Move the elevator to the nearest floor with a waiting passenger or a passenger that needs to depart. If there are multiple passengers at the same distance, prioritize the passengers in the direction the elevator is currently moving. If the elevator is not moving, choose any direction.
+Repeat steps 1 to 4 until all passengers are served.
+This strategy guarantees that all passengers will eventually be served, although it may not be the most efficient solution in terms of the total number of actions or time taken.

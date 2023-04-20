@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    passengers = {p for p, t in objects if t == "passenger"}
+    floors = {f for f, t in objects if t == "floor"}
+
+    origins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "origin")}
+    destinations = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "destin")}
+    above_floors = {f2: f1 for f1, f2 in (atom[1:] for atom in init if atom[0] == "above")}
+    lift_at = next(f for atom in init if atom[0] == "lift-at" for f in atom[1:])
+
+    plan = []
+    served = set()
+    boarded = set()
+
+    def next_floor():
+        unserved_origins = {origins[p] for p in passengers - served}
+        unserved_destinations = {destinations[p] for p in boarded - served}
+        candidate_floors = unserved_origins | unserved_destinations
+        min_distance = float('inf')
+        min_distance_floor = None
+
+        for f in candidate_floors:
+            current_floor = lift_at
+            distance = 0
+            while current_floor != f and distance < min_distance:
+                if current_floor in above_floors and above_floors[current_floor] == f:
+                    current_floor = f
+                elif current_floor in above_floors.values() and next(iter(f for f in above_floors if above_floors[f] == current_floor)) == f:
+                    current_floor
+                else:
+                    break
+                distance += 1
+
+            if distance < min_distance:
+                min_distance = distance
+                min_distance_floor = f
+
+        return min_distance_floor
+
+    while served != passengers:
+        # Check for passengers to board or depart at the current floor
+        for p in passengers:
+           
+
