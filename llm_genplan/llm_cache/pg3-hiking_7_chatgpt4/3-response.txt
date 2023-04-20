@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    at_predicate = None
+    ontrail_predicates = []
+    plan = []
+
+    # Extract relevant predicates from the init state
+    for predicate in init:
+        if predicate[0] == "at":
+            at_predicate = predicate
+        elif predicate[0] == "ontrail":
+            ontrail_predicates.append(predicate)
+
+    # Find the goal location
+    goal_location = None
+    for predicate in goal:
+        if predicate[0] == "at":
+            goal_location = predicate[1]
+            break
+
+    if not goal_location or not at_predicate:
+        return []
+
+    current_location = at_predicate[1]
+
+    # Follow the trails until the goal location is reached
+    while current_location != goal_location:
+        next_location = None
+        for ontrail_predicate in ontrail_predicates:
+            if ontrail_predicate[1] == current_location:
+                next_location = ontrail_predicate[2]
+                break
+
+        if not next_location:
+            return []
+
+        is_hill = ('ishill', next_location) in init
+        is_water = ('iswater', next_location) in init
+
+        if is_hill:
+            action = f'(climb {current_location} {next_location})'
+        elif not is_water:
+            action = f'(walk {current_location} {next_location})'
+        else:
+            return []
+
+        plan.append(action)
+        current_location = next_location
+
+    return plan

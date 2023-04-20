@@ -1,0 +1,5 @@
+A simple strategy to solve problems in this domain without using search would be to follow the given trails, as they connect the locations in the grid. By making sure to walk on the trail connections and climb on the hills when required, the hiker should be able to reach the goal location without any need for search. This strategy assumes that the given trails already provide an optimal or feasible path to the goal.
+
+
+
+

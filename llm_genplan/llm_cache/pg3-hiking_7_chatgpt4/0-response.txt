@@ -1,0 +1,5 @@
+The hiking domain consists of a grid-like environment with different types of terrain, including hills, water, and trails. The domain has two primary actions: walk and climb. Walk allows movement between adjacent locations as long as the destination is not a hill or water. Climb allows movement to adjacent hill locations. The goal of the problems in this domain is to reach a specific location on the grid by navigating through the environment using the available actions. The environment is defined by specifying the grid's size, adjacency relationships, terrain types, and trail connections.
+
+
+
+
