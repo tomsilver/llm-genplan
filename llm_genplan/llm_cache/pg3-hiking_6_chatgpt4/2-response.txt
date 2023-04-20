@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to follow the 'ontrail' predicates. Since the 'ontrail' predicates represent valid paths between locations, the hiker can reach the destination by following the sequence of 'ontrail' predicates from the initial location to the goal location, while performing the 'walk' or 'climb' actions accordingly.
+
+To apply this strategy, the hiker can follow these steps:
+
+Start at the initial location.
+Check if the current location is the goal location. If so, the problem is solved.
+Find an 'ontrail' predicate that has the current location as one of its parameters.
+Determine if the next location in the 'ontrail' predicate is a hill or not.
+If the next location is a hill, perform the 'climb' action; otherwise, perform the 'walk' action.
+Update the current location to the next location and repeat steps 2 to 5 until the goal is reached.
+By following this strategy, the hiker can solve the problems without the need for search algorithms, as the 'ontrail' predicates essentially provide a predefined path to the destination.

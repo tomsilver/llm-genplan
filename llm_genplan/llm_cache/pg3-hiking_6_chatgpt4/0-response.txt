@@ -1,0 +1,5 @@
+The hiking domain represents a grid-like environment where a hiker can navigate through different types of terrain, such as hills and water bodies. The domain supports two main actions: walking and climbing. Walking is allowed between adjacent locations, except when moving to a hill or a water body. Climbing is allowed only when moving to a hill from an adjacent location that is not a water body. The goal is to reach a specific destination on the grid.
+
+The domain consists of locations (loc) and predicates representing the hiker's current position (at), whether a location is a hill (ishill) or water (iswater), and the adjacency of locations (adjacent). The ontrail predicate indicates a valid path between two locations.
+
+The example problems provided define the grid, the adjacency relationships between locations, the terrain types (hills and water bodies), and the valid paths (ontrail). The goal in these problems is to reach a specific location on the grid.
