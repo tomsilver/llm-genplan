@@ -1,0 +1,62 @@
+def get_floor_order(init):
+    floor_order = []
+    while len(floor_order) != len([x for x in init if x[0] == "above"]):
+        for f1, f2 in [x[1:] for x in init if x[0] == "above"]:
+            if f1 not in floor_order:
+                floor_order.append(f1)
+            if f2 not in floor_order:
+                floor_order.insert(floor_order.index(f1), f2)
+    return floor_order
+
+
+def get_origin_dest(init, passengers):
+    origins = {p: f for p, f in [x[1:] for x in init if x[0] == "origin"]}
+    dests = {p: f for p, f in [x[1:] for x in init if x[0] == "destin"]}
+    return {p: (origins[p], dests[p]) for p in passengers}
+
+
+def get_lift_floor(init):
+    for pred, floor in [x for x in init if x[0] == "lift-at"]:
+        return floor
+
+
+def get_plan(objects, init, goal):
+    floors = sorted([x[0] for x in objects if x[1] == "floor"])
+    passengers = [x[0] for x in objects if x[1] == "passenger"]
+
+    floor_order = get_floor_order(init)
+    origins_dests = get_origin_dest(init, passengers)
+    lift_floor = get_lift_floor(init)
+
+    plan = []
+    direction = 1
+
+    while not all(('served', p) in goal for p in passengers):
+        next_floor_index = (floor_order.index(lift_floor) + direction) % len(floor_order)
+        next_floor = floor_order[next_floor_index]
+
+        # Passengers boarding
+        for p, (origin, _) in origins_dests.items():
+            if origin == lift_floor:
+                plan.append(f"board {lift_floor} {p}")
+                origins_dests[p] = (None, origins_dests[p][1])
+
+        # Passengers departing
+        for p, (_, dest) in origins_dests.items():
+            if dest == lift_floor:
+                plan.append(f"depart {lift_floor} {p}")
+                goal.add(('served', p))
+                origins_dests[p] = (None, None)
+
+        # Move lift
+        if lift_floor != next_floor:
+            if direction == 1:
+                plan.append(f"up {lift_floor} {next_floor}")
+            else:
+                plan.append(f"down {lift_floor} {next_floor}")
+
+        lift_floor = next_floor
+        if lift_floor == floor_order[-1] or lift_floor == floor_order[0]:
+            direction *= -1
+
+    return plan

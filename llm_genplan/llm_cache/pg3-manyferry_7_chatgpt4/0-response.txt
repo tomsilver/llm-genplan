@@ -1,0 +1,9 @@
+The "ferry" domain represents a simplified model of a ferry transporting cars between various locations. There are three main actions defined in this domain: sail, board, and debark.
+
+The "sail" action is responsible for moving the ferry from one location to another. It requires two different locations as parameters and checks if the ferry is at the starting location before updating its position.
+
+The "board" action allows a car to board the ferry at a specific location. The car must be at the same location as the ferry, and the ferry must be empty before the car can board. Once the car boards, the ferry is no longer considered empty.
+
+The "debark" action is for a car to disembark from the ferry at a specified location. The car must be on the ferry, and the ferry must be at the given location. Once the car leaves, the ferry becomes empty again.
+
+Example problems are provided that contain initial states with cars, locations, and ferry position. The goal of each problem is to get the cars to specific locations using the defined actions.

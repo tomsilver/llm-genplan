@@ -1,0 +1,18 @@
+def get_floor_order(init):
+    floor_order = []
+    above_relations = [x for x in init if x[0] == "above"]
+
+    while above_relations:
+        new_floors = []
+        for f1, f2 in [x[1:] for x in above_relations]:
+            if f1 not in floor_order and all(f1 != r[1] for r in above_relations):
+                new_floors.append(f1)
+            if f2 not in floor_order and all(f2 != r[0] for r in above_relations):
+                new_floors.append(f2)
+        if not new_floors:
+            break
+
+        floor_order.extend(new_floors)
+        above_relations = [x for x in above_relations if x[1] not in floor_order or x[2] not in floor_order]
+
+    return floor_order

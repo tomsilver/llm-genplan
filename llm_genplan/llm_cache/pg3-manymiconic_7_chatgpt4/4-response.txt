@@ -1,0 +1,15 @@
+def get_floor_order(init):
+    floor_order = []
+    remaining_above_relations = [x for x in init if x[0] == "above"]
+
+    while remaining_above_relations:
+        for f1, f2 in [x[1:] for x in remaining_above_relations]:
+            if f1 not in floor_order:
+                floor_order.append(f1)
+            if f2 not in floor_order:
+                floor_order.insert(floor_order.index(f1), f2)
+
+        # Remove processed "above" relations
+        remaining_above_relations = [x for x in remaining_above_relations if (x[1], x[2]) not in zip(floor_order[1:], floor_order[:-1])]
+
+    return floor_order

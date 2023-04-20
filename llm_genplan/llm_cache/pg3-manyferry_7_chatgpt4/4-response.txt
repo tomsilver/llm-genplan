@@ -1,0 +1,35 @@
+def get_car_locations(init):
+    return {tuple(atom[1:]) for atom in init if atom[0] == 'at'}
+
+def get_ferry_location(init):
+    return next(atom[1] for atom in init if atom[0] == 'at-ferry')
+
+def get_plan(objects, init, goal):
+    car_locations = get_car_locations(init)
+    ferry_location = get_ferry_location(init)
+    plan = []
+
+    for goal_atom in goal:
+        if goal_atom[0] == 'at':
+            car, destination = goal_atom[1:]
+            car_start_location = next(location for car_, location in car_locations if car_ == car)
+
+            # Sail ferry to the car's starting location
+            if ferry_location != car_start_location:
+                plan.append(f'(sail {ferry_location} {car_start_location})')
+                ferry_location = car_start_location
+
+            # Board the car onto the ferry
+            plan.append(f'(board {car} {ferry_location})')
+
+            # Sail ferry to the car's destination
+            if ferry_location != destination:
+                plan.append(f'(sail {ferry_location} {destination})')
+                ferry_location = destination
+
+            # Debark the car at the destination
+            plan.append(f'(debark {car} {ferry_location})')
+            car_locations.remove((car, car_start_location))
+            car_locations.add((car, destination))
+
+    return plan
