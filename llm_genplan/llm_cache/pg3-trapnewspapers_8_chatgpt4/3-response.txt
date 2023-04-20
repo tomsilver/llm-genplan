@@ -1,0 +1,65 @@
+def get_plan(objects, init, goal):
+    plan = []
+    home_base = None
+    papers = []
+    locations = []
+    
+    for obj, obj_type in objects:
+        if obj_type == 'paper':
+            papers.append(obj)
+        elif obj_type == 'loc':
+            locations.append(obj)
+    
+    for predicate in init:
+        if predicate[0] == 'ishomebase':
+            home_base = predicate[1]
+    
+    for paper in papers:
+        plan.append(f'(pick-up {paper} {home_base})')
+        
+        for predicate in init:
+            if predicate[0] == 'wantspaper':
+                loc = predicate[1]
+                if loc not in [g[1] for g in goal]:
+                    continue
+
+                plan.append(f'(move {home_base} {loc})')
+                plan.append(f'(deliver {paper} {loc})')
+                plan.append(f'(move {loc} {home_base})')
+                break
+
+    return plan
+
+# Example usage:
+objects = {
+    ('loc-0', 'loc'),
+    ('loc-1', 'loc'),
+    ('loc-2', 'loc'),
+    ('loc-3', 'loc'),
+    ('loc-4', 'loc'),
+    ('loc-5', 'loc'),
+    ('loc-6', 'loc'),
+    ('loc-7', 'loc'),
+    ('paper-0', 'paper'),
+    ('paper-1', 'paper')
+}
+
+init = {
+    ('at', 'loc-0'),
+    ('ishomebase', 'loc-0'),
+    ('safe', 'loc-0'),
+    ('safe', 'loc-5'),
+    ('safe', 'loc-6'),
+    ('unpacked', 'paper-0'),
+    ('unpacked', 'paper-1'),
+    ('wantspaper', 'loc-5'),
+    ('wantspaper', 'loc-6')
+}
+
+goal = {
+    ('satisfied', 'loc-5'),
+    ('satisfied', 'loc-6')
+}
+
+plan = get_plan(objects, init, goal)
+print(plan)
