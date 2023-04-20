@@ -1,0 +1,10 @@
+A simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+Identify the goal state, i.e., the desired locations for each ball.
+For each ball that needs to be moved, perform the following steps:
+a. Move the robot to the room where the ball is currently located.
+b. Pick up the ball using a free gripper.
+c. Move the robot to the room where the ball should be placed according to the goal state.
+d. Drop the ball in that room, freeing the gripper.
+Repeat step 2 for all balls that need to be relocated.
+This strategy works because there is no need to search for an optimal solution, as the robot can simply move between rooms and use its grippers to pick up and drop balls sequentially. This ensures that the goal state will eventually be reached, as all balls will be placed in their desired locations.
