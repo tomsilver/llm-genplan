@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+Start at the home base (loc-0).
+Pick up an unpacked paper using the "pick-up" action.
+Move to a safe location that wants a paper using the "move" action.
+Deliver the paper to the location using the "deliver" action. This will satisfy the location.
+Repeat steps 2-4 for all remaining locations that want a paper.
+If all locations are satisfied, the problem is solved.
+This strategy assumes that the agent has knowledge of the safe locations and locations that want papers. By following this straightforward approach, the agent can solve the problem without searching for an optimal solution or exploring unsafe locations.

@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Get the home base location
+    home_base = [loc for predicate, loc in init if predicate == "ishomebase"][0]
+
+    # Get safe locations and locations that want papers
+    safe_locations = [loc for predicate, loc in init if predicate == "safe"]
+    locations_wanting_papers = [loc for predicate, loc in init if predicate == "wantspaper"]
+
+    # Get unpacked papers
+    unpacked_papers = [paper for predicate, paper in init if predicate == "unpacked"]
+
+    for loc in safe_locations:
+        if loc in locations_wanting_papers:
+            # Pick up a paper
+            paper = unpacked_papers.pop()
+            plan.append(f"(pick-up {paper} {home_base})")
+
+            # Move to the location
+            plan.append(f"(move {home_base} {loc})")
+
+            # Deliver the paper
+            plan.append(f"(deliver {paper} {loc})")
+
+            # Move back to the home base
+            plan.append(f"(move {loc} {home_base})")
+
+    return plan
