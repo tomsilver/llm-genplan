@@ -1,0 +1,10 @@
+The "spanner" domain revolves around a man named Bob who needs to tighten a set of loose nuts at a gate using available spanners. The domain has multiple locations, and both the nuts and spanners are scattered across these locations.
+
+The domain includes various types of objects, including locations, locatables (man, nut, and spanner), and predicates to define their relationships. Predicates indicate whether a man is at a specific location, carrying a spanner, if a spanner is useable, if two locations are linked, and if a nut is tightened or loose.
+
+There are three actions in the domain:
+
+"walk" - Allows Bob to walk from one location to another if the two locations are linked.
+"pickup_spanner" - Allows Bob to pick up a spanner from the same location he is currently in.
+"tighten_nut" - Allows Bob to tighten a loose nut if he is in the same location as the nut, carrying a useable spanner.
+The example problems provided specify different initial conditions and the goal of tightening all the nuts in each problem. The locations, objects, and their initial states are defined, and the goal is to have all the nuts tightened.
