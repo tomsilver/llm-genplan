@@ -1,0 +1,50 @@
+from collections import deque
+
+def get_plan(objects, init, goal):
+    def find_next_positions(current_position, adjacent_positions, visited_positions):
+        next_positions = []
+        for (loc1, loc2) in adjacent_positions:
+            if loc1 == current_position and loc2 not in visited_positions:
+                next_positions.append(loc2)
+            elif loc2 == current_position and loc1 not in visited_positions:
+                next_positions.append(loc1)
+        return next_positions
+
+    current_position = None
+    goal_position = None
+    adjacent_positions = set()
+    objects = set(objects)
+
+    for atom in init:
+        if atom[0] == "at":
+            current_position = atom[1]
+        if atom[0] == "adjacent":
+            adjacent_positions.add((atom[1], atom[2]))
+
+    for atom in goal:
+        if atom[0] == "at":
+            goal_position = atom[1]
+
+    queue = deque([([current_position], [])])
+    visited_positions = set([current_position])
+
+    while queue:
+        path, plan = queue.popleft()
+        current_position = path[-1]
+
+        if current_position == goal_position:
+            return plan
+
+        next_positions = find_next_positions(current_position, adjacent_positions, visited_positions)
+        for next_position in next_positions:
+            is_hill = any(atom[0] == "ishill" and atom[1] == next_position for atom in init)
+            is_water = any(atom[0] == "iswater" and atom[1] == next_position for atom in init)
+            action = f"(climb {current_position} {next_position})" if is_hill else f"(walk {current_position} {next_position})"
+            
+            if not is_water:
+                new_path = path + [next_position]
+                new_plan = plan + [action]
+                queue.append((new_path, new_plan))
+                visited_positions.add(next_position)
+
+    return None

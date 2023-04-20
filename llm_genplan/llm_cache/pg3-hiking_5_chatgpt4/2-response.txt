@@ -1,0 +1,3 @@
+The given domain does not provide a simple strategy to solve all problems without using search, as the terrain and the location of hills, water, and trails vary in each problem. A search algorithm would be needed to explore different paths and decide which actions to take (walk or climb) to navigate through the terrain.
+
+However, if the domain were to be significantly simplified, such as having a terrain with no water or hills and a fixed starting point, a simple strategy could be applied. In that case, one could just follow the adjacent locations in a specific direction until the goal is reached.

@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    def find_next_positions(current_position, adjacent_positions, visited_positions):
+        next_positions = []
+        for (loc1, loc2) in adjacent_positions:
+            if loc1 == current_position and loc2 not in visited_positions:
+                next_positions.append(loc2)
+            elif loc2 == current_position and loc1 not in visited_positions:
+                next_positions.append(loc1)
+        return next_positions
+
+    def search(current_position, goal_position, adjacent_positions, visited_positions, plan):
+        if current_position == goal_position:
+            return plan
+
+        visited_positions.add(current_position)
+        next_positions = find_next_positions(current_position, adjacent_positions, visited_positions)
+
+        for next_position in next_positions:
+            new_plan = plan.copy()
+            is_hill = (next_position, 'hill') in objects
+            is_water = (next_position, 'water') in objects
+            action = f"(climb {current_position} {next_position})" if is_hill else f"(walk {current_position} {next_position})"
+            
+            if not is_water:
+                new_plan.append(action)
+                result = search(next_position, goal_position, adjacent_positions, visited_positions, new_plan)
+                if result:
+                    return result
+        visited_positions.remove(current_position)
+        return None
+
+    current_position = None
+    goal_position = None
+    adjacent_positions = set()
+    objects = set(objects)
+
+    for atom in init:
+        if atom[0] == "at":
+            current_position = atom[1]
+        if atom[0] == "adjacent":
+            adjacent_positions.add((atom[1], atom[2]))
+
+    for atom in goal:
+        if atom[0] == "at":
+            goal_position = atom[1]
+
+    plan = search(current_position, goal_position, adjacent_positions, set(), [])
+
+    return plan

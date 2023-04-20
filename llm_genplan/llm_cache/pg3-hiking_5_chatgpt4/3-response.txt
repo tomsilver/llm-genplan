@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_position = None
+    adjacent_positions = {}
+    goal_position = None
+
+    # Find initial and goal positions
+    for atom in init:
+        if atom[0] == "at":
+            current_position = atom[1]
+        if atom[0] == "adjacent":
+            adjacent_positions[atom[1]] = atom[2]
+
+    for atom in goal:
+        if atom[0] == "at":
+            goal_position = atom[1]
+
+    # Simple strategy: follow adjacent positions in a specific direction
+    while current_position != goal_position:
+        next_position = adjacent_positions[current_position]
+        action = f"(walk {current_position} {next_position})"
+        plan.append(action)
+        current_position = next_position
+
+    return plan
