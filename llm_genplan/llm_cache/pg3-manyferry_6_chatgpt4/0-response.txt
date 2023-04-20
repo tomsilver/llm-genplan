@@ -1,0 +1,5 @@
+The Ferry domain involves transporting cars between various locations using a ferry. There are three primary actions in this domain: sail, board, and debark. The ferry can sail between different locations, cars can board the ferry when it is empty and at a location with a car, and cars can debark from the ferry once it arrives at a destination.
+
+The domain's predicates include not-eq (to ensure two locations are not the same), car (to identify cars), location (to identify locations), at-ferry (to specify the location of the ferry), at (to specify the location of a car), empty-ferry (to indicate the ferry is empty), and on (to indicate that a car is on the ferry).
+
+The example problems provided define various initial states and goals, specifying the positions of cars, the location of the ferry, and the desired final positions of the cars. The objective is to find a sequence of actions that can achieve the specified goal from the initial state.

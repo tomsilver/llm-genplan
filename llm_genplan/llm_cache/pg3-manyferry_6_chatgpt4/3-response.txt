@@ -1,0 +1,46 @@
+def get_car_and_destination(goal):
+    car_positions = {}
+    for predicate in goal:
+        if predicate[0] == "at":
+            car_positions[predicate[1]] = predicate[2]
+    return car_positions
+
+def find_ferry_and_car_positions(init):
+    ferry_position = None
+    car_positions = {}
+    for predicate in init:
+        if predicate[0] == "at-ferry":
+            ferry_position = predicate[1]
+        elif predicate[0] == "at":
+            car_positions[predicate[1]] = predicate[2]
+    return ferry_position, car_positions
+
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Determine the initial positions of the cars and the ferry
+    ferry_position, car_positions = find_ferry_and_car_positions(init)
+    
+    # Determine the desired positions of the cars in the goal
+    car_destinations = get_car_and_destination(goal)
+    
+    for car, destination in car_destinations.items():
+        car_position = car_positions[car]
+        
+        # Sail the ferry to the location of the car
+        if ferry_position != car_position:
+            plan.append(f"(sail {ferry_position} {car_position})")
+            ferry_position = car_position
+
+        # Board the car onto the ferry
+        plan.append(f"(board {car} {car_position})")
+
+        # Sail the ferry to the destination location for the car
+        if ferry_position != destination:
+            plan.append(f"(sail {ferry_position} {destination})")
+            ferry_position = destination
+
+        # Debark the car at the destination location
+        plan.append(f"(debark {car} {destination})")
+
+    return plan

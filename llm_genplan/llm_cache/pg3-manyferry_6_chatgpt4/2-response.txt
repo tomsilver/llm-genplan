@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+Identify the current location of the ferry, and the locations of each car in the initial state.
+
+For each car that needs to be moved, perform the following steps:
+a. Sail the ferry to the location of the car.
+b. Board the car onto the ferry.
+c. Sail the ferry to the desired destination location for the car.
+d. Debark the car at the destination location.
+
+This strategy ensures that each car is transported to its desired destination one at a time, and it guarantees that the ferry will always be empty when it arrives at a car's location. This sequential approach eliminates the need for searching through various combinations of actions, as it directly follows the required steps to achieve the goal.
