@@ -1,0 +1,24 @@
+def get_plan(objects, init, goal):
+    # Parse input data
+    locations, spanners, nuts, links, position = parse_data(objects, init)
+
+    # Implement the strategy
+    plan = []
+    for nut in sorted(nuts, key=lambda n: distance(position, n, links)):
+        walk_path = find_path(position, nut, links)
+        plan.extend(walk_path)
+        position = nut
+
+        closest_spanner = min(spanners, key=lambda s: distance(position, s, links))
+        walk_path = find_path(position, closest_spanner, links)
+        plan.extend(walk_path)
+        plan.append(f"(pickup_spanner {closest_spanner} {closest_spanner} bob)")
+        position = closest_spanner
+
+        walk_path = find_path(position, nut, links)
+        plan.extend(walk_path)
+        plan.append(f"(tighten_nut {nut} {closest_spanner} bob {nut})")
+        position = nut
+        spanners.remove(closest_spanner)
+
+    return plan

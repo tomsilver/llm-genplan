@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    floors = sorted([obj[0] for obj in objects if obj[1] == 'floor'])
+    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
+    
+    origins = {p: f for p, f in [(atom[1], atom[2]) for atom in init if atom[0] == 'origin']}
+    destinations = {p: f for p, f in [(atom[1], atom[2]) for atom in init if atom[0] == 'destin']}
+    lift_positions = [atom[1] for atom in init if atom[0] == 'lift-at']
+    
+    plan = []
+    boarded_passengers = set()
+    served_passengers = set()
+    
+    while len(served_passengers) < len(passengers):
+        # Iterate through all lift positions
+        for lift_at in lift_positions:
+            # Sweep up
+            for floor in floors:
+                if lift_at != floor:
+                    plan.append(f'(up {lift_at} {floor})')
+                    lift_at = floor
+                    
+                for p in passengers:
+                    if origins[p] == floor and p not in boarded_passengers:
+                        plan.append(f'(board {floor} {p})')
+                        boarded_passengers.add(p)
+                    if destinations[p] == floor and p in boarded_passengers:
+                        plan.append(f'(depart {floor} {p})')
+                        boarded_passengers.remove(p)
+                        served_passengers.add(p)
+                        
+            # Sweep down
+            for floor in reversed(floors):
+                if lift_at != floor:
+                    plan.append(f'(down {lift_at} {floor})')
+                    lift_at = floor
+                    
+                for p in passengers:
+                    if origins[p] == floor and p not in boarded_passengers:
+                        plan.append(f'(board {floor} {p})')
+                        boarded_passengers.add(p)
+                    if destinations[p] == floor and p in boarded_passengers:
+                        plan.append(f'(depart {floor} {p})')
+                        boarded_passengers.remove(p)
+                        served_passengers.add(p)
+
+    return plan

@@ -1,0 +1,48 @@
+Given this task:
+(define (problem prob0 (:domain spanner)
+  (:objects
+    gate - location
+    location1 - location
+    location2 - location
+    location3 - location
+    location4 - location
+    shed - location
+    bob - man
+    nut1 - nut
+    nut2 - nut
+    nut3 - nut
+    spanner1 - spanner
+    spanner2 - spanner
+    spanner3 - spanner
+  )
+  (:init
+    (at bob shed)
+    (at nut1 gate)
+    (at nut2 gate)
+    (at nut3 gate)
+    (at spanner1 location2)
+    (at spanner2 location3)
+    (at spanner3 location4)
+    (link location1 location2)
+    (link location2 location3)
+    (link location3 location4)
+    (link location4 gate)
+    (link shed location1)
+    (loose nut1)
+    (loose nut2)
+    (loose nut3)
+    (useable spanner1)
+    (useable spanner2)
+    (useable spanner3)
+  )
+  (:goal (and
+    (tightened nut1)
+    (tightened nut2)
+    (tightened nut3)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(walk shed location1 bob)', '(walk location1 location2 bob)', '(walk location2 location3 bob)', '(walk location3 location4 bob)', '(pickup_spanner location4 location4 bob)', '(tighten_nut gate location4 bob gate)', '(walk gate location4 bob)', '(pickup_spanner location3 location3 bob)', '(walk location3 location4 bob)', '(tighten_nut gate location3 bob gate)', '(walk gate location4 bob)', '(walk location4 location3 bob)', '(pickup_spanner location2 location2 bob)', '(walk location2 location3 bob)', '(walk location3 location4 bob)', '(tighten_nut gate location2 bob gate)'].
+NOTE: The plan did not achieve the goal.
+Fix the code.

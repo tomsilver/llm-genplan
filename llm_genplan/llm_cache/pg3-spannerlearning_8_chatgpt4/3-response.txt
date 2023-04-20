@@ -1,0 +1,78 @@
+def get_plan(objects, init, goal):
+    # Parse input data
+    locations, spanners, nuts, links, position = parse_data(objects, init)
+
+    # Implement the strategy
+    plan = []
+    for spanner in sorted(spanners, key=lambda s: distance(position, s, links)):
+        walk_path = find_path(position, spanner, links)
+        plan.extend(walk_path)
+        plan.append(f"(pickup_spanner {spanner} {spanner} bob)")
+        position = spanner
+
+    for nut in sorted(nuts, key=lambda n: distance(position, n, links)):
+        walk_path = find_path(position, nut, links)
+        plan.extend(walk_path)
+        plan.append(f"(tighten_nut {nut} {spanners.pop()} bob {nut})")
+        position = nut
+
+    return plan
+
+
+def parse_data(objects, init):
+    locations = []
+    spanners = []
+    nuts = []
+    links = {}
+    position = None
+
+    for item in objects:
+        if item[1] == "location":
+            locations.append(item[0])
+
+    for atom in init:
+        if atom[0] == "at":
+            if atom[1] == "bob":
+                position = atom[2]
+            elif atom[1].startswith("spanner"):
+                spanners.append(atom[2])
+            elif atom[1].startswith("nut"):
+                nuts.append(atom[2])
+        elif atom[0] == "link":
+            links.setdefault(atom[1], []).append(atom[2])
+            links.setdefault(atom[2], []).append(atom[1])
+
+    return locations, spanners, nuts, links, position
+
+
+def distance(start, end, links):
+    visited = set()
+    queue = [(start, 0)]
+
+    while queue:
+        current, dist = queue.pop(0)
+        if current == end:
+            return dist
+        if current not in visited:
+            visited.add(current)
+            for neighbor in links[current]:
+                queue.append((neighbor, dist + 1))
+    return float("inf")
+
+
+def find_path(start, end, links):
+    path = []
+    visited = set()
+    queue = [(start, [])]
+
+    while queue:
+        current, history = queue.pop(0)
+        if current == end:
+            for loc1, loc2 in zip(history, history[1:]):
+                path.append(f"(walk {loc1} {loc2} bob)")
+            return path
+        if current not in visited:
+            visited.add(current)
+            for neighbor in links[current]:
+                queue.append((neighbor, history + [current]))
+    return []
