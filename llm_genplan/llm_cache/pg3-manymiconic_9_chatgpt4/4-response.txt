@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    floors = sorted([obj[0] for obj in objects if obj[1] == "floor"])
+    passengers = [obj[0] for obj in objects if obj[1] == "passenger"]
+
+    origins = {atom[1]: atom[2] for atom in init if atom[0] == "origin"}
+    destinations = {atom[1]: atom[2] for atom in init if atom[0] == "destin"}
+    initial_lift = [atom[1] for atom in init if atom[0] == "lift-at"][0]
+
+    plan = []
+    lift_position = initial_lift
+
+    # Move the lift up floor by floor
+    for floor in floors:
+        if lift_position != floor:
+            if (lift_position, floor) in [(atom[1], atom[2]) for atom in init if atom[0] == "above"]:
+                plan.append(f"(up {lift_position} {floor})")
+            else:
+                plan.append(f"(down {lift_position} {floor})")
+            lift_position = floor
+
+        for passenger in passengers:
+            if origins[passenger] == floor:
+                plan.append(f"(board {floor} {passenger})")
+
+            if destinations[passenger] == floor:
+                plan.append(f"(depart {floor} {passenger})")
+
+    # Move the lift down floor by floor
+    for floor in reversed(floors):
+        if lift_position != floor:
+            if (lift_position, floor) in [(atom[1], atom[2]) for atom in init if atom[0] == "above"]:
+                plan.append(f"(up {lift_position} {floor})")
+            else:
+                plan.append(f"(down {lift_position} {floor})")
+            lift_position = floor
+
+        for passenger in passengers:
+            if origins[passenger] == floor:
+                plan.append(f"(board {floor} {passenger})")
+
+            if destinations[passenger] == floor:
+                plan.append(f"(depart {floor} {passenger})")
+
+    return plan

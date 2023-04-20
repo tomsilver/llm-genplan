@@ -1,0 +1,11 @@
+The Miconic domain is a planning problem that simulates a simplified elevator system. In this domain, there are two types of objects: passengers and floors. The main goal is to transport passengers from their origin floor to their destination floor using the elevator.
+
+There are four actions available:
+
+Board: A passenger boards the elevator at their origin floor.
+Depart: A passenger leaves the elevator at their destination floor.
+Up: The elevator moves up from one floor to another.
+Down: The elevator moves down from one floor to another.
+The domain is defined with a set of predicates describing the state of the elevator system, such as the origin and destination floors for each passenger, the relative positions of floors (above or below), and whether a passenger has boarded or been served.
+
+Example problems provided demonstrate instances of the Miconic domain with different floor and passenger configurations. The goal for each problem is to serve all passengers, meaning they have successfully reached their destination floors.

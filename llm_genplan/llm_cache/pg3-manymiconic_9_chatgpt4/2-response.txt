@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is the "Sweep" or "Round-Trip" strategy. In this strategy, the elevator starts at the lowest floor and moves to the highest floor, picking up passengers as it goes. Once it reaches the highest floor, it then moves back down to the lowest floor, stopping at each floor to let passengers off at their destination. This strategy ensures that all passengers are picked up and dropped off at their respective destinations.
+
+To implement this strategy, follow these steps:
+
+Start at the lowest floor.
+Move up floor by floor.
+At each floor, pick up all passengers waiting at that floor (board action) and let off any passengers whose destination is the current floor (depart action).
+Once the highest floor is reached, start moving down floor by floor.
+At each floor, let off any passengers whose destination is the current floor (depart action) and pick up any passengers waiting at that floor (board action).
+Repeat until all passengers have been served.
+This strategy is simple and guarantees a solution, but it may not be the most efficient in terms of the number of actions taken, especially if the elevator has to stop at many floors with no passengers to pick up or let off. Nevertheless, it provides a straightforward way to solve all problems in the Miconic domain without using search algorithms.
