@@ -1,0 +1,71 @@
+def get_shortest_path(paths, start, end):
+    if start == end:
+        return [start]
+    if start not in paths:
+        return None
+    shortest = None
+    for node in paths[start]:
+        path = get_shortest_path(paths, node, end)
+        if path is not None:
+            if shortest is None or len(path) < len(shortest):
+                shortest = [start] + path
+    return shortest
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    objects = dict(objects)
+    locations = [obj for obj, obj_type in objects.items() if obj_type == 'location']
+    nuts = [obj for obj, obj_type in objects.items() if obj_type == 'nut']
+    spanners = [obj for obj, obj_type in objects.items() if obj_type == 'spanner']
+
+    init_dict = {}
+    for atom in init:
+        predicate, *args = atom
+        if predicate not in init_dict:
+            init_dict[predicate] = {}
+        if predicate == 'link':
+            if args[0] not in init_dict[predicate]:
+                init_dict[predicate][args[0]] = []
+            init_dict[predicate][args[0]].append(args[1])
+        else:
+            init_dict[predicate][args[0]] = args[1:]
+
+    links = {location: set() for location in locations}
+    for l1, l2_list in init_dict['link'].items():
+        for l2 in l2_list:
+            links[l1].add(l2)
+            links[l2].add(l1)
+
+    bob_loc = init_dict['at']['bob'][0]
+
+    for nut in nuts:
+        if ('tightened', nut) in goal:
+            nut_loc = init_dict['at'][nut][0]
+            path_to_nut = get_shortest_path(links, bob_loc, nut_loc)
+
+            for i in range(len(path_to_nut) - 1):
+                plan.append(f"(walk {path_to_nut[i]} {path_to_nut[i+1]} bob)")
+                bob_loc = path_to_nut[i+1]
+
+            nearest_spanner = None
+            nearest_spanner_loc = None
+            min_distance = float('inf')
+            for spanner in spanners:
+                spanner_loc = init_dict['at'][spanner][0]
+                path_to_spanner = get_shortest_path(links, bob_loc, spanner_loc)
+                if path_to_spanner is not None and len(path_to_spanner) < min_distance:
+                    nearest_spanner = spanner
+                    nearest_spanner_loc = spanner_loc
+                    min_distance = len(path_to_spanner)
+
+            if nearest_spanner is not None:
+                path_to_spanner = get_shortest_path(links, bob_loc, nearest_spanner_loc)
+                for i in range(len(path_to_spanner) - 1):
+                    plan.append(f"(walk {path_to_spanner[i]} {path_to_spanner[i+1]} bob)")
+                    bob_loc = path_to_spanner[i+1]
+
+                plan.append(f"(pickup_spanner {bob_loc} {nearest_spanner} bob)")
+                plan.append(f"(tighten_nut {bob_loc} {nearest_spanner} bob {nut})")
+
+    return plan

@@ -1,0 +1,14 @@
+def get_shortest_path(links, start, end):
+    visited = set()
+    queue = [(start, [start])]
+    while queue:
+        current_node, path = queue.pop(0)
+        if current_node == end:
+            return path
+        if current_node not in visited:
+            visited.add(current_node)
+            for neighbor in links[current_node]:
+                if neighbor not in visited:
+                    new_path = path + [neighbor]
+                    queue.append((neighbor, new_path))
+    return None
