@@ -1,0 +1,9 @@
+Since the domain involves navigating through a grid of locations with different terrain types, you can solve any problem in this domain without using search by following the given trail, which is represented by the 'ontrail' predicate. This strategy assumes that the trail connects the start and goal locations while avoiding obstacles like water and hills (when necessary).
+
+To implement this strategy, at each step, you would:
+
+Check your current location.
+Identify the next location on the trail that is adjacent to your current location.
+Perform the appropriate action (either 'walk' or 'climb') to move to that location.
+Repeat steps 1-3 until you reach the goal location.
+This strategy allows you to navigate through the grid while avoiding water and hills (unless climbing is necessary) without the need for search algorithms. It relies on the assumption that the given trail provides a valid path between the start and goal locations.

@@ -1,0 +1,9 @@
+The hiking domain is a planning problem that involves navigating through a grid of locations (loc) with different terrain types such as hills and water. The main goal is to reach a specific destination location on the grid.
+
+There are two actions available in this domain:
+
+walk: This action allows moving from one location to another, provided that the destination location is not a hill and is adjacent to the current location. The action also requires the current location to not be water.
+climb: This action allows moving from one location to another, provided that the destination location is a hill and is adjacent to the current location. The action also requires the current location to not be water.
+The domain specifies a set of predicates to define the properties of locations, such as whether a location is water, a hill, or adjacent to other locations. There are also predicates to indicate the current location (at) and if a location is part of a trail (ontrail).
+
+Example problems in this domain include a grid of locations with specified adjacency, hills, water areas, and trail segments. The problems involve starting from a given location and reaching a specific goal location while adhering to the constraints and available actions.

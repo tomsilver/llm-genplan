@@ -1,0 +1,34 @@
+def get_current_location(init):
+    for atom in init:
+        if atom[0] == 'at':
+            return atom[1]
+    return None
+
+def get_next_location(current_location, init):
+    for atom in init:
+        if atom[0] == 'ontrail' and atom[1] == current_location:
+            return atom[2]
+    return None
+
+def get_action(current_location, next_location, init):
+    if ('ishill', next_location) in init:
+        return f'(climb {current_location} {next_location})'
+    else:
+        return f'(walk {current_location} {next_location})'
+
+def get_plan(objects, init, goal):
+    plan = []
+    current_location = get_current_location(init)
+    goal_location = None
+
+    for atom in goal:
+        if atom[0] == 'at':
+            goal_location = atom[1]
+
+    while current_location != goal_location:
+        next_location = get_next_location(current_location, init)
+        action = get_action(current_location, next_location, init)
+        plan.append(action)
+        current_location = next_location
+
+    return plan
