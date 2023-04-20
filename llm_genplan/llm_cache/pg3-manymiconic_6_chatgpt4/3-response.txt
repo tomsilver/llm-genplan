@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    floors = sorted([o[0] for o in objects if o[1] == 'floor'])
+    passengers = [o[0] for o in objects if o[1] == 'passenger']
+    origins = {o[1]: o[2] for o in init if o[0] == 'origin'}
+    destinations = {o[1]: o[2] for o in init if o[0] == 'destin'}
+    lift_at = next(o[1] for o in init if o[0] == 'lift-at')
+
+    plan = []
+
+    unserved_passengers = set(passengers)
+    direction = 1
+
+    while unserved_passengers:
+        next_floor = floors[(floors.index(lift_at) + direction) % len(floors)]
+
+        if direction == 1:
+            plan.append(f"(up {lift_at} {next_floor})")
+        else:
+            plan.append(f"(down {lift_at} {next_floor})")
+
+        lift_at = next_floor
+
+        # Board passengers at the current floor
+        for p in passengers:
+            if origins[p] == lift_at and p in unserved_passengers:
+                plan.append(f"(board {lift_at} {p})")
+
+        # Depart passengers at the current floor
+        for p in passengers:
+            if destinations[p] == lift_at and p not in unserved_passengers:
+                plan.append(f"(depart {lift_at} {p})")
+                unserved_passengers.remove(p)
+
+        # Update the direction if at the top or bottom floor
+        if lift_at == floors[0]:
+            direction = 1
+        elif lift_at == floors[-1]:
+            direction = -1
+
+    return plan

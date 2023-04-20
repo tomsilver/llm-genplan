@@ -1,0 +1,17 @@
+The Miconic domain models a simplified elevator system in a building with multiple floors. The main goal is to transport passengers from their origin floors to their destination floors using an elevator. There are three main entities in this domain: passengers, floors, and the elevator (or lift).
+
+The domain defines the following predicates:
+
+origin: representing the floor a passenger starts on.
+destin: representing the floor a passenger wants to go to.
+above: representing the relative vertical position of floors.
+boarded: representing if a passenger is currently on the elevator.
+served: representing if a passenger has reached their destination floor.
+lift-at: representing the floor the elevator is currently on.
+There are four possible actions in this domain:
+
+board: a passenger boards the elevator when it's on their origin floor.
+depart: a passenger departs from the elevator when it's on their destination floor.
+up: the elevator moves up to a floor that is above its current position.
+down: the elevator moves down to a floor that is below its current position.
+The example problems provided define a set of floors and passengers, as well as their origin and destination floors, and the initial positions of the elevator. The goal is to serve all passengers by transporting them to their respective destination floors.

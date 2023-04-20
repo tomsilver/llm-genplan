@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in the Miconic domain without using search is the "Sweep" method. This strategy involves moving the elevator sequentially through the floors, either in an ascending or descending order, and allowing passengers to board and depart as necessary. Here are the steps for this strategy:
+
+Start at the lowest floor (or the floor where the elevator is initially located).
+Move the elevator upwards through the floors, stopping at each floor:
+a. If there are passengers waiting at the current floor with their origin matching the current floor, allow them to board the elevator.
+b. If there are passengers on the elevator with their destination matching the current floor, allow them to depart the elevator.
+Once the elevator reaches the top floor, reverse its direction and move downwards through the floors, again stopping at each floor and repeating steps 2a and 2b.
+Continue to sweep up and down until all passengers have been served (i.e., reached their destination floors).
+This strategy ensures that all passengers are picked up and dropped off at their destinations without the need for any complex search algorithm. The main disadvantage of the Sweep method is that it may not be the most efficient in terms of the number of actions or time taken, especially if the distribution of passengers and their destinations is sparse. However, it guarantees that all passengers will eventually be served.
