@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+Start at the home base location.
+Pick up a newspaper at the home base.
+Move to the next safe location that wants a newspaper.
+Deliver the newspaper to that location.
+Repeat steps 2-4 until all locations that want a newspaper are satisfied.
+Once all locations are satisfied, the problem is solved.
+This strategy works because the agent only needs to visit safe locations and deliver newspapers to locations that want them. Since the agent can carry only one newspaper at a time, the agent will have to return to the home base each time to pick up the next newspaper. By following this strategy, the agent can deliver newspapers to all locations without the need for a search algorithm.

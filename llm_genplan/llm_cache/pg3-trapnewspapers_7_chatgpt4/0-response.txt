@@ -1,0 +1,8 @@
+The trapnewspapers domain involves a delivery agent picking up newspapers from a home base and delivering them to various locations. The domain has two types of objects: loc (location) and paper (newspaper). There are six predicates in the domain to describe different states, such as the agent being at a location, a location being a home base, a location being satisfied with its newspaper delivery, etc.
+
+There are three actions in this domain:
+
+pick-up: This action allows the agent to pick up a newspaper from the home base if the agent is at the home base and the newspaper is unpacked. The effect of this action is that the agent starts carrying the newspaper.
+move: This action allows the agent to move from one location to another if the agent is at the starting location and the starting location is safe. The effect of this action is that the agent is no longer at the starting location and is now at the destination location.
+deliver: This action allows the agent to deliver a newspaper to a location if the agent is at that location and carrying the newspaper. The effect of this action is that the agent stops carrying the newspaper, the location no longer wants a paper, and the location is satisfied with its newspaper delivery.
+The example problems provided describe scenarios where the agent must deliver newspapers to different locations while navigating through a set of safe locations. The goal is to satisfy all the locations that want a newspaper by delivering the correct paper to each location.
