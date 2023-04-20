@@ -1,0 +1,10 @@
+The simple strategy for solving all problems in this domain without using search involves following these steps:
+
+Identify the goal states, which indicate the target locations for the balls.
+For each ball in the goal state, execute the following steps:
+a. Move Robby to the room where the ball is currently located.
+b. Pick up the ball using a free gripper.
+c. Move Robby to the room where the ball needs to be according to the goal state.
+d. Drop the ball in that room, freeing the gripper.
+Repeat steps 2a-2d for each ball in the goal state until all balls are in their target locations.
+This strategy assumes that there are enough grippers for Robby to pick up the balls one by one, and the rooms are easily accessible. It is a straightforward approach that may not be the most efficient but can solve the problems in this domain without the need for search algorithms.
