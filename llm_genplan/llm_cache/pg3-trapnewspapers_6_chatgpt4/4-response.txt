@@ -1,0 +1,47 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    locations = sorted([o[0] for o in objects if o[1] == 'loc'])
+    papers = [o[0] for o in objects if o[1] == 'paper']
+    
+    home_base = None
+    wants_paper = set()
+    safe_locs = set()
+    
+    for atom in init:
+        if atom[0] == 'ishomebase':
+            home_base = atom[1]
+        elif atom[0] == 'wantspaper':
+            wants_paper.add(atom[1])
+        elif atom[0] == 'safe':
+            safe_locs.add(atom[1])
+    
+    current_loc = home_base
+    
+    for loc in locations:
+        if loc in wants_paper:
+            if loc not in safe_locs:
+                continue
+            
+            # Pick up a paper from the home base
+            for paper in papers:
+                if ('unpacked', paper) in init:
+                    plan.append(f'(pick-up {paper} {home_base})')
+                    init.remove(('unpacked', paper))
+                    break
+            
+            # Move to the location
+            if loc != current_loc:
+                plan.append(f'(move {current_loc} {loc})')
+                current_loc = loc
+            
+            # Deliver the paper
+            plan.append(f'(deliver {paper} {current_loc})')
+            wants_paper.remove(loc)
+            
+            # Move back to the home base for the next paper
+            if current_loc != home_base:
+                plan.append(f'(move {current_loc} {home_base})')
+                current_loc = home_base
+    
+    return plan

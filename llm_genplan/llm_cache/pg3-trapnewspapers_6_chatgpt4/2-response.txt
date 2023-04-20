@@ -1,0 +1,9 @@
+A simple strategy for solving all problems in this domain without using search can be described as follows:
+
+Start at the home base (ishomebase location).
+Pick up a paper (using the pick-up action).
+Move to the nearest location that wants a paper and is safe (using the move action).
+Deliver the paper to the location (using the deliver action).
+Repeat steps 2-4 for all remaining locations that want a paper.
+Once all locations have been satisfied, the goal is achieved.
+This strategy assumes that there is always a safe path to every location that wants a paper. It eliminates the need for search by following a straightforward process to deliver newspapers to all desired locations.
