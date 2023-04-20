@@ -1,0 +1,6 @@
+The ferry domain involves moving cars between different locations using a ferry. The domain consists of three main actions: sail, board, and debark.
+
+Sail action: The ferry moves from one location to another.
+Board action: A car boards the ferry at a particular location, provided the ferry is empty.
+Debark action: A car disembarks from the ferry at a particular location.
+The domain's predicates describe the status of cars and locations, including whether a car is on the ferry, a car's location, and whether the ferry is empty. The example problems define specific scenarios with different cars and locations, with initial states and goal states for the cars' desired locations. The objective is to determine a sequence of actions to move the cars to their target locations using the ferry.

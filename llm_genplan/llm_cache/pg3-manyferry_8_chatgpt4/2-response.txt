@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+Identify the initial and goal locations of each car.
+For each car, perform the following actions in order:
+a. Sail the ferry to the car's initial location.
+b. Board the car onto the ferry.
+c. Sail the ferry to the car's goal location.
+d. Debark the car at the goal location.
+This strategy works because the ferry can only hold one car at a time, and each car needs to be moved individually. By following the above steps, you ensure that each car is transported from its initial location to its goal location, fulfilling the problem's requirements.
+
+Note that this strategy might not be the most efficient one in terms of the number of actions or the time taken, but it guarantees a solution for all problems in this domain.
