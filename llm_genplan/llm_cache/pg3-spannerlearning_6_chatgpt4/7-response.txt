@@ -1,0 +1,68 @@
+def get_plan(objects, init, goal):
+    plan = []
+    locations = set()
+    spanners = set()
+    nuts = set()
+    bob_location = ""
+    links = {}
+    
+    for obj, obj_type in objects:
+        if obj_type == "location":
+            locations.add(obj)
+        elif obj_type == "spanner":
+            spanners.add(obj)
+        elif obj_type == "nut":
+            nuts.add(obj)
+
+    for atom in init:
+        if atom[0] == "at" and atom[1] == "bob":
+            bob_location = atom[2]
+        elif atom[0] == "link":
+            if atom[1] not in links:
+                links[atom[1]] = set()
+            links[atom[1]].add(atom[2])
+            if atom[2] not in links:
+                links[atom[2]] = set()
+            links[atom[2]].add(atom[1])
+    
+    starting_location = bob_location
+    
+    for nut in nuts:
+        nut_location = ""
+        for atom in init:
+            if atom[0] == "at" and atom[1] == nut:
+                nut_location = atom[2]
+                break
+        
+        for spanner in spanners:
+            spanner_location = ""
+            for atom in init:
+                if atom[0] == "at" and atom[1] == spanner:
+                    spanner_location = atom[2]
+                    break
+            
+            if spanner_location:
+                path_to_spanner = find_path(links, bob_location, spanner_location)
+                for i in range(len(path_to_spanner) - 1):
+                    plan.append(f"(walk {path_to_spanner[i]} {path_to_spanner[i+1]} bob)")
+                plan.append(f"(pickup_spanner {spanner_location} {spanner} bob)")
+
+                path_to_nut = find_path(links, spanner_location, nut_location)
+                for i in range(len(path_to_nut) - 1):
+                    plan.append(f"(walk {path_to_nut[i]} {path_to_nut[i+1]} bob)")
+
+                # If we are at the gate, walk to location3 first before attempting to tighten the nut
+                if bob_location == "gate":
+                    plan.append(f"(walk gate location3 bob)")
+
+                plan.append(f"(tighten_nut {nut_location} {spanner} bob {nut})")
+
+                path_to_start = find_path(links, nut_location, starting_location)
+                for i in range(len(path_to_start) - 1):
+                    plan.append(f"(walk {path_to_start[i]} {path_to_start[i+1]} bob)")
+
+                spanners.remove(spanner)
+                bob_location = starting_location
+                break
+
+    return plan

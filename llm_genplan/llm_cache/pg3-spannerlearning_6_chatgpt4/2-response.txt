@@ -1,0 +1,11 @@
+A simple strategy for solving all problems in this domain without using search involves the following steps:
+
+Identify the location of each spanner and the path to reach it from Bob's initial location (shed).
+Identify the location of each nut and the path to reach it from the respective spanner's location.
+For each nut:
+a. Have Bob walk to the location of the nearest spanner he hasn't used yet, following the path identified in step 1.
+b. Once Bob reaches the spanner's location, pick up the spanner using the "pickup_spanner" action.
+c. Walk to the location of the nut, following the path identified in step 2.
+d. Tighten the nut using the "tighten_nut" action, which also renders the spanner unusable.
+Repeat step 3 until all nuts are tightened.
+This strategy eliminates the need for search by using a greedy approach. Bob picks up the nearest available spanner and tightens the nuts one by one. While this strategy might not be the most optimal one, it will still accomplish the goal of tightening all nuts.

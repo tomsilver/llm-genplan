@@ -1,0 +1,53 @@
+def get_plan(objects, init, goal):
+    plan = []
+    locations = set()
+    spanners = set()
+    nuts = set()
+    bob_location = ""
+    
+    for obj, obj_type in objects:
+        if obj_type == "location":
+            locations.add(obj)
+        elif obj_type == "spanner":
+            spanners.add(obj)
+        elif obj_type == "nut":
+            nuts.add(obj)
+
+    for atom in init:
+        if atom[0] == "at" and atom[1] == "bob":
+            bob_location = atom[2]
+            break
+
+    for nut in nuts:
+        nut_location = ""
+        for atom in init:
+            if atom[0] == "at" and atom[1] == nut:
+                nut_location = atom[2]
+                break
+        
+        for spanner in spanners:
+            spanner_location = ""
+            for atom in init:
+                if atom[0] == "at" and atom[1] == spanner:
+                    spanner_location = atom[2]
+                    break
+            
+            if spanner_location:
+                # Walk to spanner location
+                plan.append(f"(walk {bob_location} {spanner_location} bob)")
+
+                # Pick up the spanner
+                plan.append(f"(pickup_spanner {spanner_location} {spanner} bob)")
+
+                # Walk to the nut location
+                plan.append(f"(walk {spanner_location} {nut_location} bob)")
+
+                # Tighten the nut
+                plan.append(f"(tighten_nut {nut_location} {spanner} bob {nut})")
+
+                # Remove the spanner from the available spanners
+                spanners.remove(spanner)
+                bob_location = nut_location
+                break
+
+    return plan

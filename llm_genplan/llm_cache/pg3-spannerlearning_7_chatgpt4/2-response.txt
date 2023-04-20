@@ -1,0 +1,10 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+Bob should start at the shed and visit all the locations in a systematic order, either following the links or using a depth-first or breadth-first traversal.
+At each location, if there is a spanner, Bob should pick it up.
+When Bob reaches the gate location, he should try to use each carried spanner to tighten the loose nuts.
+a. If a spanner is useable and there is a loose nut at the gate, use the spanner to tighten the nut.
+b. If a nut is tightened, mark it as tightened and the spanner as not useable.
+Repeat step 3 until all nuts are tightened.
+The goal is achieved when all nuts are tightened.
+By following this strategy, Bob can systematically tighten all the nuts without the need for search, as he will eventually visit all the locations and collect all the available spanners.

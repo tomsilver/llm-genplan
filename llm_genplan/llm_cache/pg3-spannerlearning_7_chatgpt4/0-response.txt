@@ -1,0 +1,5 @@
+The "spanner" domain is a problem-solving scenario in which a man named Bob is tasked with tightening loose nuts using available spanners. The domain contains various locations, including a shed, gate, and other locations connected by links. There are different types of objects such as man, nut, spanner, and location.
+
+Predicates in this domain determine the state of objects, such as whether a spanner is useable or if a nut is tightened or loose. Bob can perform three actions: walk from one location to another, pick up a spanner at a location, and tighten a nut using a carried spanner.
+
+The example problems provided in the domain require Bob to tighten all the loose nuts using available spanners while navigating through the connected locations. The problems differ in the number of spanners and their placements in the locations. The goal is to have all the nuts tightened.
