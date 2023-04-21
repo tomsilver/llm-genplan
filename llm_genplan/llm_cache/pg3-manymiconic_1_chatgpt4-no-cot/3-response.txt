@@ -1,0 +1,47 @@
+def get_plan(objects, init, goal):
+    objects = dict(objects)
+    origins = {}
+    destinations = {}
+    lift_position = None
+
+    for atom in init:
+        if atom[0] == "origin":
+            origins[atom[1]] = atom[2]
+        elif atom[0] == "destin":
+            destinations[atom[1]] = atom[2]
+        elif atom[0] == "lift-at":
+            lift_position = atom[1]
+
+    passengers = sorted(origins.keys(), key=lambda p: (objects[origins[p]], objects[p]))
+
+    plan = []
+
+    for passenger in passengers:
+        origin = origins[passenger]
+        destination = destinations[passenger]
+
+        if lift_position != origin:
+            if objects[lift_position] < objects[origin]:
+                while lift_position != origin:
+                    plan.append(f"(up {lift_position} {origin})")
+                    lift_position = origin
+            else:
+                while lift_position != origin:
+                    plan.append(f"(down {lift_position} {origin})")
+                    lift_position = origin
+
+        plan.append(f"(board {origin} {passenger})")
+
+        if lift_position != destination:
+            if objects[lift_position] < objects[destination]:
+                while lift_position != destination:
+                    plan.append(f"(up {lift_position} {destination})")
+                    lift_position = destination
+            else:
+                while lift_position != destination:
+                    plan.append(f"(down {lift_position} {destination})")
+                    lift_position = destination
+
+        plan.append(f"(depart {destination} {passenger})")
+
+    return plan
