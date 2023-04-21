@@ -15,6 +15,7 @@ dependencies = [
    "pddlgym@git+https://github.com/tomsilver/pddlgym.git",
    "pathos",
    "pyperclip",
+   "pandas",
 ]
 
 [project.optional-dependencies]
@@ -26,7 +27,6 @@ develop = [
     "pylint>=2.14.5",
     "pytest-pylint>=0.18.0",
     "pytest>=7.2.2",
-    "pandas",
 ]
 
 [tool.setuptools.packages.find]
