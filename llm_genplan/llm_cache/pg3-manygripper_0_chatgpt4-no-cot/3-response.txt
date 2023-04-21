@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    # Get the initial locations of balls and their target locations from the goal
+    ball_locations = {atom[1]: atom[2] for atom in init if atom[0] == 'at'}
+    target_locations = {atom[1]: atom[2] for atom in goal}
+
+    # Find Robby's initial location
+    robby_location = [atom[1] for atom in init if atom[0] == 'at-robby'][0]
+
+    # Find available grippers
+    free_grippers = [atom[1] for atom in init if atom[0] == 'free']
+
+    # Initialize the plan
+    plan = []
+
+    # Iterate through balls
+    for ball, location in ball_locations.items():
+        target_location = target_locations.get(ball)
+
+        if target_location:
+            # Move Robby to the ball's location
+            if location != robby_location:
+                plan.append(f'(move {robby_location} {location})')
+                robby_location = location
+
+            # Pick up the ball with a free gripper
+            gripper = free_grippers.pop()
+            plan.append(f'(pick {ball} {location} {gripper})')
+
+            # Move Robby to the target location
+            if target_location != robby_location:
+                plan.append(f'(move {robby_location} {target_location})')
+                robby_location = target_location
+
+            # Drop the ball
+            plan.append(f'(drop {ball} {target_location} {gripper})')
+
+            # Make the gripper free again
+            free_grippers.append(gripper)
+
+    return plan

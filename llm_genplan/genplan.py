@@ -75,25 +75,27 @@ def get_genplan_from_llm(
     prompt0 = f"Domain:\n{domain_str.strip()}\n\n"
     if problems_str:
         prompt0 += f"Example problems:\n{problems_str.strip()}\n"
-    prompt0 += "Write a short summary of this domain in words."
-    run_prompt(prompt0, save_path, prompt_num=0)
 
-    # Optionally show some representation of the problem distribution, like
-    # (partial) code that generates problems.
-    if FLAGS.prompt_problem_distribution != "none":
-        dist_str = get_prompt_problem_distribution(
-            FLAGS.env, FLAGS.prompt_problem_distribution
+    if not FLAGS.skip_chain_of_thought:
+        prompt0 += "Write a short summary of this domain in words."
+        run_prompt(prompt0, save_path, prompt_num=0)
+
+        # Optionally show some representation of the problem distribution, like
+        # (partial) code that generates problems.
+        if FLAGS.prompt_problem_distribution != "none":
+            dist_str = get_prompt_problem_distribution(
+                FLAGS.env, FLAGS.prompt_problem_distribution
+            )
+            prompt1 = f"Problem distribution:\n{dist_str.strip()}\n\n"
+            prompt1 += "Write a short summary of the problem distribution in words."
+            run_prompt(prompt1, save_path, prompt_num=1)
+
+        # Simple strategy without search.
+        prompt2 = (
+            "There is a simple strategy for solving all problems in this domain "
+            "without using search. What is that strategy?"
         )
-        prompt1 = f"Problem distribution:\n{dist_str.strip()}\n\n"
-        prompt1 += "Write a short summary of the problem distribution in words."
-        run_prompt(prompt1, save_path, prompt_num=1)
-
-    # Simple strategy without search.
-    prompt2 = (
-        "There is a simple strategy for solving all problems in this domain "
-        "without using search. What is that strategy?"
-    )
-    run_prompt(prompt2, save_path, prompt_num=2)
+        run_prompt(prompt2, save_path, prompt_num=2)
 
     # Python function.
     if all_train_tasks[0].typed:
@@ -117,6 +119,15 @@ where
     - `plan` is a list of actions, where each action is a ground operator
        represented as a string (e.g., '(operator-baz object-qux ...)')
 """
+
+    if FLAGS.skip_chain_of_thought:
+        no_cot_prompt0 = prompt0
+        no_cot_prompt0 += (
+            "There is a simple strategy for solving all problems in this "
+            "domain without using search. "
+        )
+        no_cot_prompt0 += first_genplan_prompt
+        first_genplan_prompt = no_cot_prompt0
 
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""
