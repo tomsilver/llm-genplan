@@ -10,7 +10,7 @@ def get_plan(objects, init, goal):
             break
         next_location = next_location[0]
 
-        if (next_location, 'ishill') in init:
+        if (next_location, 'loc') in objects and ('ishill', next_location) in init:
             action = f'(climb {current_location} {next_location})'
         else:
             action = f'(walk {current_location} {next_location})'
