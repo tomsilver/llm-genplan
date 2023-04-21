@@ -1,0 +1,51 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    origins = {}
+    destins = {}
+    lift_floor = None
+    
+    for atom in init:
+        if atom[0] == "origin":
+            origins[atom[1]] = atom[2]
+        elif atom[0] == "destin":
+            destins[atom[1]] = atom[2]
+        elif atom[0] == "lift-at":
+            lift_floor = atom[1]
+
+    floors = sorted([f for f, t in objects if t == "floor"], key=lambda x: (int(x.split("_")[0][1:]), int(x.split("_")[1][1:])))
+
+    def get_move_actions(from_floor, to_floor):
+        if from_floor == to_floor:
+            return []
+        
+        move_actions = []
+        from_idx = floors.index(from_floor)
+        to_idx = floors.index(to_floor)
+        
+        if from_idx < to_idx:
+            for i in range(from_idx, to_idx):
+                move_actions.append(f"(up {floors[i]} {floors[i + 1]})")
+        else:
+            for i in range(from_idx, to_idx, -1):
+                move_actions.append(f"(down {floors[i]} {floors[i - 1]})")
+                
+        return move_actions
+    
+    for passenger in [p for p, t in objects if t == "passenger"]:
+        origin_floor = origins[passenger]
+        destin_floor = destins[passenger]
+        
+        # Move lift to origin floor
+        plan.extend(get_move_actions(lift_floor, origin_floor))
+        # Board passenger
+        plan.append(f"(board {origin_floor} {passenger})")
+        
+        # Move lift to destination floor
+        plan.extend(get_move_actions(origin_floor, destin_floor))
+        # Depart passenger
+        plan.append(f"(depart {destin_floor} {passenger})")
+        
+        lift_floor = destin_floor
+        
+    return plan
