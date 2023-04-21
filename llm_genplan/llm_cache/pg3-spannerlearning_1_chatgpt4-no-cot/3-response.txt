@@ -1,0 +1,62 @@
+def get_plan(objects, init, goal):
+    # Extract information from objects, init, and goal
+    man = [obj for obj, obj_type in objects if obj_type == "man"][0]
+    spanners = [obj for obj, obj_type in objects if obj_type == "spanner"]
+    nuts = [obj for obj, obj_type in objects if obj_type == "nut"]
+
+    man_location = [loc for pred, loc, loc2 in init if pred == "at" and loc2 == man][0]
+
+    spanner_locations = {spanner: loc for spanner, loc in [(pred[1], pred[2]) for pred in init if pred[0] == "at" and pred[1] in spanners]}
+    nut_locations = {nut: loc for nut, loc in [(pred[1], pred[2]) for pred in init if pred[0] == "at" and pred[1] in nuts]}
+
+    # Get the links between locations
+    links = [(loc1, loc2) for pred, loc1, loc2 in init if pred == "link"]
+
+    # Helper function to find the shortest path between two locations
+    def shortest_path(start, end, links):
+        visited = set()
+        queue = [[start]]
+
+        while queue:
+            path = queue.pop(0)
+            node = path[-1]
+
+            if node == end:
+                return path
+
+            if node not in visited:
+                neighbors = [loc2 for loc1, loc2 in links if loc1 == node] + [loc1 for loc1, loc2 in links if loc2 == node]
+
+                for neighbor in neighbors:
+                    new_path = list(path)
+                    new_path.append(neighbor)
+                    queue.append(new_path)
+
+                visited.add(node)
+
+    plan = []
+
+    # Find the nearest spanner and walk there
+    nearest_spanner = min(spanners, key=lambda s: len(shortest_path(man_location, spanner_locations[s], links)))
+    nearest_spanner_location = spanner_locations[nearest_spanner]
+
+    for loc in shortest_path(man_location, nearest_spanner_location, links)[1:]:
+        plan.append(f"(walk {man_location} {loc} {man})")
+        man_location = loc
+
+    # Pick up the spanner
+    plan.append(f"(pickup_spanner {man_location} {nearest_spanner} {man})")
+
+    # Tighten all nuts
+    for nut in nuts:
+        nut_location = nut_locations[nut]
+
+        # Walk to the nut location
+        for loc in shortest_path(man_location, nut_location, links)[1:]:
+            plan.append(f"(walk {man_location} {loc} {man})")
+            man_location = loc
+
+        # Tighten the nut
+        plan.append(f"(tighten_nut {man_location} {nearest_spanner} {man} {nut})")
+
+    return plan
