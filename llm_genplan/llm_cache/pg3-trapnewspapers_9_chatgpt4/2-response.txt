@@ -1,0 +1,10 @@
+A simple strategy for solving all problems in this domain without using search is to follow these steps:
+
+1. Start at the home base (ishomebase location).
+2. Pick up an unpacked newspaper (using the pick-up action).
+3. Move to the next safe location that wants a newspaper (using the move action).
+4. Deliver the newspaper to that location (using the deliver action), which satisfies the location.
+5. Repeat steps 2-4 until all locations that want a newspaper have been satisfied.
+6. Check if the goal state has been reached, i.e., all specified locations are satisfied.
+
+This greedy strategy does not require any search, as it sequentially delivers newspapers to each location that wants one, ensuring that the delivery person always moves to a safe location and only carries one newspaper at a time.
