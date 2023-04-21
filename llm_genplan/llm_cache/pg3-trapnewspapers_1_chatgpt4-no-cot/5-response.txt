@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    homebase = None
+    safe_locs = []
+    loc_papers = {}
+    paper_needs = {}
+
+    for atom in init:
+        if atom[0] == 'at':
+            homebase = atom[1]
+        elif atom[0] == 'safe':
+            safe_locs.append(atom[1])
+        elif atom[0] == 'unpacked':
+            loc_papers[homebase] = loc_papers.get(homebase, []) + [atom[1]]
+        elif atom[0] == 'wantspaper':
+            paper_needs[atom[1]] = True
+
+    for paper, loc in loc_papers.items():
+        for l in loc:
+            plan.append(f'(pick-up {l} {homebase})')
+
+    current_loc = homebase
+    for loc in safe_locs:
+        if paper_needs.get(loc):
+            plan.append(f'(move {current_loc} {loc})')
+            current_loc = loc
+            for paper in list(loc_papers[homebase]):  # Create a copy of the list to avoid removing items while iterating
+                plan.append(f'(deliver {paper} {loc})')
+                loc_papers[homebase].remove(paper)
+                if not paper_needs.get(loc):
+                    break
+
+    return plan

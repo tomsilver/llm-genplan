@@ -1,58 +1,46 @@
 def get_plan(objects, init, goal):
-    # Extract floors, passengers, origins, destinations, and initial lift positions from objects and init
-    floors = sorted([p for p, t in objects if t == "floor"])
-    origins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "origin")}
-    destins = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "destin")}
-    lift_floors = [f for f, in (atom[1:] for atom in init if atom[0] == "lift-at")]
-
-    # Get move actions between two floors
-    def get_move_actions(from_floor, to_floor):
-        if from_floor == to_floor:
-            return []
-
-        move_actions = []
-        from_idx = floors.index(from_floor)
-        to_idx = floors.index(to_floor)
-
-        if from_floor.split("_")[1] != to_floor.split("_")[1]:
-            return move_actions
-
-        if from_idx < to_idx:
-            for i in range(from_idx, to_idx):
-                move_actions.append(f"(up {floors[i]} {floors[i + 1]})")
-        else:
-            for i in range(from_idx, to_idx, -1):
-                move_actions.append(f"(down {floors[i]} {floors[i - 1]})")
-
-        return move_actions
-
-    # Generate plan
     plan = []
-    for lift_floor in lift_floors:
-        for passenger in [p for p, t in objects if t == "passenger"]:
-            origin_floor = origins[passenger]
-            destin_floor = destins[passenger]
-
-            lift_floor_with_same_b_value = lift_floor.split("_")[0] + "_" + origin_floor.split("_")[1]
-
-            # Move lift to floor with same "_b" value as origin floor
-            plan.extend(get_move_actions(lift_floor, lift_floor_with_same_b_value))
-
-            # Move lift to origin floor
-            plan.extend(get_move_actions(lift_floor_with_same_b_value, origin_floor))
-            # Board passenger
-            plan.append(f"(board {origin_floor} {passenger})")
-
-            lift_floor_with_same_b_value = lift_floor.split("_")[0] + "_" + destin_floor.split("_")[1]
-
-            # Move lift to floor with same "_b" value as destination floor
-            plan.extend(get_move_actions(origin_floor, lift_floor_with_same_b_value))
-
-            # Move lift to destination floor
-            plan.extend(get_move_actions(lift_floor_with_same_b_value, destin_floor))
-            # Depart passenger
-            plan.append(f"(depart {destin_floor} {passenger})")
-
-            lift_floor = destin_floor
-
+    passengers = [p for p, t in objects if t == "passenger"]
+    origins = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == "origin"]}
+    destinations = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == "destin"]}
+    current_floor = next(atom[1] for atom in init if atom[0] == "lift-at")
+    
+    for passenger in passengers:
+        origin_floor = origins[passenger]
+        destin_floor = destinations[passenger]
+        
+        # Move to the origin floor
+        while current_floor != origin_floor:
+            current_floor_number, current_floor_suffix = current_floor[1:].split("_")
+            origin_floor_number, origin_floor_suffix = origin_floor[1:].split("_")
+            
+            if int(current_floor_number) < int(origin_floor_number):
+                next_floor = "f" + str(int(current_floor_number) + 1) + "_" + current_floor_suffix
+                plan.append(f"(up {current_floor} {next_floor})")
+                current_floor = next_floor
+            else:
+                next_floor = "f" + str(int(current_floor_number) - 1) + "_" + current_floor_suffix
+                plan.append(f"(down {current_floor} {next_floor})")
+                current_floor = next_floor
+        
+        # Board the passenger
+        plan.append(f"(board {current_floor} {passenger})")
+        
+        # Move to the destination floor
+        while current_floor != destin_floor:
+            current_floor_number, current_floor_suffix = current_floor[1:].split("_")
+            destin_floor_number, destin_floor_suffix = destin_floor[1:].split("_")
+            
+            if int(current_floor_number) < int(destin_floor_number):
+                next_floor = "f" + str(int(current_floor_number) + 1) + "_" + current_floor_suffix
+                plan.append(f"(up {current_floor} {next_floor})")
+                current_floor = next_floor
+            else:
+                next_floor = "f" + str(int(current_floor_number) - 1) + "_" + current_floor_suffix
+                plan.append(f"(down {current_floor} {next_floor})")
+                current_floor = next_floor
+        
+        # Depart the passenger
+        plan.append(f"(depart {current_floor} {passenger})")
+    
     return plan

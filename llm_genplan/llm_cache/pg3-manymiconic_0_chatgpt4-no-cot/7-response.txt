@@ -1,8 +1,50 @@
-It seems that there is an issue with the very first action in the plan, `(down f8_b0 f7_b1)`. The precondition of this action is not satisfied, as it requires the lift to be at `f8_b0` and `f7_b1` to be above `f8_b0`. According to the initial state, the lifts are at `f7_b0` and `f8_b1`. Therefore, the first action should be changed to match the lift's initial position.
+def get_plan(objects, init, goal):
+    plan = []
+    passengers = [p for p, t in objects if t == "passenger"]
+    origins = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == "origin"]}
+    destinations = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == "destin"]}
+    current_floors = {lift: floor for lift, floor in [tuple(atom[1:])[::-1] for atom in init if atom[0] == "lift-at"]}  # Fix is here
 
-Let's replace the first action with `(down f8_b1 f7_b1)` and the precondition `(above f7_b1 f8_b1)`.
+    for passenger in passengers:
+        origin_floor = origins[passenger]
+        destin_floor = destinations[passenger]
+        selected_lift = next(lift for lift, floor in current_floors.items() if floor[-2:] == origin_floor[-2:])
+        current_floor = current_floors[selected_lift]
 
-The corrected plan should look like this:
+        # Move to the origin floor
+        while current_floor != origin_floor:
+            current_floor_number, current_floor_suffix = current_floor[1:].split("_")
+            origin_floor_number, origin_floor_suffix = origin_floor[1:].split("_")
 
-```
-['(down f8_b1 f7_b1)', '(down f7_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(board f5_b0 p1_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(up f6_b1 f7_b0)', '(up f7_b0 f7_b1)', '(up f7_b1 f8_b0)', '(down f8_b0 f7_b1)', '(down f7_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(depart f2_b0 p1_b0)', '(board f2_b0 p0_b0)', '(down f2_b0 f1_b1)', '(down f1_b1 f1_b0)', '(depart f1_b0 p0_b0)', '(board f1_b1 p1_b1)', '(up f1_b1 f2_b0)', '(up f2_b0 f2_b1)', '(up f2_b1 f3_b0)', '(up f3_b0 f3_b1)', '(up f3_b1 f4_b0)', '(up f4_b0 f4_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(depart f6_b1 p1_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(board f4_b1 p0_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(
+            if int(current_floor_number) < int(origin_floor_number):
+                next_floor = "f" + str(int(current_floor_number) + 1) + "_" + current_floor_suffix
+                plan.append(f"(up {current_floor} {next_floor} {selected_lift})")
+                current_floor = next_floor
+            else:
+                next_floor = "f" + str(int(current_floor_number) - 1) + "_" + current_floor_suffix
+                plan.append(f"(down {current_floor} {next_floor} {selected_lift})")
+                current_floor = next_floor
+
+        # Board the passenger
+        plan.append(f"(board {current_floor} {passenger} {selected_lift})")
+        current_floors[selected_lift] = origin_floor
+
+        # Move to the destination floor
+        while current_floor != destin_floor:
+            current_floor_number, current_floor_suffix = current_floor[1:].split("_")
+            destin_floor_number, destin_floor_suffix = destin_floor[1:].split("_")
+
+            if int(current_floor_number) < int(destin_floor_number):
+                next_floor = "f" + str(int(current_floor_number) + 1) + "_" + current_floor_suffix
+                plan.append(f"(up {current_floor} {next_floor} {selected_lift})")
+                current_floor = next_floor
+            else:
+                next_floor = "f" + str(int(current_floor_number) - 1) + "_" + current_floor_suffix
+                plan.append(f"(down {current_floor} {next_floor} {selected_lift})")
+                current_floor = next_floor
+
+        # Depart the passenger
+        plan.append(f"(depart {current_floor} {passenger} {selected_lift})")
+        current_floors[selected_lift] = destin_floor
+
+    return plan

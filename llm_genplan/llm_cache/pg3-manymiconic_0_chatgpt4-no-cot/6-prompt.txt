@@ -49,10 +49,12 @@ Given this task:
   )    
 )
         
-The code failed. It returned the following plan: ['(down f8_b0 f7_b1)', '(down f7_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(board f5_b0 p1_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(up f6_b1 f7_b0)', '(up f7_b0 f7_b1)', '(up f7_b1 f8_b0)', '(down f8_b0 f7_b1)', '(down f7_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(depart f2_b0 p1_b0)', '(board f2_b0 p0_b0)', '(down f2_b0 f1_b1)', '(down f1_b1 f1_b0)', '(depart f1_b0 p0_b0)', '(board f1_b1 p1_b1)', '(up f1_b1 f2_b0)', '(up f2_b0 f2_b1)', '(up f2_b1 f3_b0)', '(up f3_b0 f3_b1)', '(up f3_b1 f4_b0)', '(up f4_b0 f4_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(depart f6_b1 p1_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(board f4_b1 p0_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(down f2_b0 f1_b1)', '(depart f1_b1 p0_b1)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(board f5_b0 p1_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(up f6_b1 f7_b0)', '(down f7_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(depart f2_b0 p1_b0)', '(board f2_b0 p0_b0)', '(down f2_b0 f1_b1)', '(down f1_b1 f1_b0)', '(depart f1_b0 p0_b0)', '(board f1_b1 p1_b1)', '(up f1_b1 f2_b0)', '(up f2_b0 f2_b1)', '(up f2_b1 f3_b0)', '(up f3_b0 f3_b1)', '(up f3_b1 f4_b0)', '(up f4_b0 f4_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(depart f6_b1 p1_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(board f4_b1 p0_b1)', '(up f4_b1 f5_b0)', '(up f5_b0 f5_b1)', '(up f5_b1 f6_b0)', '(up f6_b0 f6_b1)', '(down f6_b1 f6_b0)', '(down f6_b0 f5_b1)', '(down f5_b1 f5_b0)', '(down f5_b0 f4_b1)', '(down f4_b1 f4_b0)', '(down f4_b0 f3_b1)', '(down f3_b1 f3_b0)', '(down f3_b0 f2_b1)', '(down f2_b1 f2_b0)', '(down f2_b0 f1_b1)', '(depart f1_b1 p0_b1)'].
-NOTE: (down f8_b0 f7_b1) has an unsatisfied precondition at time 0
-(Follow each of:
-    (Set (lift-at f8_b0) to true)
-    and (Set (above f7_b1 f8_b0) to true)
-)
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 103, in get_plan
+    current_floor_number, current_floor_suffix = current_floor[1:].split("_")
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+The code was interrupted because it timed out (possible infinite loop).
 Fix the code.
