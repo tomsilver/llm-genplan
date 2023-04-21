@@ -1,6 +1,7 @@
 .DS_Store
 .python-version
 results
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
