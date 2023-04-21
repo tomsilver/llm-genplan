@@ -6,13 +6,16 @@ Example commands:     python llm_genplan/main.py --env pyperplan-gripper
 
 import logging
 import os
+import pickle
 import sys
 import time
+from pathlib import Path
 
 from llm_genplan import utils
 from llm_genplan.envs import create_tasks
 from llm_genplan.flags import FLAGS, parse_flags
 from llm_genplan.genplan import get_genplan_from_llm, run_genplan_on_task
+from llm_genplan.structs import Metrics, TaskMetrics
 
 
 def _main() -> None:
@@ -53,9 +56,13 @@ def _main() -> None:
     )
 
     # Evaluate the generalized plan on the held-out evaluation tasks.
+    results: Metrics = {}
     num_successes = 0
     num_eval = len(eval_tasks)
     for i, eval_task in enumerate(eval_tasks):
+        task_id = f"{eval_task.domain_name}_seed{FLAGS.seed}_problem{i}"
+        task_metrics: TaskMetrics = {}
+        results[task_id] = task_metrics
         success, info = run_genplan_on_task(
             generalized_plan, eval_task, horizon=FLAGS.horizon, timeout=FLAGS.timeout
         )
@@ -63,10 +70,22 @@ def _main() -> None:
         logging.info(f"Eval task {i+1}/{num_eval}: {success_str} [{info}]")
         if success:
             num_successes += 1
+        task_metrics["success"] = success
     logging.info(
         f"Generalized plan solved {num_successes}/{num_eval} "
         "held-out evaluation tasks."
     )
+
+    # Save the results.
+    os.makedirs(FLAGS.results_dir, exist_ok=True)
+    outdata = {
+        "config": FLAGS,
+        "results": results.copy(),
+        "git_commit_hash": utils.get_git_commit_hash(),
+    }
+    outfile = Path(FLAGS.results_dir) / f"{utils.get_config_path_str()}.pkl"
+    with open(outfile, "wb") as f:
+        pickle.dump(outdata, f)
 
     script_time = time.time() - script_start
     logging.info(f"\n\nMain script terminated in {script_time:.5f} seconds")

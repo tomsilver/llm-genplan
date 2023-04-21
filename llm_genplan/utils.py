@@ -26,6 +26,11 @@ def get_git_commit_hash() -> str:
     return out.decode("ascii").strip()
 
 
+def get_config_path_str() -> str:
+    """Get a string identifier for an experiment from FLAGS."""
+    return f"{FLAGS.env}__{FLAGS.seed}__{FLAGS.experiment_id}"
+
+
 def get_pddl_from_url(url: str, cache_dir: Path = PDDL_DIR) -> str:
     """Download a PDDL file from a given URL.
 

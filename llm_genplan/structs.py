@@ -5,7 +5,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import DefaultDict, List, Set, Tuple, Union
+from typing import Any, DefaultDict, Dict, List, Set, Tuple, Union
 
 from pddlgym.parser import Literal, PDDLDomainParser, PDDLProblemParser
 
@@ -16,13 +16,6 @@ class Task:
 
     domain_str: str
     problem_str: str
-
-    def __postinit__(self) -> None:
-        # In addition to sanity checking, this serves the purpose of parsing
-        # the domain once up front, since the properties are cached after.
-        assert isinstance(self.objects, set)
-        assert isinstance(self.init, set)
-        assert isinstance(self.goal, set)
 
     @cached_property
     def domain_file(self) -> Path:
@@ -207,3 +200,9 @@ class Task:
 def _literal_to_tuple(lit: Literal) -> Tuple[str, ...]:
     arg_strs = [v.name for v in lit.variables]
     return (lit.predicate.name,) + tuple(arg_strs)
+
+
+# Metrics are saved during evaluation.
+TaskMetrics = Dict[str, Any]
+# Maps a task string identifier to task metrics.
+Metrics = Dict[str, TaskMetrics]
