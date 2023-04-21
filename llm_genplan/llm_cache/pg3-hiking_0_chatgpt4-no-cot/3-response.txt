@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_position = None
+    goal_position = None
+
+    # Find the starting and goal positions
+    for atom in init:
+        if atom[0] == "at":
+            current_position = atom[1]
+        if atom[0] == "iswater" or atom[0] == "ishill":
+            objects.add((atom[1], "loc"))
+
+    for atom in goal:
+        if atom[0] == "at":
+            goal_position = atom[1]
+
+    # Follow the trail
+    while current_position != goal_position:
+        next_position = None
+
+        for atom in init:
+            if atom[0] == "ontrail" and atom[1] == current_position:
+                next_position = atom[2]
+                break
+
+        # Check if the next position is a hill or not
+        is_hill = False
+        for atom in init:
+            if atom[0] == "ishill" and atom[1] == next_position:
+                is_hill = True
+                break
+
+        if is_hill:
+            plan.append(f"(climb {current_position} {next_position})")
+        else:
+            plan.append(f"(walk {current_position} {next_position})")
+
+        current_position = next_position
+
+    return plan
