@@ -1,0 +1,31 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Find the home base location and papers that need to be picked up
+    home_base = None
+    papers = []
+    for atom in init:
+        if atom[0] == "ishomebase":
+            home_base = atom[1]
+        elif atom[0] == "unpacked":
+            papers.append(atom[1])
+    
+    # Deliver papers to the locations that want them
+    for atom in goal:
+        if atom[0] == "satisfied":
+            loc = atom[1]
+            # Find the paper that is to be delivered to the location
+            for paper in papers:
+                if ("wantspaper", loc) in init:
+                    # Pick up the paper at the home base
+                    plan.append(f"(pick-up {paper} {home_base})")
+                    # Move to the location before delivering the paper
+                    plan.append(f"(move {home_base} {loc})")
+                    plan.append(f"(deliver {paper} {loc})")
+                    # Move back to the home base after delivering the paper
+                    plan.append(f"(move {loc} {home_base})")
+                    # Remove the paper from the list of available papers
+                    papers.remove(paper)
+                    break
+    
+    return plan
