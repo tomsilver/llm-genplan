@@ -1,0 +1,81 @@
+def get_start(init):
+    for atom in init:
+        if atom[0] == 'at':
+            return atom[1]
+    return None
+
+def get_goal(goal):
+    for atom in goal:
+        if atom[0] == 'at':
+            return atom[1]
+    return None
+
+def get_adjacent(init):
+    adjacent = {}
+    for atom in init:
+        if atom[0] == 'adjacent':
+            loc1, loc2 = atom[1], atom[2]
+            if loc1 not in adjacent:
+                adjacent[loc1] = []
+            if loc2 not in adjacent:
+                adjacent[loc2] = []
+            adjacent[loc1].append(loc2)
+            adjacent[loc2].append(loc1)
+    return adjacent
+
+def get_ontrail(init):
+    ontrail = {}
+    for atom in init:
+        if atom[0] == 'ontrail':
+            loc1, loc2 = atom[1], atom[2]
+            if loc1 not in ontrail:
+                ontrail[loc1] = []
+            if loc2 not in ontrail:
+                ontrail[loc2] = []
+            ontrail[loc1].append(loc2)
+            ontrail[loc2].append(loc1)
+    return ontrail
+
+def get_ishill(init):
+    hills = set()
+    for atom in init:
+        if atom[0] == 'ishill':
+            hills.add(atom[1])
+    return hills
+
+def get_iswater(init):
+    water = set()
+    for atom in init:
+        if atom[0] == 'iswater':
+            water.add(atom[1])
+    return water
+
+def get_plan(objects, init, goal):
+    start = get_start(init)
+    end = get_goal(goal)
+    adjacent = get_adjacent(init)
+    ontrail = get_ontrail(init)
+    ishill = get_ishill(init)
+    iswater = get_iswater(init)
+    
+    visited = set()
+    path = []
+    stack = [(start, [])]
+
+    while stack:
+        current, current_path = stack.pop()
+        if current == end:
+            path = current_path
+            break
+        if current not in visited:
+            visited.add(current)
+            for neighbor in adjacent[current]:
+                if neighbor in ontrail[current] and neighbor not in visited:
+                    action = 'walk' if neighbor not in ishill else 'climb'
+                    stack.append((neighbor, current_path + [(action, current, neighbor)]))
+
+    plan = []
+    for action, from_loc, to_loc in path:
+        plan.append(f"({action} {from_loc} {to_loc})")
+
+    return plan
