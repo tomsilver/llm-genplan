@@ -45,7 +45,11 @@ def _main() -> None:
     # Go back and forth with ChatGPT until it finds a generalized plan that
     # works on all of the train tasks, or until we run out of patience.
     logging.info("Starting conversation with LLM.")
-    save_path = utils.CACHE_DIR / f"{FLAGS.env}_{FLAGS.seed}_{FLAGS.experiment_id}"
+    if FLAGS.load_experiment_id:
+        load_experiment_id = FLAGS.load_experiment_id
+    else:
+        load_experiment_id = FLAGS.experiment_id
+    save_path = utils.CACHE_DIR / f"{FLAGS.env}_{FLAGS.seed}_{load_experiment_id}"
     os.makedirs(save_path, exist_ok=True)
     generalized_plan = get_genplan_from_llm(
         prompt_tasks,
@@ -53,6 +57,7 @@ def _main() -> None:
         save_path,
         horizon=FLAGS.horizon,
         timeout=FLAGS.timeout,
+        max_debug_attempts=FLAGS.max_debug_attempts,
     )
 
     # Evaluate the generalized plan on the held-out evaluation tasks.

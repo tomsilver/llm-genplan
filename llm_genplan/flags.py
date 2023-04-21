@@ -15,14 +15,17 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument("--env", required=True, type=str)
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--experiment_id", required=True, type=str)
+    parser.add_argument("--load_experiment_id", default="", type=str)
     parser.add_argument("--num_prompt_tasks", default=2, type=int)
     parser.add_argument("--num_extra_train_tasks", default=5, type=int)
     parser.add_argument("--num_eval_tasks", default=10, type=int)
     parser.add_argument("--horizon", default=1000000, type=int)
     parser.add_argument("--timeout", default=30, type=int)
+    parser.add_argument("--max_debug_attempts", default=4, type=int)
     parser.add_argument("--exclude_inputs_in_feedback", action="store_true")
     parser.add_argument("--prompt_problem_distribution", default="none", type=str)
     parser.add_argument("--abbreviate_problem_strs", action="store_true")
+    parser.add_argument("--force_load_from_cache", action="store_true")
     parser.add_argument("--results_dir", default="results", type=str)
     parser.add_argument(
         "--debug",

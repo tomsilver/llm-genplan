@@ -57,7 +57,7 @@ def get_genplan_from_llm(
     save_path: Path,
     horizon: int,
     timeout: int,
-    max_debug_attempts: int = 5,
+    max_debug_attempts: int = 4,
 ) -> GeneralizedPlan:
     """Interact with an LLM to get a generalized plan."""
     # Initial prompt with domain and example problems.
@@ -121,7 +121,7 @@ where
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""
 
-    for t in range(max_debug_attempts):
+    for t in range(max_debug_attempts + 1):
         # Get the prompt.
         if t == 0:
             prompt = first_genplan_prompt
@@ -173,6 +173,8 @@ def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> Optional[str]:
             # Special case timeouts because they can be nondeterministic.
             if "KeyboardInterrupt" in prompt:
                 assert "KeyboardInterrupt" in saved_prompt
+            elif FLAGS.force_load_from_cache:
+                logging.warning("WARNING: Forced loading saved prompt from cache.")
             else:
                 raise RuntimeError("Loading failed.")
         # Load the saved response.
