@@ -1,0 +1,10 @@
+In this domain, a simple strategy to solve all problems without using search is to follow the trails. The trails are a sequence of "ontrail" predicates that connect adjacent locations. Since these trails are pre-defined and connect two adjacent locations without requiring any complex pathfinding, you can use the "walk" and "climb" actions to follow the trails and reach the goal location.
+
+To implement this strategy, you can iteratively perform the following steps:
+
+Identify the current location (the one with the "at" predicate).
+Find the next location on the trail by checking the "ontrail" predicates that include the current location.
+If the next location is a hill, use the "climb" action; otherwise, use the "walk" action.
+Update the current location to the next location.
+Repeat steps 2-4 until you reach the goal location.
+By following the trails, you can effectively solve all problems in this domain without requiring any search algorithms or heuristics.

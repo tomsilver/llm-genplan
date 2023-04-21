@@ -1,0 +1,7 @@
+The hiking domain is a planning problem that focuses on navigating a grid-like environment with different types of terrain, such as hills and water. The domain is defined using the STRIPS and TYPING requirements, with a single type called "loc" representing the locations on the grid.
+
+There are five predicates in this domain: "at" represents the current location, "iswater" and "ishill" describe whether a location has water or is a hill, "adjacent" represents adjacency between two locations, and "ontrail" indicates the presence of a trail between two locations.
+
+Two actions are possible in this domain: "walk" and "climb". The "walk" action is used to move between adjacent, non-hill locations without water, while the "climb" action is used for moving to adjacent hill locations without water. In both actions, the effect is that the agent moves from one location to another.
+
+The example problems provided describe specific grid layouts with various combinations of hills, water, and trails. The goal in each problem is to reach a specific location on the grid by navigating the terrain using the available actions.
