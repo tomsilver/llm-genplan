@@ -1,0 +1,74 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find the locations of objects and initial state
+    locations = {}
+    links = {}
+    loose_nuts = set()
+    useable_spanners = set()
+
+    for atom in init:
+        if atom[0] == 'at':
+            locations[atom[1]] = atom[2]
+        elif atom[0] == 'link':
+            links[atom[1]] = atom[2]
+        elif atom[0] == 'loose':
+            loose_nuts.add(atom[1])
+        elif atom[0] == 'useable':
+            useable_spanners.add(atom[1])
+
+    bob_location = locations['bob']
+    gate_location = locations['nut1']  # Set the gate location
+    
+    # Function to find the shortest path between two locations
+    def find_path(start, end):
+        queue = [(start, [])]
+        visited = set()
+
+        while queue:
+            current, path = queue.pop(0)
+            visited.add(current)
+
+            if current == end:
+                return path
+
+            for next_location, linked_location in links.items():
+                if current == next_location and linked_location not in visited:
+                    queue.append((linked_location, path + [next_location]))  # Change this line
+
+    while loose_nuts:
+        # Find nearest spanner
+        nearest_spanner = None
+        nearest_spanner_distance = float('inf')
+
+        for spanner in useable_spanners:
+            spanner_location = locations[spanner]
+            path_to_spanner = find_path(bob_location, spanner_location)
+            distance = len(path_to_spanner)
+
+            if distance < nearest_spanner_distance:
+                nearest_spanner = spanner
+                nearest_spanner_location = spanner_location
+                nearest_spanner_distance = distance
+
+        # Walk to spanner and pick it up
+        path_to_spanner = find_path(bob_location, nearest_spanner_location)
+        for location in path_to_spanner:
+            plan.append(f'(walk {bob_location} {location} bob)')
+            bob_location = location
+        plan.append(f'(pickup_spanner {bob_location} {nearest_spanner} bob)')
+        
+        # Walk to gate
+        path_to_gate = find_path(bob_location, gate_location)
+        for location in path_to_gate:
+            plan.append(f'(walk {bob_location} {location} bob)')
+            bob_location = location
+
+        # Tighten nuts
+        for nut in list(loose_nuts):
+            plan.append(f'(tighten_nut {bob_location} {nearest_spanner} bob {nut})')
+            loose_nuts.remove(nut)
+            if nearest_spanner in useable_spanners:  # Check if the spanner is still in the set before removing it
+                useable_spanners.remove(nearest_spanner)
+
+    return plan
