@@ -1,0 +1,7 @@
+I apologize for the confusion in my previous response. The provided code snippet is written in Lisp, and it appears you are working with Python. The SyntaxError issue you mentioned seems to be in the Python code, not the Lisp code provided. To address the unterminated string literal issue in the Python code, you can update the line 115 to:
+
+```python
+plan.append(f"(tighten_nut {current_location} {spanner[0]} bob)")
+```
+
+This should fix the SyntaxError problem. If you need further assistance, please provide the full Python code so I can understand the context and offer a more accurate solution.

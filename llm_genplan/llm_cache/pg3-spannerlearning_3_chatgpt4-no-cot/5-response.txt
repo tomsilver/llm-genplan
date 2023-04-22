@@ -1,0 +1,61 @@
+from itertools import permutations
+
+def get_plan(objects, init, goal):
+    # Helper function to find the shortest distance between two locations
+    def shortest_path(links, start, end, visited=None):
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        if start == end:
+            return 0
+        min_distance = float("inf")
+        for link in links:
+            if start in link and not any(l in visited for l in link):
+                next_loc = link[1] if link[0] == start else link[0]
+                distance = shortest_path(links, next_loc, end, visited) + 1
+                if distance < min_distance:
+                    min_distance = distance
+        visited.remove(start)
+        return min_distance
+
+    # Extract data from objects, init, and goal
+    locations = [o for o in objects if o[1] == "location"]
+    spanners = [o for o in objects if o[1] == "spanner"]
+    nuts = [o for o in objects if o[1] == "nut"]
+    links = [i for i in init if i[0] == "link"]
+    loose_nuts = [g for g in goal if g[0] == "tightened"]
+
+    # Find the initial location of Bob, spanners, and nuts
+    bob_location = next(i[1] for i in init if i[0] == "at" and i[1].startswith("bob"))
+    spanner_locations = {s[0]: next(i[1] for i in init if i[0] == "at" and i[1] == s[0]) for s in spanners}
+    nut_locations = {n[0]: n[1] for n in init if n[0].startswith("nut")}
+
+    # Calculate the shortest path to each spanner and nut from Bob's location
+    spanner_distances = {s: shortest_path(links, bob_location, loc) for s, loc in spanner_locations.items()}
+    nut_distances = {n: shortest_path(links, bob_location, loc) for n, loc in nut_locations.items()}
+
+    # Sort the spanners by the distance from Bob
+    sorted_spanners = sorted(spanners, key=lambda s: spanner_distances[s[0]])
+
+    # Calculate the total distance Bob needs to travel for each spanner
+    min_distance = float("inf")
+    best_plan = []
+    for spanner in sorted_spanners:
+        # Calculate the distance to pick up the spanner and tighten all the nuts
+        plan = []
+        current_location = bob_location
+        distance = spanner_distances[spanner[0]]
+        plan.append(f"(walk {current_location} {spanner_locations[spanner[0]]} bob)")
+        current_location = spanner_locations[spanner[0]]
+        plan.append(f"(pickup_spanner {current_location} {spanner[0]} bob)")
+        for nut in loose_nuts:
+            distance += shortest_path(links, current_location, nut_locations[nut[1]])
+            plan.append(f"(walk {current_location} {nut_locations[nut[1]]} bob)")
+            current_location = nut_locations[nut[1]]
+            plan.append(f"(tighten_nut {current_location} {spanner[0]} bob {nut[1]})")
+
+        if distance < min_distance:
+            min_distance = distance
+            best_plan = plan
+
+    return best_plan
