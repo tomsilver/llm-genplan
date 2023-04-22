@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Get a list of locations and papers
+    locations = [obj[0] for obj in objects if obj[1] == 'loc']
+    papers = [obj[0] for obj in objects if obj[1] == 'paper']
+    
+    # Get the initial location and home base
+    home_base = next(atom[1] for atom in init if atom[0] == 'ishomebase')
+    
+    # Get a list of locations that want a newspaper
+    locations_wanting_paper = [atom[1] for atom in init if atom[0] == 'wantspaper']
+    
+    # Get the current location
+    current_location = next(atom[1] for atom in init if atom[0] == 'at')
+    
+    # Iterate over locations that want a newspaper
+    for loc in locations_wanting_paper:
+        # Pick up a newspaper from the home base
+        paper = papers.pop()
+        plan.append(f'(pick-up {paper} {home_base})')
+        
+        # Move from the current location to the target location
+        plan.append(f'(move {current_location} {loc})')
+        
+        # Deliver the newspaper to the target location
+        plan.append(f'(deliver {paper} {loc})')
+        
+        # Move back to the home base
+        plan.append(f'(move {loc} {home_base})')
+        
+        # Update the current location
+        current_location = home_base
+        
+    return plan
