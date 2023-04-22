@@ -27,9 +27,14 @@ def create_tasks(
         tasks = _get_pddlgym_tasks(benchmark_name, num_prompt + num_train)
         tasks += _get_pddlgym_tasks(benchmark_name, num_eval, test=True)
 
+    elif env_name.startswith("custom-"):
+        benchmark_name = env_name[len("custom-") :]
+        tasks = _get_custom_tasks(benchmark_name, total_num_tasks)
+
     elif env_name.startswith("pg3-"):
         benchmark_name = env_name[len("pg3-") :]
         return _get_pg3_tasks(benchmark_name, num_prompt, num_train, num_eval)
+
     else:
         raise NotImplementedError(f"Unrecognized env: {env_name}.")
 
@@ -90,6 +95,28 @@ def _get_pddlgym_tasks(
         task = Task(domain_str, problem_str)
         tasks.append(task)
     return tasks
+
+
+def _get_custom_tasks(benchmark_name: str, num_tasks: int) -> List[Task]:
+    """Get tasks saved locally."""
+    benchmark_dir = utils.PDDL_DIR / "custom" / benchmark_name
+    domain_file_path = benchmark_dir / "domain.pddl"
+    assert domain_file_path.exists(), f"Domain not found: {domain_file_path}"
+    # Load the domain.
+    with open(domain_file_path, "r", encoding="utf-8") as f:
+        domain_str = f.read().lower()
+    # Load the problems.
+    all_tasks: List[Task] = []
+    for file_path in benchmark_dir.glob("*.pddl"):
+        if file_path.stem == "domain.pddl":
+            continue
+        with open(file_path, "r", encoding="utf-8") as f:
+            problem_str = f.read().lower()
+        task = Task(domain_str, problem_str)
+        all_tasks.append(task)
+    # Make sure we have enough problems.
+    assert len(all_tasks) >= num_tasks
+    return all_tasks
 
 
 def _get_pg3_tasks(
