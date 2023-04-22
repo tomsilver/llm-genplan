@@ -1,0 +1,58 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find the locations, man, nuts, and spanners
+    locations = [loc for loc, typ in objects if typ == "location"]
+    man = [m for m, typ in objects if typ == "man"][0]
+    nuts = [nut for nut, typ in objects if typ == "nut"]
+    spanners = [spanner for spanner, typ in objects if typ == "spanner"]
+
+    # Find the initial location of the man
+    man_location = [loc for loc in locations if ('at', man, loc) in init][0]
+
+    # Find the initial locations of the spanners
+    spanner_locations = {spanner: loc for spanner, loc in [(s, loc) for s in spanners for loc in locations if ('at', s, loc) in init]}
+
+    # Find the initial locations of the nuts
+    nut_locations = {nut: loc for nut, loc in [(n, loc) for n in nuts for loc in locations if ('at', n, loc) in init]}
+
+    # Find the links between locations
+    links = [(loc1, loc2) for loc1, loc2 in [(l1, l2) for l1 in locations for l2 in locations if ('link', l1, l2) in init]]
+
+    # Helper function to find a path between two locations using DFS
+    def find_path(start, end, path=[]):
+        path = path + [start]
+        if start == end:
+            return path
+        if not start in [loc1 for loc1, _ in links]:
+            return None
+        for loc1, loc2 in [link for link in links if link[0] == start]:
+            if loc2 not in path:
+                newpath = find_path(loc2, end, path)
+                if newpath:
+                    return newpath
+        return None
+
+    # Move to each spanner, pick it up, move to each nut, and tighten it
+    for spanner, spanner_location in spanner_locations.items():
+        path_to_spanner = find_path(man_location, spanner_location)
+        if path_to_spanner is not None:
+            for loc in path_to_spanner[1:]:
+                plan.append(f"(walk {man_location} {loc} {man})")
+                man_location = loc
+
+            plan.append(f"(pickup_spanner {man_location} {spanner} {man})")
+
+            for nut, nut_location in nut_locations.items():
+                if ('loose', nut) in init:
+                    path_to_nut = find_path(man_location, nut_location)
+                    if path_to_nut is not None:
+                        for loc in path_to_nut[1:]:
+                            plan.append(f"(walk {man_location} {loc} {man})")
+                            man_location = loc
+
+                        plan.append(f"(tighten_nut {man_location} {spanner} {man} {nut})")
+                        init.remove(('loose', nut))
+                        init.add(('tightened', nut))
+
+    return plan

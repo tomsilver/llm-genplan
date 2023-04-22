@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    start = None
+    end = None
+    water = set()
+    hills = set()
+    trail = set()
+    adjacent = {}
+
+    for atom in init:
+        if atom[0] == "at":
+            start = atom[1]
+        elif atom[0] == "iswater":
+            water.add(atom[1])
+        elif atom[0] == "ishill":
+            hills.add(atom[1])
+        elif atom[0] == "adjacent":
+            adjacent.setdefault(atom[1], set()).add(atom[2])
+            adjacent.setdefault(atom[2], set()).add(atom[1])
+        elif atom[0] == "ontrail":
+            trail.add((atom[1], atom[2]))
+
+    for atom in goal:
+        if atom[0] == "at":
+            end = atom[1]
+
+    plan = []
+    current_location = start
+
+    while current_location != end:
+        for next_location in adjacent[current_location]:
+            if next_location in water or (current_location, next_location) not in trail:
+                continue
+
+            if next_location in hills:
+                action = f"(climb {current_location} {next_location})"
+            else:
+                action = f"(walk {current_location} {next_location})"
+
+            plan.append(action)
+            current_location = next_location
+            break
+
+    return plan
