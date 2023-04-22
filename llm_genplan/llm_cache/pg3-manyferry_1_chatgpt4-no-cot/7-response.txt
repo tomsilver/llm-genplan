@@ -28,7 +28,7 @@ def get_plan(objects, init, goal):
 
             # If the car is not already at its goal location
             if initial_location != goal_location:
-                # Sail the ferry to the car's initial location
+                # Sail the ferry to the car's initial location if it is not already there
                 if not_eq(ferry_location, initial_location):
                     plan.append(f'sail {ferry_location} {initial_location}')
                     ferry_location = initial_location

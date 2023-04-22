@@ -1,0 +1,60 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find the initial location of the ferry
+    ferry_location = None
+    for atom in init:
+        if atom[0] == 'at-ferry':
+            ferry_location = atom[1]
+            break
+
+    # Helper function to find the initial location of a car
+    def car_initial_location(car):
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == car:
+                return atom[2]
+        return None
+
+    # Check if two locations are not equal
+    def not_eq(loc1, loc2):
+        return loc1 != loc2
+
+    # Move each car to its goal location
+    for goal_atom in goal:
+        if goal_atom[0] == 'at':
+            car = goal_atom[1]
+            goal_location = goal_atom[2]
+            initial_location = car_initial_location(car)
+
+            # If the car is not already at its goal location
+            if initial_location != goal_location:
+                # Check if the car is at the ferry's location
+                if initial_location == ferry_location:
+                    # Board the car onto the ferry
+                    plan.append(f'board {car} {initial_location}')
+
+                    # Sail the ferry to the car's goal location
+                    if not_eq(ferry_location, goal_location):
+                        plan.append(f'sail {ferry_location} {goal_location}')
+                        ferry_location = goal_location
+
+                    # Debark the car at its goal location
+                    plan.append(f'debark {car} {goal_location}')
+                else:
+                    # Sail the ferry to the car's initial location
+                    if not_eq(ferry_location, initial_location):
+                        plan.append(f'sail {ferry_location} {initial_location}')
+                        ferry_location = initial_location
+
+                    # Board the car onto the ferry
+                    plan.append(f'board {car} {initial_location}')
+
+                    # Sail the ferry to the car's goal location
+                    if not_eq(ferry_location, goal_location):
+                        plan.append(f'sail {ferry_location} {goal_location}')
+                        ferry_location = goal_location
+
+                    # Debark the car at its goal location
+                    plan.append(f'debark {car} {goal_location}')
+
+    return plan
