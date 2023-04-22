@@ -1,0 +1,58 @@
+Given this task:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    l0
+    l1
+    l2
+    l3
+    l4
+    l5
+    l6
+    ...
+  )
+  (:init
+    (at c0 l1)
+    (at c1 l5)
+    (at c2 l2)
+    (at-ferry l4)
+    (car c0)
+    (car c1)
+    (car c2)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    (location l9)
+    (not-eq l0 l1)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    (not-eq l1 l0)
+    ...
+  )
+  (:goal (and
+    (at c0 l4)
+    (at c1 l9)
+    (at c2 l3)
+    )
+  )    
+)
+        
+The code returned this plan: ['board c2 l4', 'debark c2 l4', 'board c0 l4', 'sail l4 l4', 'debark c0 l4', 'board c1 l4', 'debark c1 l4']
+However, the action board c2 l4 is invalid at step 0.
+NOTE: the valid operators are: (board ?car ?loc) (debark ?car ?loc) (sail ?from ?to).
+Fix the code.

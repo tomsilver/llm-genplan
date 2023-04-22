@@ -1,0 +1,51 @@
+def get_plan(objects, init, goal):
+    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
+    floors = [obj[0] for obj in objects if obj[1] == 'floor']
+
+    passenger_info = {}
+    for passenger in passengers:
+        origin = [atom[2] for atom in init if atom[0] == 'origin' and atom[1] == passenger][0]
+        destin = [atom[2] for atom in init if atom[0] == 'destin' and atom[1] == passenger][0]
+        passenger_info[passenger] = (origin, destin)
+
+    sorted_passengers = sorted(passengers, key=lambda p: floors.index(passenger_info[p][0]))
+
+    lift_at = [atom[1] for atom in init if atom[0] == 'lift-at'][0]
+    plan = []
+
+    for passenger in sorted_passengers:
+        origin, destin = passenger_info[passenger]
+
+        while lift_at != origin:
+            above = [(atom[1], atom[2]) for atom in init if atom[0] == 'above']
+            next_floor_up = next((floor for floor in floors if (lift_at, floor) in above), None)
+            next_floor_down = next((floor for floor in floors if (floor, lift_at) in above), None)
+
+            if next_floor_up is not None and floors.index(next_floor_up) < floors.index(origin):
+                plan.append(f"(up {lift_at} {next_floor_up})")
+                lift_at = next_floor_up
+            elif next_floor_down is not None:
+                plan.append(f"(down {lift_at} {next_floor_down})")
+                lift_at = next_floor_down
+            else:
+                break
+
+        plan.append(f"(board {origin} {passenger})")
+
+        while lift_at != destin:
+            above = [(atom[1], atom[2]) for atom in init if atom[0] == 'above']
+            next_floor_up = next((floor for floor in floors if (lift_at, floor) in above), None)
+            next_floor_down = next((floor for floor in floors if (floor, lift_at) in above), None)
+
+            if next_floor_up is not None and floors.index(next_floor_up) < floors.index(destin):
+                plan.append(f"(up {lift_at} {next_floor_up})")
+                lift_at = next_floor_up
+            elif next_floor_down is not None:
+                plan.append(f"(down {lift_at} {next_floor_down})")
+                lift_at = next_floor_down
+            else:
+                break
+
+        plan.append(f"(depart {destin} {passenger})")
+
+    return plan
