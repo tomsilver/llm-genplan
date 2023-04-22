@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    passengers = [p for p, t in objects if t == "passenger"]
+    floors = [f for f, t in objects if t == "floor"]
+    origin = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "origin")}
+    destin = {p: f for p, f in (atom[1:] for atom in init if atom[0] == "destin")}
+    lift_at = next(f for atom in init if atom[0] == "lift-at" for f in atom[1:])
+    above = {(f1, f2) for atom in init if atom[0] == "above" for f1, f2 in (atom[1:],)}
+
+    sorted_passengers = sorted(passengers, key=lambda p: (origin[p], destin[p]))
+
+    plan = []
+    for p in sorted_passengers:
+        o, d = origin[p], destin[p]
+        while lift_at != o:
+            if (lift_at, o) in above:
+                next_floor = o
+                plan.append(f"(up {lift_at} {next_floor})")
+            else:
+                next_floor = next(f1 for f1, f2 in above if f2 == lift_at)
+                plan.append(f"(down {lift_at} {next_floor})")
+            lift_at = next_floor
+
+        plan.append(f"(board {o} {p})")
+
+        while lift_at != d:
+            if (lift_at, d) in above:
+                next_floor = d
+                plan.append(f"(up {lift_at} {next_floor})")
+            else:
+                next_floor = next(f1 for f1, f2 in above if f2 == lift_at)
+                plan.append(f"(down {lift_at} {next_floor})")
+            lift_at = next_floor
+
+        plan.append(f"(depart {d} {p})")
+
+    return plan
