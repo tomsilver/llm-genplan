@@ -1,0 +1,33 @@
+def get_plan(objects, init, goal):
+    plan = []
+    ball_positions = {}
+    goal_positions = {}
+    robot_position = None
+    
+    for atom in init:
+        if atom[0] == "at" and "ball" in atom[1]:
+            ball_positions[atom[1]] = atom[2]
+        elif atom[0] == "at-robby":
+            robot_position = atom[1]
+    
+    for atom in goal:
+        if atom[0] == "at":
+            goal_positions[atom[1]] = atom[2]
+    
+    for ball, goal_position in goal_positions.items():
+        initial_position = ball_positions[ball]
+        gripper = "gripper0" if ball_positions[ball] != robot_position else "gripper1"
+
+        if initial_position != robot_position:
+            plan.append(f"(move {robot_position} {initial_position})")
+            robot_position = initial_position
+
+        plan.append(f"(pick {ball} {initial_position} {gripper})")
+        
+        if goal_position != robot_position:
+            plan.append(f"(move {robot_position} {goal_position})")
+            robot_position = goal_position
+        
+        plan.append(f"(drop {ball} {goal_position} {gripper})")
+    
+    return plan
