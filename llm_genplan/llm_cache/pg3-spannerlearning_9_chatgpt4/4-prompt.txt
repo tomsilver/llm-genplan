@@ -53,9 +53,12 @@ Given this task:
         
 The code raised the following exception:
 Traceback (most recent call last):
-  File "<file-name-omitted>", line 49, in get_plan
-    distance = len(shortest_path(bob_location, spanner_location)) - 1
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: object of type 'NoneType' has no len()
+  File "<file-name-omitted>", line 11, in get_plan
+    links = {l1: l2 for pred, l1, l2 in init if pred == "link"}
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 11, in <dictcomp>
+    links = {l1: l2 for pred, l1, l2 in init if pred == "link"}
+                        ^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
 
 Fix the code.

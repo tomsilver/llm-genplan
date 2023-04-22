@@ -1,0 +1,60 @@
+Given this task:
+(define (problem manygripper (:domain gripper-strips)
+  (:objects
+    ball0
+    ball1
+    ball2
+    ball3
+    ball4
+    ball5
+    ball6
+    gripper0
+    gripper1
+    room0
+    ...
+  )
+  (:init
+    (at ball0 room1)
+    (at ball1 room8)
+    (at ball2 room8)
+    (at ball3 room18)
+    (at ball4 room9)
+    (at ball5 room7)
+    (at ball6 room13)
+    (at-robby room0)
+    (ball ball0)
+    (ball ball1)
+    (ball ball2)
+    (ball ball3)
+    (ball ball4)
+    (ball ball5)
+    (ball ball6)
+    (free gripper0)
+    (free gripper1)
+    (gripper gripper0)
+    (gripper gripper1)
+    (room room0)
+    (room room1)
+    (room room10)
+    (room room11)
+    (room room12)
+    (room room13)
+    (room room14)
+    (room room15)
+    (room room16)
+    (room room17)
+    ...
+  )
+  (:goal (and
+    (at ball2 room9)
+    (at ball3 room3)
+    (at ball5 room0)
+    (at ball6 room10)
+    )
+  )    
+)
+        
+The code returned this plan: ['(move room18)', '(pick ball3 room18 gripper0)', '(move room3)', '(drop ball3 room3 gripper0)', '(move room8)', '(pick ball2 room8 gripper0)', '(move room9)', '(drop ball2 room9 gripper0)', '(move room7)', '(pick ball5 room7 gripper0)', '(move room0)', '(drop ball5 room0 gripper0)', '(move room13)', '(pick ball6 room13 gripper0)', '(move room10)', '(drop ball6 room10 gripper0)']
+However, the action (move room18) is invalid at step 0.
+NOTE: the valid operators are: (drop ?obj ?room ?gripper) (move ?from ?to) (pick ?obj ?room ?gripper).
+Fix the code.

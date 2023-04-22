@@ -148,19 +148,28 @@ where
         # Note: appending the response so that if the LLM is relying on any
         # helper functions that it previously defined, they will be available.
         # If it rewrites `get_plan`, the newer code will take precedence.
-        gen_plan_code_str += "\n\n\n" + response
-        gen_plan = GeneralizedPlan(gen_plan_code_str)
+        # However, only keep the response for the next iteration if there is
+        # no parsing error because otherwise it would be impossible to correct.
+        new_gen_plan_code_str = gen_plan_code_str + "\n\n\n" + response
+        gen_plan = GeneralizedPlan(new_gen_plan_code_str)
 
         # Test the generalized plan.
         gen_plan_succeeded = True
+        parsing_error_found = False
         for task in all_train_tasks:
             success, info = run_genplan_on_task(gen_plan, task, horizon, timeout)
+            if "SyntaxError" in info:
+                parsing_error_found = True
             if not success:
                 gen_plan_succeeded = False
                 last_error_info = info
                 break
 
-        # Succeeded on the training problem.
+        # See note above about parsing errors.
+        if not parsing_error_found:
+            gen_plan_code_str = new_gen_plan_code_str
+
+        # Succeeded on the training problems.
         if gen_plan_succeeded:
             break
 

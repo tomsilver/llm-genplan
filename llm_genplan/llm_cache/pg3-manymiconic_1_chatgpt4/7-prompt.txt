@@ -49,13 +49,9 @@ Given this task:
         
 The code raised the following exception:
 Traceback (most recent call last):
-  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
-  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
-  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "<file-name-omitted>", line 107
-    It appears that the precondition (above f5_b0 f5_b1) is not satisfied in the initial state of the problem, which is causing the failure in the plan execution. To fix the code, you need to add this precondition in the (:init ...) section. Here's the corrected problem definition:
-                                                                                                                                                                                                                                                      ^
-SyntaxError: unterminated string literal (detected at line 107)
+  File "<file-name-omitted>", line 151, in get_plan
+    for f in range(int(current_floor[1:]), len(floors)):
+                   ^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3_b0'
 
 Fix the code.

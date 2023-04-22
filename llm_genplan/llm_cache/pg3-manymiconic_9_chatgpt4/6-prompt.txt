@@ -79,8 +79,8 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap_external>", line 1074, in get_code
   File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "<file-name-omitted>", line 92
-    It seems there is an issue with the initial plan that is generated. The plan starts with the action (down f2_b1 f0_b0), but the precondition for this action is not satisfied, as there is no fact (above f0_b0 f2_b1) in the initial state. To fix the code, I recommend updating the initial state with the correct facts and relationships between the objects. Since the lift is initially at f2_b1, it is better to start with an action that boards a passenger at that floor.
+  File "<file-name-omitted>", line 93
+    It seems the issue is that the lift is not at the correct starting position. The lift starts at floors f2_b1 and f6_b0, but the plan starts with moving up from f0_b0 to f1_b0. To fix the code, you need to move the lift to the correct position before executing the plan.
        ^^^^^
 SyntaxError: invalid syntax
 

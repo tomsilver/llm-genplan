@@ -1,79 +1,39 @@
 def get_plan(objects, init, goal):
-    # Extract relevant information from the input
-    bob_location = None
-    nuts = {}
-    spanners = {}
-    connections = {}
-    
-    for atom in init:
-        if atom[0] == 'at':
-            if atom[1] == 'bob':
-                bob_location = atom[2]
-            elif 'nut' in atom[1]:
-                nuts[atom[1]] = atom[2]
-            elif 'spanner' in atom[1]:
-                spanners[atom[1]] = atom[2]
-        elif atom[0] == 'link':
-            if atom[1] not in connections:
-                connections[atom[1]] = set()
-            if atom[2] not in connections:
-                connections[atom[2]] = set()
-            connections[atom[1]].add(atom[2])
-            connections[atom[2]].add(atom[1])
-    
-    # Calculate the shortest path between two locations
-    def shortest_path(start, end):
-        visited = set()
-        queue = [(start, [start])]
-        
-        while queue:
-            location, path = queue.pop(0)
-            visited.add(location)
-            
-            if location == end:
-                return path
-            
-            for neighbor in connections.get(location, set()):
-                if neighbor not in visited:
-                    queue.append((neighbor, path + [neighbor]))
-        return None
-    
-    # Implement the strategy
     plan = []
-    for nut_goal in goal:
-        nut = nut_goal[1]
-        nut_location = nuts[nut]
-        
-        # Find the nearest spanner
-        min_distance = float('inf')
-        nearest_spanner = None
-        for spanner, spanner_location in spanners.items():
-            path = shortest_path(bob_location, spanner_location)
-            if path is None:
-                continue
-            distance = len(path) - 1
-            if distance < min_distance:
-                min_distance = distance
-                nearest_spanner = spanner
-        
-        # Walk to the nearest spanner
-        path_to_spanner = shortest_path(bob_location, spanners[nearest_spanner])
-        for i in range(len(path_to_spanner) - 1):
-            plan.append(f"(walk {path_to_spanner[i]} {path_to_spanner[i + 1]} bob)")
-        
-        # Pick up the spanner
-        plan.append(f"(pickup_spanner {spanners[nearest_spanner]} {nearest_spanner} bob)")
-        
-        # Walk to the nut location
-        path_to_nut = shortest_path(spanners[nearest_spanner], nut_location)
-        for i in range(len(path_to_nut) - 1):
-            plan.append(f"(walk {path_to_nut[i]} {path_to_nut[i + 1]} bob)")
-        
-        # Tighten the nut
-        plan.append(f"(tighten_nut {nut_location} {nearest_spanner} bob {nut})")
-        
-        # Update Bob's location and remove the used spanner
-        bob_location = nut_location
-        del spanners[nearest_spanner]
-    
+
+    man = [obj for obj, obj_type in objects if obj_type == "man"][0]
+
+    # Find all locations and their links
+    locations = [obj for obj, obj_type in objects if obj_type == "location"]
+    links = {l1: l2 for pred, *args in init if pred == "link" and len(args) == 2 for l1, l2 in [args]}
+
+    # Find all spanners and nuts and their initial locations
+    spanners = {obj: loc for pred, obj, loc in init if pred == "at" and obj.startswith("spanner")}
+    nuts = {obj: loc for pred, obj, loc in init if pred == "at" and obj.startswith("nut")}
+
+    current_location = [loc for pred, m, loc in init if pred == "at" and m == man][0]
+
+    # Traverse the locations
+    while current_location in links:
+        next_location = links[current_location]
+
+        # Pick up spanners at the current location
+        for spanner, loc in spanners.items():
+            if loc == current_location:
+                plan.append(f"(pickup_spanner {current_location} {spanner} {man})")
+                spanners[spanner] = man
+
+        # Move to the next location
+        plan.append(f"(walk {current_location} {next_location} {man})")
+        current_location = next_location
+
+    # Tighten nuts at the gate
+    for nut, loc in nuts.items():
+        if loc == current_location:
+            for spanner, carrier in spanners.items():
+                if carrier == man:
+                    plan.append(f"(tighten_nut {current_location} {spanner} {man} {nut})")
+                    spanners[spanner] = None  # Set spanner to unusable
+                    break
+
     return plan

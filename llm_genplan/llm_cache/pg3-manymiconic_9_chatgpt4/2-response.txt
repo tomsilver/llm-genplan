@@ -1,11 +1,14 @@
-The simple strategy for solving all problems in this domain without using search is the "Sweep" or "Round-Trip" strategy. In this strategy, the elevator starts at the lowest floor and moves to the highest floor, picking up passengers as it goes. Once it reaches the highest floor, it then moves back down to the lowest floor, stopping at each floor to let passengers off at their destination. This strategy ensures that all passengers are picked up and dropped off at their respective destinations.
+A simple strategy for solving all problems in the Miconic domain without using search is the "Sweep" strategy. The Sweep strategy involves the elevator moving from the lowest to the highest floor and then back down, stopping at every floor in both directions. 
 
-To implement this strategy, follow these steps:
+Here's how the Sweep strategy works:
 
-Start at the lowest floor.
-Move up floor by floor.
-At each floor, pick up all passengers waiting at that floor (board action) and let off any passengers whose destination is the current floor (depart action).
-Once the highest floor is reached, start moving down floor by floor.
-At each floor, let off any passengers whose destination is the current floor (depart action) and pick up any passengers waiting at that floor (board action).
-Repeat until all passengers have been served.
-This strategy is simple and guarantees a solution, but it may not be the most efficient in terms of the number of actions taken, especially if the elevator has to stop at many floors with no passengers to pick up or let off. Nevertheless, it provides a straightforward way to solve all problems in the Miconic domain without using search algorithms.
+1. Start at the lowest floor.
+2. Move up one floor at a time, stopping at every floor.
+   a. Pick up any passengers at their origin floor.
+   b. Drop off any passengers whose destination is the current floor.
+3. Once the highest floor is reached, reverse direction and move down one floor at a time, stopping at every floor.
+   a. Pick up any passengers at their origin floor.
+   b. Drop off any passengers whose destination is the current floor.
+4. Continue this process until all passengers are served.
+
+This strategy guarantees that all passengers will be served, as the elevator visits every floor while moving up and down. Although it may not be the most efficient solution for every problem instance, it will always provide a correct solution without requiring search.

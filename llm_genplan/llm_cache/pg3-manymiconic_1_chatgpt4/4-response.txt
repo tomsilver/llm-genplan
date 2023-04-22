@@ -1,50 +1,41 @@
 def get_plan(objects, init, goal):
-    floors = sorted([f for f, t in objects if t == 'floor'])
-    passengers = [p for p, t in objects if t == 'passenger']
-    origins = {p: f for p, f in [tuple(a[1:]) for a in init if a[0] == 'origin']}
-    destinations = {p: f for p, f in [tuple(a[1:]) for a in init if a[0] == 'destin']}
-    
-    # Get initial lift positions
-    lift_positions = {i: a[1] for i, a in enumerate(init) if a[0] == 'lift-at'}
-    
+    floors = sorted([obj for obj in objects if obj[1] == 'floor'])
+    passengers = [obj for obj in objects if obj[1] == 'passenger']
+    current_floor = next(atom[1] for atom in init if atom[0] == 'lift-at')
+
     plan = []
-    directions = {i: 'up' for i in lift_positions}
 
-    served_passengers = set()
-    boarded_passengers = set()
+    # Helper function to determine if any passengers have not been served yet
+    def unserved_passengers():
+        return [p for p in passengers if ('served', p[0]) not in goal]
 
-    while len(served_passengers) < len(passengers):
-        for i, lift_position in lift_positions.items():
-            # Board passengers at the current floor
+    while unserved_passengers():
+        # Move the lift up, stopping at each floor
+        for f in range(int(current_floor[1:]), len(floors)):
+            floor = floors[f][0]
+            plan.append(f'(up {current_floor} {floor})')
+            current_floor = floor
+
+            # Board and depart passengers at the current floor
             for p in passengers:
-                if origins[p] == lift_position and p not in boarded_passengers:
-                    plan.append(f'(board {lift_position} {p})')
-                    boarded_passengers.add(p)
+                if ('origin', p[0], floor) in init:
+                    plan.append(f'(board {floor} {p[0]})')
+                if ('destin', p[0], floor) in init and ('boarded', p[0]) in goal:
+                    plan.append(f'(depart {floor} {p[0]})')
+                    goal.add(('served', p[0]))
 
-            # Depart passengers at the current floor
+        # Move the lift down, stopping at each floor
+        for f in range(int(current_floor[1:]), -1, -1):
+            floor = floors[f][0]
+            plan.append(f'(down {current_floor} {floor})')
+            current_floor = floor
+
+            # Board and depart passengers at the current floor
             for p in passengers:
-                if destinations[p] == lift_position and p in boarded_passengers:
-                    plan.append(f'(depart {lift_position} {p})')
-                    served_passengers.add(p)
-                    boarded_passengers.remove(p)
-
-            # Move the elevator
-            if directions[i] == 'up':
-                next_floor_index = floors.index(lift_position) + 1
-                if next_floor_index == len(floors):
-                    directions[i] = 'down'
-                    next_floor_index -= 2
-            else:
-                next_floor_index = floors.index(lift_position) - 1
-                if next_floor_index < 0:
-                    directions[i] = 'up'
-                    next_floor_index += 2
-
-            if directions[i] == 'up':
-                plan.append(f'(up {lift_position} {floors[next_floor_index]})')
-            else:
-                plan.append(f'(down {lift_position} {floors[next_floor_index]})')
-
-            lift_positions[i] = floors[next_floor_index]
+                if ('origin', p[0], floor) in init:
+                    plan.append(f'(board {floor} {p[0]})')
+                if ('destin', p[0], floor) in init and ('boarded', p[0]) in goal:
+                    plan.append(f'(depart {floor} {p[0]})')
+                    goal.add(('served', p[0]))
 
     return plan

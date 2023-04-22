@@ -1,11 +1,12 @@
-The Miconic domain is a planning problem that simulates a simplified elevator system. In this domain, there are two types of objects: passengers and floors. The main goal is to transport passengers from their origin floor to their destination floor using the elevator.
+The Miconic domain represents a simplified elevator system. It consists of two types of objects, passengers and floors. The main goal is to serve passengers by picking them up at their origin floor and dropping them off at their destination floor.
 
-There are four actions available:
+There are four main actions in this domain:
 
-Board: A passenger boards the elevator at their origin floor.
-Depart: A passenger leaves the elevator at their destination floor.
-Up: The elevator moves up from one floor to another.
-Down: The elevator moves down from one floor to another.
-The domain is defined with a set of predicates describing the state of the elevator system, such as the origin and destination floors for each passenger, the relative positions of floors (above or below), and whether a passenger has boarded or been served.
+1. board: A passenger boards the elevator at their origin floor.
+2. depart: A passenger departs the elevator at their destination floor.
+3. up: The elevator moves up from one floor to another.
+4. down: The elevator moves down from one floor to another.
 
-Example problems provided demonstrate instances of the Miconic domain with different floor and passenger configurations. The goal for each problem is to serve all passengers, meaning they have successfully reached their destination floors.
+Predicates are used to describe the relationships between objects, such as the origin and destination floors of passengers, which floors are above others, whether a passenger has boarded the elevator, and whether a passenger has been served.
+
+The example problems provide specific instances of the Miconic domain, describing the initial states (e.g., the floors' relationships, passengers' origin and destination floors, and the elevator's starting position) and the goal states, which require all passengers to be served.

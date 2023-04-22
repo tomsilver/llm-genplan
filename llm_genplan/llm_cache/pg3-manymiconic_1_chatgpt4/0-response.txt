@@ -1,9 +1,5 @@
-The Miconic domain represents a simplified elevator problem. In this domain, there are passengers and floors as object types. There are predicates to represent the origin floor and destination floor of each passenger, if a passenger has boarded the elevator, if a passenger has been served, and the current location of the elevator. There are also predicates to represent the relative position of floors, indicating if one floor is above another.
+The Miconic domain is a planning problem that models a simplified elevator system. The domain consists of two types of objects: passengers and floors. There are several predicates that describe the relationships between passengers and floors, such as the origin and destination of passengers, which floor the lift is currently at, and whether a passenger has boarded or been served. 
 
-There are four actions in this domain:
+There are four possible actions in this domain: board, depart, up, and down. Passengers can board the lift if it is at their origin floor, and they can depart if it is at their destination floor. The lift can move up or down to different floors according to the "above" predicate. 
 
-Board: A passenger boards the elevator at their origin floor if the elevator is at that floor.
-Depart: A passenger departs the elevator at their destination floor if the elevator is at that floor and the passenger has boarded the elevator.
-Up: The elevator moves up from one floor to another if the second floor is above the first.
-Down: The elevator moves down from one floor to another if the first floor is above the second.
-The goal of the problem is to serve all passengers, i.e., to take them from their origin floor to their destination floor. Example problems are provided with specific floors, passengers, origins, destinations, and initial elevator locations.
+The goal of this domain is to serve all passengers by picking them up at their origin floors and dropping them off at their destination floors. The provided example problems illustrate instances of the Miconic domain with varying numbers of floors and passengers.

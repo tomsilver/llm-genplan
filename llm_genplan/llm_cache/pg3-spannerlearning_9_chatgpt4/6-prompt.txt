@@ -53,13 +53,12 @@ Given this task:
         
 The code raised the following exception:
 Traceback (most recent call last):
-  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
-  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
-  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "<file-name-omitted>", line 197
-    queue.append((neighbor, path + [neighbor])))
-                                               ^
-SyntaxError: unmatched ')'
+  File "<file-name-omitted>", line 101, in get_plan
+    current_location = [loc for pred, m, loc in init if pred == "at" and m == man][0]
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 101, in <listcomp>
+    current_location = [loc for pred, m, loc in init if pred == "at" and m == man][0]
+                                ^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
 
 Fix the code.

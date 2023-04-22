@@ -1,52 +1,43 @@
-It seems that you pasted my previous response into the problem definition, which is causing the syntax error. Let's remove that, and here is the corrected problem definition:
+def get_plan(objects, init, goal):
+    floors = sorted([obj for obj in objects if obj[1] == 'floor'])
+    passengers = [obj for obj in objects if obj[1] == 'passenger']
+    current_floor = next(atom[1] for atom in init if atom[0] == 'lift-at')
 
-lisp
-Copy code
-(define (problem miconicprob (:domain miconic)
-  (:objects
-    f0_b0 - floor
-    f1_b0 - floor
-    f2_b0 - floor
-    f3_b0 - floor
-    f4_b0 - floor
-    f5_b0 - floor
-    p0_b0 - passenger
-    p1_b0 - passenger
-    p2_b0 - passenger
-    p3_b0 - passenger
-    p4_b0 - passenger
-  )
-  (:init
-    (above f0_b0 f1_b0)
-    (above f0_b0 f2_b0)
-    (above f0_b0 f3_b0)
-    (above f0_b0 f4_b0)
-    (above f0_b0 f5_b0)
-    (above f1_b0 f2_b0)
-    (above f1_b0 f3_b0)
-    (above f1_b0 f4_b0)
-    (above f1_b0 f5_b0)
-    (above f2_b0 f3_b0)
-    ...
-    (destin p0_b0 f0_b0)
-    (destin p1_b0 f3_b0)
-    (destin p2_b0 f3_b0)
-    (destin p3_b0 f1_b0)
-    (destin p4_b0 f0_b0)
-    (lift-at f3_b0)
-    (origin p0_b0 f2_b0)
-    (origin p1_b0 f4_b0)
-    (origin p2_b0 f5_b0)
-    (origin p3_b0 f0_b0)
-    (origin p4_b0 f3_b0)
-  )
-  (:goal (and
-    (served p0_b0)
-    (served p1_b0)
-    (served p2_b0)
-    (served p3_b0)
-    (served p4_b0)
-    )
-  )    
-)
-This should fix the syntax error in the problem definition.
+    plan = []
+
+    # Helper function to determine if any passengers have not been served yet
+    def unserved_passengers():
+        return [p for p in passengers if ('served', p[0]) not in init]
+
+    while unserved_passengers():
+        # Move the lift up, stopping at each floor
+        for f in range(int(current_floor[1:]), len(floors)):
+            floor = floors[f][0]
+            plan.append(f'(up {current_floor} {floor})')
+            current_floor = floor
+
+            # Board and depart passengers at the current floor
+            for p in passengers:
+                if ('origin', p[0], floor) in init:
+                    plan.append(f'(board {floor} {p[0]})')
+                    init.add(('boarded', p[0]))
+                if ('destin', p[0], floor) in init and ('boarded', p[0]) in init:
+                    plan.append(f'(depart {floor} {p[0]})')
+                    init.add(('served', p[0]))
+
+        # Move the lift down, stopping at each floor
+        for f in range(int(current_floor[1:]), -1, -1):
+            floor = floors[f][0]
+            plan.append(f'(down {current_floor} {floor})')
+            current_floor = floor
+
+            # Board and depart passengers at the current floor
+            for p in passengers:
+                if ('origin', p[0], floor) in init:
+                    plan.append(f'(board {floor} {p[0]})')
+                    init.add(('boarded', p[0]))
+                if ('destin', p[0], floor) in init and ('boarded', p[0]) in init:
+                    plan.append(f'(depart {floor} {p[0]})')
+                    init.add(('served', p[0]))
+
+    return plan

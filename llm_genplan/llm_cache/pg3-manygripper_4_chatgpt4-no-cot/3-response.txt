@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    plan = []
+    init_state = {atom for atom in init}
+    grippers = [g for g in objects if g.startswith('gripper')]
+    gripper_states = {g: 'free' for g in grippers}
+
+    for goal_atom in goal:
+        if goal_atom[0] == 'at':
+            ball, target_room = goal_atom[1], goal_atom[2]
+            current_room = next(atom[2] for atom in init_state if atom[0] == 'at' and atom[1] == ball)
+
+            # Move Robby to the current room
+            plan.append(f'(move {current_room})')
+
+            # Pick up the ball with a free gripper
+            free_gripper = next(g for g, state in gripper_states.items() if state == 'free')
+            plan.append(f'(pick {ball} {current_room} {free_gripper})')
+            gripper_states[free_gripper] = 'occupied'
+
+            # Move Robby to the target room
+            plan.append(f'(move {target_room})')
+
+            # Drop the ball in the target room
+            plan.append(f'(drop {ball} {target_room} {free_gripper})')
+            gripper_states[free_gripper] = 'free'
+
+    return plan
