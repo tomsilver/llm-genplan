@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    current_location = None
+    trail = {}
+    plan = []
+
+    for atom in init:
+        if atom[0] == "at":
+            current_location = atom[1]
+        elif atom[0] == "ontrail":
+            trail[atom[1]] = atom[2]
+
+    while current_location != next(iter(goal))[1]:
+        next_location = trail[current_location]
+
+        if ('ishill', next_location) in init:
+            plan.append(f'(climb {current_location} {next_location})')
+        else:
+            plan.append(f'(walk {current_location} {next_location})')
+
+        current_location = next_location
+
+    return plan
