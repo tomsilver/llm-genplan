@@ -1,0 +1,31 @@
+def get_plan(objects, init, goal):
+    plan = []
+    loc_wantspaper = {}
+    homebase = None
+    papers = []
+
+    for atom in init:
+        if atom[0] == 'wantspaper':
+            loc_wantspaper[atom[1]] = True
+        elif atom[0] == 'ishomebase':
+            homebase = atom[1]
+        elif atom[0] == 'unpacked':
+            papers.append(atom[1])
+
+    paper_idx = 0
+    for loc, wants_paper in loc_wantspaper.items():
+        if wants_paper:
+            # Pick up a paper
+            plan.append(f"(pick-up {papers[paper_idx]} {homebase})")
+            paper_idx += 1
+
+            # Move to the location
+            plan.append(f"(move {homebase} {loc})")
+
+            # Deliver the paper
+            plan.append(f"(deliver {papers[paper_idx - 1]} {loc})")
+
+            # Move back to the homebase
+            plan.append(f"(move {loc} {homebase})")
+
+    return plan
