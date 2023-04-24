@@ -1,0 +1,33 @@
+def get_plan(objects, init, goal):
+    loc_map = {}
+    for obj in objects:
+        if obj[1] == "loc":
+            loc_map[obj[0]] = {"hill": False, "water": False, "trail": []}
+    
+    at_loc = None
+    goal_loc = None
+    
+    for atom in init:
+        if atom[0] == "at":
+            at_loc = atom[1]
+        elif atom[0] == "ishill":
+            loc_map[atom[1]]["hill"] = True
+        elif atom[0] == "iswater":
+            loc_map[atom[1]]["water"] = True
+        elif atom[0] == "ontrail":
+            loc_map[atom[1]]["trail"].append(atom[2])
+    
+    for atom in goal:
+        if atom[0] == "at":
+            goal_loc = atom[1]
+    
+    plan = []
+    while at_loc != goal_loc:
+        next_loc = loc_map[at_loc]["trail"].pop(0)
+        if loc_map[next_loc]["hill"]:
+            plan.append(f"(climb {at_loc} {next_loc})")
+        else:
+            plan.append(f"(walk {at_loc} {next_loc})")
+        at_loc = next_loc
+    
+    return plan
