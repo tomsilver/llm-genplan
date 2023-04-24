@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    man = [o for o, t in objects if t == 'man'][0]
+    locations = sorted([o for o, t in objects if t == 'location'])
+    spanners = [o for o, t in objects if t == 'spanner']
+    nuts = [o for o, t in objects if t == 'nut']
+
+    man_location = [l for l in locations if ('at', man, l) in init][0]
+    nut_locations = {nut: loc for nut, loc in [(n, l) for n in nuts for l in locations] if ('at', nut, loc) in init}
+    spanner_locations = {spanner: loc for spanner, loc in [(s, l) for s in spanners for l in locations] if ('at', spanner, loc) in init}
+
+    links = {l1: l2 for l1, l2 in [(l1, l2) for l1 in locations for l2 in locations] if ('link', l1, l2) in init}
+
+    for nut in nuts:
+        nut_location = nut_locations[nut]
+        while man_location != nut_location:
+            next_location = links[man_location]
+            plan.append(f"(walk {man_location} {next_location} {man})")
+            man_location = next_location
+
+            if man_location in spanner_locations.values():
+                spanner = next(spanner for spanner, loc in spanner_locations.items() if loc == man_location)
+                plan.append(f"(pickup_spanner {man_location} {spanner} {man})")
+
+        plan.append(f"(tighten_nut {man_location} {spanner} {man} {nut})")
+
+    return plan
