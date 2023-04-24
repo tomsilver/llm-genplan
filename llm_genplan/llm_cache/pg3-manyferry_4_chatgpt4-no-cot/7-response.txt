@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def find(predicate, value, position):
+        for atom in init:
+            if atom[0] == predicate and atom[position] == value:
+                return atom[1 if position == 2 else 2]
+        return None
+
+    cars = [atom for atom in goal if atom[0] == 'at']
+
+    for car in cars:
+        car_name = car[1]
+        desired_loc = car[2]
+        current_loc = find('at', car_name, 1)
+
+        if current_loc != desired_loc:
+            ferry_loc = find('at-ferry', 'True', 1)
+
+            if current_loc != ferry_loc:
+                plan.append(f'sail {ferry_loc} {current_loc}')
+                ferry_loc = current_loc
+
+            plan.append(f'board {car_name} {current_loc}')
+            plan.append(f'sail {current_loc} {desired_loc}')
+            plan.append(f'debark {car_name} {desired_loc}')
+
+            ferry_loc = desired_loc
+
+    return plan
