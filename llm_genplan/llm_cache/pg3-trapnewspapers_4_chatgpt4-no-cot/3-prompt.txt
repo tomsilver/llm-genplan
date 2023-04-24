@@ -1,0 +1,148 @@
+Domain:
+(define (domain trapnewspapers)
+    (:requirements :strips :typing)
+    (:types loc paper)
+    (:predicates 
+        (at ?loc - loc)
+        (ishomebase ?loc - loc)
+        (satisfied ?loc - loc)
+        (wantspaper ?loc - loc)
+        (safe ?loc - loc)
+        (unpacked ?paper - paper)
+        (carrying ?paper - paper)
+    )
+    
+    (:action pick-up
+        :parameters (?paper - paper ?loc - loc)
+        :precondition (and
+            (at ?loc)
+            (ishomebase ?loc)
+            (unpacked ?paper)
+        )
+        :effect (and
+            (not (unpacked ?paper))
+            (carrying ?paper)
+        )
+    )
+    
+    (:action move
+        :parameters (?from - loc ?to - loc)
+        :precondition (and
+            (at ?from)
+            (safe ?from)
+        )
+        :effect (and
+            (not (at ?from))
+            (at ?to)
+        )
+    )
+    
+    (:action deliver
+        :parameters (?paper - paper ?loc - loc)
+        :precondition (and
+            (at ?loc)
+            (carrying ?paper)
+        )
+        :effect (and
+            (not (carrying ?paper))
+            (not (wantspaper ?loc))
+            (satisfied ?loc)
+        )
+    )
+    
+)
+
+Example problems:
+(define (problem newspaper (:domain trapnewspapers)
+  (:objects
+    loc-0 - loc
+    loc-1 - loc
+    loc-2 - loc
+    loc-3 - loc
+    loc-4 - loc
+    loc-5 - loc
+    loc-6 - loc
+    paper-0 - paper
+    paper-1 - paper
+    paper-2 - paper
+    paper-3 - paper
+  )
+  (:init
+    (at loc-0)
+    (ishomebase loc-0)
+    (safe loc-0)
+    (safe loc-1)
+    (safe loc-3)
+    (safe loc-4)
+    (safe loc-5)
+    (unpacked paper-0)
+    (unpacked paper-1)
+    (unpacked paper-2)
+    (unpacked paper-3)
+    (wantspaper loc-1)
+    (wantspaper loc-3)
+    (wantspaper loc-4)
+    (wantspaper loc-5)
+  )
+  (:goal (and
+    (satisfied loc-1)
+    (satisfied loc-3)
+    (satisfied loc-4)
+    (satisfied loc-5)
+    )
+  )    
+)
+        
+(define (problem newspaper (:domain trapnewspapers)
+  (:objects
+    loc-0 - loc
+    loc-1 - loc
+    loc-2 - loc
+    loc-3 - loc
+    loc-4 - loc
+    loc-5 - loc
+    paper-0 - paper
+    paper-1 - paper
+    paper-2 - paper
+    paper-3 - paper
+  )
+  (:init
+    (at loc-0)
+    (ishomebase loc-0)
+    (safe loc-0)
+    (safe loc-1)
+    (safe loc-2)
+    (safe loc-3)
+    (safe loc-4)
+    (unpacked paper-0)
+    (unpacked paper-1)
+    (unpacked paper-2)
+    (unpacked paper-3)
+    (wantspaper loc-1)
+    (wantspaper loc-2)
+    (wantspaper loc-3)
+    (wantspaper loc-4)
+  )
+  (:goal (and
+    (satisfied loc-1)
+    (satisfied loc-2)
+    (satisfied loc-3)
+    (satisfied loc-4)
+    )
+  )    
+)
+There is a simple strategy for solving all problems in this domain without using search. Implement the strategy as a Python function.
+
+The code should should be of the form
+
+def get_plan(objects, init, goal):
+    # Your code here
+    return plan
+
+where
+    - `objects` is a set of (object name, type name) tuples
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')
