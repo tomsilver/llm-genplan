@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    passengers = []
+    lift_floor = None
+    floors = []
+    
+    for obj in objects:
+        if obj[1] == 'passenger':
+            passengers.append((obj[0], obj[1]))
+        elif obj[1] == 'floor':
+            floors.append(obj[0])
+
+    floor_order = {floor: index for index, floor in enumerate(floors)}
+    
+    # Extract information about passengers and the initial position of the lift
+    for atom in init:
+        if atom[0] == 'origin':
+            index = passengers.index((atom[1], 'passenger'))
+            passengers[index] = (atom[1], atom[2], floor_order[atom[2]])
+        elif atom[0] == 'destin':
+            index = passengers.index((atom[1], 'passenger'))
+            passengers[index] = (passengers[index][0], passengers[index][1], passengers[index][2], atom[2], floor_order[atom[2]])
+        elif atom[0] == 'lift-at':
+            lift_floor = atom[1]
+
+    # Sort passengers by destination floors
+    passengers.sort(key=lambda x: x[4])
+
+    plan = []
+
+    # Move the lift to the floor of the first passenger in the sorted list
+    if lift_floor != passengers[0][1]:
+        plan.append(f"(move {lift_floor} {passengers[0][1]})")
+        lift_floor = passengers[0][1]
+
+    # Board and serve passengers in the sorted order
+    for passenger in passengers:
+        origin, destination = passenger[1], passenger[3]
+        if lift_floor != origin:
+            plan.append(f"(move {lift_floor} {origin})")
+            lift_floor = origin
+
+        plan.append(f"(board {origin} {passenger[0]})")
+
+        if lift_floor != destination:
+            plan.append(f"(move {lift_floor} {destination})")
+            lift_floor = destination
+
+        plan.append(f"(depart {destination} {passenger[0]})")
+
+    return plan

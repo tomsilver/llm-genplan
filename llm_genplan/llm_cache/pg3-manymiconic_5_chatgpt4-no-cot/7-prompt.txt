@@ -1,0 +1,63 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f0_b1 - floor
+    f1_b0 - floor
+    f1_b1 - floor
+    f2_b0 - floor
+    f2_b1 - floor
+    f3_b0 - floor
+    f3_b1 - floor
+    f4_b0 - floor
+    f4_b1 - floor
+    ...
+    p0_b0 - passenger
+    p0_b1 - passenger
+    p1_b0 - passenger
+    p1_b1 - passenger
+    p2_b0 - passenger
+    p2_b1 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f0_b0 f5_b0)
+    (above f0_b0 f6_b0)
+    (above f0_b0 f7_b0)
+    (above f0_b0 f8_b0)
+    (above f0_b1 f1_b1)
+    (above f0_b1 f2_b1)
+    ...
+    (destin p0_b0 f0_b0)
+    (destin p0_b1 f1_b1)
+    (destin p1_b0 f3_b0)
+    (destin p1_b1 f8_b1)
+    (destin p2_b0 f0_b0)
+    (destin p2_b1 f3_b1)
+    (lift-at f6_b0)
+    (lift-at f8_b1)
+    (origin p0_b0 f8_b0)
+    (origin p0_b1 f2_b1)
+    (origin p1_b0 f7_b0)
+    (origin p1_b1 f6_b1)
+    (origin p2_b0 f5_b0)
+    (origin p2_b1 f8_b1)
+  )
+  (:goal (and
+    (served p0_b0)
+    (served p0_b1)
+    (served p1_b0)
+    (served p1_b1)
+    (served p2_b0)
+    (served p2_b1)
+    )
+  )    
+)
+        
+The code returned this plan: ['(move f8_b1 f2_b1)', '(board f2_b1 p0_b1)', '(move f2_b1 f1_b1)', '(depart f1_b1 p0_b1)', '(move f1_b1 f8_b0)', '(board f8_b0 p0_b0)', '(move f8_b0 f0_b0)', '(depart f0_b0 p0_b0)', '(move f0_b0 f5_b0)', '(board f5_b0 p2_b0)', '(move f5_b0 f0_b0)', '(depart f0_b0 p2_b0)', '(move f0_b0 f6_b1)', '(board f6_b1 p1_b1)', '(move f6_b1 f8_b1)', '(depart f8_b1 p1_b1)', '(move f8_b1 f7_b0)', '(board f7_b0 p1_b0)', '(move f7_b0 f3_b0)', '(depart f3_b0 p1_b0)', '(move f3_b0 f8_b1)', '(board f8_b1 p2_b1)', '(move f8_b1 f3_b1)', '(depart f3_b1 p2_b1)']
+However, the action (move f8_b1 f2_b1) is invalid at step 0.
+NOTE: the valid operators are: (board ?f ?p) (depart ?f ?p) (down ?f1 ?f2) (up ?f1 ?f2).
+Fix the code.
