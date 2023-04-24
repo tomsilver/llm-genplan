@@ -1,0 +1,51 @@
+def get_plan(objects, init, goal):
+    floor_above = {} 
+    origins = {}
+    destinations = {}
+    passengers = []
+
+    for atom in init:
+        if atom[0] == 'above':
+            floor_above[atom[1]] = atom[2]
+        elif atom[0] == 'origin':
+            origins[atom[1]] = atom[2]
+        elif atom[0] == 'destin':
+            destinations[atom[1]] = atom[2]
+        elif atom[0] == 'lift-at':
+            lift_position = atom[1]
+
+    for obj in objects:
+        if obj[1] == 'passenger':
+            passengers.append(obj[0])
+
+    plan = []
+
+    for passenger in passengers:
+        origin = origins[passenger]
+        destination = destinations[passenger]
+
+        # Move the lift to the origin floor
+        while lift_position != origin:
+            if floor_above[lift_position] == origin:
+                plan.append(f'(up {lift_position} {origin})')
+                lift_position = origin
+            else:
+                lift_position = floor_above[lift_position]
+                plan.append(f'(down {lift_position} {floor_above[lift_position]})')
+
+        # Board the passenger
+        plan.append(f'(board {origin} {passenger})')
+
+        # Move the lift to the destination floor
+        while lift_position != destination:
+            if floor_above[lift_position] == destination:
+                plan.append(f'(up {lift_position} {destination})')
+                lift_position = destination
+            else:
+                lift_position = floor_above[lift_position]
+                plan.append(f'(down {lift_position} {floor_above[lift_position]})')
+
+        # Depart the passenger
+        plan.append(f'(depart {destination} {passenger})')
+
+    return plan
