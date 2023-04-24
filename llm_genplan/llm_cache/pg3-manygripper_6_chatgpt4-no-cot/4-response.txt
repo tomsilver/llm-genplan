@@ -1,0 +1,56 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    def find_atom(atoms, predicate):
+        for atom in atoms:
+            if atom[0] == predicate:
+                return atom
+        return None
+
+    def find_atoms(atoms, predicate):
+        return [atom for atom in atoms if atom[0] == predicate]
+
+    def find_free_gripper(init):
+        free_grippers = find_atoms(init, 'free')
+        return free_grippers[0][1]
+
+    balls_goal_rooms = {}
+    for g in goal:
+        if g[0] == 'at':
+            balls_goal_rooms[g[1]] = g[2]
+
+    for ball, goal_room in balls_goal_rooms.items():
+        # Find the initial room of the ball
+        ball_init_room = find_atom(init, 'at')
+        while ball_init_room and ball_init_room[1] != ball:
+            init.remove(ball_init_room)
+            ball_init_room = find_atom(init, 'at')
+
+        # Find Robby's initial room
+        robby_init_room = find_atom(init, 'at-robby')
+        init_room = robby_init_room[1]
+
+        # Move Robby to the room where the target ball is located
+        if init_room != ball_init_room[2]:
+            plan.append(f'move {init_room} {ball_init_room[2]}')
+
+        # Pick up the target ball using a free gripper
+        free_gripper = find_free_gripper(init)
+        plan.append(f'pick {ball} {ball_init_room[2]} {free_gripper}')
+
+        # Move Robby to the goal room where the target ball should be dropped
+        plan.append(f'move {ball_init_room[2]} {goal_room}')
+
+        # Drop the target ball in the goal room
+        plan.append(f'drop {ball} {goal_room} {free_gripper}')
+
+        # Update the initial state
+        init.remove(('free', free_gripper))
+        init.add(('carry', ball, free_gripper))
+        init.remove(ball_init_room)
+        init.add(('at', ball, goal_room))
+        init.add(('free', free_gripper))
+        init.remove(robby_init_room)
+        init.add(('at-robby', goal_room))
+
+    return plan
