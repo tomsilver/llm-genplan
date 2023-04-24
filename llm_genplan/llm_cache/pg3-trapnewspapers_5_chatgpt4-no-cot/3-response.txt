@@ -1,0 +1,20 @@
+def get_plan(objects, init, goal):
+    locs = [o for o, t in objects if t == 'loc']
+    papers = [o for o, t in objects if t == 'paper']
+    homebase = next(o for o in locs if ('ishomebase', o) in init)
+    safe_locs = [o for o in locs if ('safe', o) in init]
+    wants_paper = [o for o in locs if ('wantspaper', o) in init]
+
+    plan = []
+
+    for paper in papers:
+        plan.append(f'(pick-up {paper} {homebase})')
+        for loc in safe_locs:
+            if loc != homebase:
+                plan.append(f'(move {homebase} {loc})')
+                if loc in wants_paper:
+                    plan.append(f'(deliver {paper} {loc})')
+                    wants_paper.remove(loc)
+                plan.append(f'(move {loc} {homebase})')
+
+    return plan

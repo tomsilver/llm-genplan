@@ -1,0 +1,46 @@
+Given this task:
+(define (problem newspaper (:domain trapnewspapers)
+  (:objects
+    loc-0 - loc
+    loc-1 - loc
+    loc-2 - loc
+    loc-3 - loc
+    loc-4 - loc
+    loc-5 - loc
+    loc-6 - loc
+    loc-7 - loc
+    paper-0 - paper
+    paper-1 - paper
+    paper-2 - paper
+    paper-3 - paper
+  )
+  (:init
+    (at loc-0)
+    (ishomebase loc-0)
+    (safe loc-0)
+    (safe loc-3)
+    (safe loc-4)
+    (safe loc-5)
+    (safe loc-7)
+    (unpacked paper-0)
+    (unpacked paper-1)
+    (unpacked paper-2)
+    (unpacked paper-3)
+    (wantspaper loc-3)
+    (wantspaper loc-4)
+    (wantspaper loc-5)
+    (wantspaper loc-7)
+  )
+  (:goal (and
+    (satisfied loc-3)
+    (satisfied loc-4)
+    (satisfied loc-5)
+    (satisfied loc-7)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pick-up paper-2 loc-0)', '(move loc-0 loc-7)', '(deliver paper-2 loc-7)', '(move loc-7 loc-0)', '(move loc-0 loc-3)', '(deliver paper-2 loc-3)', '(move loc-3 loc-0)', '(move loc-0 loc-4)', '(deliver paper-2 loc-4)', '(move loc-4 loc-0)', '(move loc-0 loc-5)', '(deliver paper-2 loc-5)', '(move loc-5 loc-0)', '(pick-up paper-3 loc-0)', '(move loc-0 loc-7)', '(move loc-7 loc-0)', '(move loc-0 loc-3)', '(move loc-3 loc-0)', '(move loc-0 loc-4)', '(move loc-4 loc-0)', '(move loc-0 loc-5)', '(move loc-5 loc-0)', '(pick-up paper-0 loc-0)', '(move loc-0 loc-7)', '(move loc-7 loc-0)', '(move loc-0 loc-3)', '(move loc-3 loc-0)', '(move loc-0 loc-4)', '(move loc-4 loc-0)', '(move loc-0 loc-5)', '(move loc-5 loc-0)', '(pick-up paper-1 loc-0)', '(move loc-0 loc-7)', '(move loc-7 loc-0)', '(move loc-0 loc-3)', '(move loc-3 loc-0)', '(move loc-0 loc-4)', '(move loc-4 loc-0)', '(move loc-0 loc-5)', '(move loc-5 loc-0)'].
+NOTE: (deliver paper-2 loc-3) has an unsatisfied precondition at time 5
+(Set (carrying paper-2) to true)
+Fix the code.
