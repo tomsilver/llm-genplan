@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    plan = []
+    cars = [atom[1] for atom in goal if atom[0] == 'at']
+    target_locations = [atom[2] for atom in goal if atom[0] == 'at']
+    locations = [atom[1] for atom in init if atom[0] == 'location']
+
+    def is_valid_sail(from_loc, to_loc):
+        return (from_loc, to_loc) not in [(atom[1], atom[2]) for atom in init if atom[0] == 'not-eq']
+
+    for car, target_location in zip(cars, target_locations):
+        car_location = next(atom[2] for atom in init if atom[0] == 'at' and atom[1] == car)
+        ferry_location = next(atom[1] for atom in init if atom[0] == 'at-ferry')
+
+        while car_location != ferry_location:
+            for loc in locations:
+                if is_valid_sail(ferry_location, loc):
+                    plan.append(f'sail {ferry_location} {loc}')
+                    ferry_location = loc
+                    if car_location == ferry_location:
+                        break
+
+        plan.append(f'board {car} {ferry_location}')
+
+        while target_location != ferry_location:
+            for loc in locations:
+                if is_valid_sail(ferry_location, loc):
+                    plan.append(f'sail {ferry_location} {loc}')
+                    ferry_location = loc
+                    if target_location == ferry_location:
+                        break
+
+        plan.append(f'sail {ferry_location} {target_location}')
+        plan.append(f'debark {car} {target_location}')
+
+    return plan

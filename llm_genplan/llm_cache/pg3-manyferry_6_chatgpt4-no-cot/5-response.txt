@@ -1,0 +1,19 @@
+def get_plan(objects, init, goal):
+    plan = []
+    cars = [atom[1] for atom in goal if atom[0] == 'at']
+    target_locations = [atom[2] for atom in goal if atom[0] == 'at']
+
+    for car, target_location in zip(cars, target_locations):
+        car_location = next(atom[2] for atom in init if atom[0] == 'at' and atom[1] == car)
+        ferry_location = next(atom[1] for atom in init if atom[0] == 'at-ferry')
+
+        if car_location != ferry_location:
+            plan.append(f'sail {ferry_location} {car_location}')
+            ferry_location = car_location
+
+        plan.append(f'board {car} {ferry_location}')
+        ferry_location = car_location
+        plan.append(f'sail {ferry_location} {target_location}')
+        plan.append(f'debark {car} {target_location}')
+
+    return plan
