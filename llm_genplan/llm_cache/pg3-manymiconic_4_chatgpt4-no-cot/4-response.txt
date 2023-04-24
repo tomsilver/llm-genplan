@@ -1,0 +1,52 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Create dictionaries for origin and destination floors
+    origin_floors = {}
+    destin_floors = {}
+    for atom in init:
+        if atom[0] == 'origin':
+            origin_floors[atom[1]] = atom[2]
+        if atom[0] == 'destin':
+            destin_floors[atom[1]] = atom[2]
+
+    # Find the current lift position
+    current_lift_position = None
+    for atom in init:
+        if atom[0] == 'lift-at':
+            current_lift_position = atom[1]
+            break
+    
+    def move_lift_to(target_floor):
+        nonlocal current_lift_position
+        while current_lift_position != target_floor:
+            for atom in init:
+                if atom[0] == 'above' and (atom[1] == current_lift_position or atom[2] == current_lift_position):
+                    if atom[1] == current_lift_position and atom[2] == target_floor:
+                        plan.append(f'(up {current_lift_position} {atom[2]})')
+                        current_lift_position = atom[2]
+                    elif atom[2] == current_lift_position and atom[1] == target_floor:
+                        plan.append(f'(down {current_lift_position} {atom[1]})')
+                        current_lift_position = atom[1]
+
+    # Go to each passenger's origin floor and board them
+    for passenger in sorted(origin_floors.keys()):
+        origin_floor = origin_floors[passenger]
+
+        # Move the lift to the origin floor
+        move_lift_to(origin_floor)
+
+        # Board the passenger
+        plan.append(f'(board {origin_floor} {passenger})')
+
+    # Go to each passenger's destination floor and drop them off
+    for passenger in sorted(destin_floors.keys()):
+        destin_floor = destin_floors[passenger]
+
+        # Move the lift to the destination floor
+        move_lift_to(destin_floor)
+
+        # Drop off the passenger
+        plan.append(f'(depart {destin_floor} {passenger})')
+    
+    return plan
