@@ -1,0 +1,62 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    locations = [loc for loc, t in objects if t == 'location']
+    nuts = [nut for nut, t in objects if t == 'nut']
+    spanners = [spanner for spanner, t in objects if t == 'spanner']
+    links = {(l1, l2) for pred, l1, l2 in init if pred == 'link'}
+
+    def find_path(src, dest):
+        visited = set()
+        queue = [(src, [])]
+
+        while queue:
+            current, path = queue.pop(0)
+
+            if current == dest:
+                return path + [current]
+
+            if current not in visited:
+                visited.add(current)
+                for l1, l2 in links:
+                    if l1 == current and l2 not in visited:
+                        queue.append((l2, path + [current]))
+
+    for nut in nuts:
+        nut_location = next(l for pred, n, l in init if pred == 'at' and n == nut)
+        min_distance = float('inf')
+        nearest_spanner = None
+        spanner_location = None
+
+        for spanner in spanners:
+            if any(pred == 'useable' and s == spanner for pred, s in init):
+                spanner_loc = next(l for pred, s, l in init if pred == 'at' and s == spanner)
+                path = find_path(nut_location, spanner_loc)
+                distance = len(path) - 1
+
+                if distance < min_distance:
+                    min_distance = distance
+                    nearest_spanner = spanner
+                    spanner_location = spanner_loc
+
+        man_location = next(l for pred, m, l in init if pred == 'at' and m == 'bob')
+        path_to_spanner = find_path(man_location, spanner_location)
+        path_to_nut = find_path(spanner_location, nut_location)
+
+        for step in path_to_spanner[1:]:
+            plan.append(f'(walk {man_location} {step} bob)')
+            man_location = step
+
+        plan.append(f'(pickup_spanner {spanner_location} {nearest_spanner} bob)')
+
+        for step in path_to_nut[1:]:
+            plan.append(f'(walk {man_location} {step} bob)')
+            man_location = step
+
+        plan.append(f'(tighten_nut {nut_location} {nearest_spanner} bob {nut})')
+
+        init.remove(('useable', nearest_spanner))
+        init.remove(('loose', nut))
+        init.add(('tightened', nut))
+
+    return plan
