@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    plan = []
+    at_dict = {init_atom[1]: init_atom[2] for init_atom in init if init_atom[0] == 'at'}
+    ferry_loc = next(init_atom[2] for init_atom in init if init_atom[0] == 'at-ferry')
+
+    for goal_atom in goal:
+        if goal_atom[0] == 'at':
+            car, destination = goal_atom[1], goal_atom[2]
+            initial_location = at_dict[car]
+
+            if ferry_loc != initial_location:
+                plan.append(f'sail {ferry_loc} {initial_location}')
+                ferry_loc = initial_location
+
+            plan.append(f'board {car} {initial_location}')
+            plan.append(f'sail {initial_location} {destination}')
+            plan.append(f'debark {car} {destination}')
+
+            at_dict[car] = destination
+            ferry_loc = destination
+
+    return plan
