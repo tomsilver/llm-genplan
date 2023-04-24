@@ -23,19 +23,24 @@ def get_plan(objects, init, goal):
     # Find available grippers
     available_grippers = [gripper for gripper in init_dict["free"]]
 
+    # Determine Robby's initial room
+    current_room = init_dict["at-robby"][0][0]
+
     # Iterate over goal_positions and move balls to their destination rooms
     for ball, goal_room in goal_positions.items():
         start_room = ball_positions[ball]
         gripper = available_grippers.pop()  # Use an available gripper
 
         # Move to the room with the target ball
-        plan.append(f"(move {start_room})")
+        plan.append(f"(move {current_room} {start_room})")
+        current_room = start_room
 
         # Pick up the ball using the available gripper
         plan.append(f"(pick {ball} {start_room} {gripper})")
 
         # Move to the destination room
-        plan.append(f"(move {goal_room})")
+        plan.append(f"(move {start_room} {goal_room})")
+        current_room = goal_room
 
         # Drop the ball
         plan.append(f"(drop {ball} {goal_room} {gripper})")

@@ -54,14 +54,6 @@ Given this task:
   )    
 )
         
-The code raised the following exception:
-Traceback (most recent call last):
-  File "<file-name-omitted>", line 12, in get_plan
-    ball_positions = {ball: room for ball, room in init_dict["at"]}
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<file-name-omitted>", line 12, in <dictcomp>
-    ball_positions = {ball: room for ball, room in init_dict["at"]}
-                                     ^^^^^^^^^^
-ValueError: too many values to unpack (expected 2)
-
+The code failed. It returned the following plan: ['(move room0 room18)', "(pick ball3 room18 ('gripper0',))", '(move room18 room3)', "(drop ball3 room3 ('gripper0',))", '(move room3 room8)', "(pick ball2 room8 ('gripper0',))", '(move room8 room9)', "(drop ball2 room9 ('gripper0',))", '(move room9 room7)', "(pick ball5 room7 ('gripper0',))", '(move room7 room0)', "(drop ball5 room0 ('gripper0',))", '(move room0 room13)', "(pick ball6 room13 ('gripper0',))", '(move room13 room10)', "(drop ball6 room10 ('gripper0',))"].
+NOTE: The plan did not achieve the goal.
 Fix the code.

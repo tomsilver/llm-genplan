@@ -54,14 +54,7 @@ Given this task:
   )    
 )
         
-The code raised the following exception:
-Traceback (most recent call last):
-  File "<file-name-omitted>", line 12, in get_plan
-    ball_positions = {ball: room for ball, room in init_dict["at"]}
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<file-name-omitted>", line 12, in <dictcomp>
-    ball_positions = {ball: room for ball, room in init_dict["at"]}
-                                     ^^^^^^^^^^
-ValueError: too many values to unpack (expected 2)
-
+The code returned this plan: ['(move room18)', "(pick ball3 room18 ('gripper0',))", '(move room3)', "(drop ball3 room3 ('gripper0',))", '(move room8)', "(pick ball2 room8 ('gripper0',))", '(move room9)', "(drop ball2 room9 ('gripper0',))", '(move room7)', "(pick ball5 room7 ('gripper0',))", '(move room0)', "(drop ball5 room0 ('gripper0',))", '(move room13)', "(pick ball6 room13 ('gripper0',))", '(move room10)', "(drop ball6 room10 ('gripper0',))"]
+However, the action (move room18) is invalid at step 0.
+NOTE: the valid operators are: (drop ?obj ?room ?gripper) (move ?from ?to) (pick ?obj ?room ?gripper).
 Fix the code.

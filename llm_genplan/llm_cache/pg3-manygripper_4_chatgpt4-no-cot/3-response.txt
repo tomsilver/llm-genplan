@@ -1,27 +1,35 @@
 def get_plan(objects, init, goal):
     plan = []
-    init_state = {atom for atom in init}
-    grippers = [g for g in objects if g.startswith('gripper')]
-    gripper_states = {g: 'free' for g in grippers}
+    
+    # Convert init and goal to dictionaries for easier access
+    init_dict = {atom[0]: atom[1:] for atom in init}
+    goal_dict = {atom[0]: atom[1:] for atom in goal}
+    
+    # Determine the initial and final positions of the balls
+    ball_positions = {ball: room for ball, room in init_dict["at"]}
+    goal_positions = {ball: room for ball, room in goal_dict["at"]}
 
-    for goal_atom in goal:
-        if goal_atom[0] == 'at':
-            ball, target_room = goal_atom[1], goal_atom[2]
-            current_room = next(atom[2] for atom in init_state if atom[0] == 'at' and atom[1] == ball)
+    # Find available grippers
+    available_grippers = [gripper for gripper in init_dict["free"]]
 
-            # Move Robby to the current room
-            plan.append(f'(move {current_room})')
+    # Iterate over goal_positions and move balls to their destination rooms
+    for ball, goal_room in goal_positions.items():
+        start_room = ball_positions[ball]
+        gripper = available_grippers.pop()  # Use an available gripper
 
-            # Pick up the ball with a free gripper
-            free_gripper = next(g for g, state in gripper_states.items() if state == 'free')
-            plan.append(f'(pick {ball} {current_room} {free_gripper})')
-            gripper_states[free_gripper] = 'occupied'
+        # Move to the room with the target ball
+        plan.append(f"(move {start_room})")
 
-            # Move Robby to the target room
-            plan.append(f'(move {target_room})')
+        # Pick up the ball using the available gripper
+        plan.append(f"(pick {ball} {start_room} {gripper})")
 
-            # Drop the ball in the target room
-            plan.append(f'(drop {ball} {target_room} {free_gripper})')
-            gripper_states[free_gripper] = 'free'
+        # Move to the destination room
+        plan.append(f"(move {goal_room})")
+
+        # Drop the ball
+        plan.append(f"(drop {ball} {goal_room} {gripper})")
+
+        # Add the gripper back to the available grippers
+        available_grippers.append(gripper)
 
     return plan
