@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    locs = set()
+    papers = set()
+    homebase = None
+    wants_paper = dict()
+    plan = []
+
+    for obj, obj_type in objects:
+        if obj_type == 'loc':
+            locs.add(obj)
+        elif obj_type == 'paper':
+            papers.add(obj)
+
+    for predicate in init:
+        if predicate[0] == 'ishomebase':
+            homebase = predicate[1]
+        elif predicate[0] == 'wantspaper':
+            wants_paper[predicate[1]] = True
+        elif predicate[0] == 'at':
+            current_loc = predicate[1]
+
+    paper_to_loc = {}
+    for loc, wants in wants_paper.items():
+        if wants:
+            paper = papers.pop()
+            paper_to_loc[paper] = loc
+
+    for paper, loc in paper_to_loc.items():
+        # Pick up the paper
+        plan.append(f'(pick-up {paper} {homebase})')
+
+        # Move to the location that wants the paper
+        plan.append(f'(move {current_loc} {loc})')
+        current_loc = loc
+
+        # Deliver the paper
+        plan.append(f'(deliver {paper} {loc})')
+
+        # Return to homebase
+        plan.append(f'(move {current_loc} {homebase})')
+        current_loc = homebase
+
+    return plan
