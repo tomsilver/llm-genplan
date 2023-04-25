@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    plan = []
+    at_robby = [x for x in init if x[0] == "at-robby"][0][1]
+
+    for condition in goal:
+        ball = condition[1]
+        target_room = condition[2]
+        ball_room = [x for x in init if x[0] == "at" and x[1] == ball][0][2]
+
+        # Find a free gripper or skip the loop if none are available
+        free_grippers = [x for x in init if x[0] == "free"]
+        if not free_grippers:
+            continue
+        gripper = free_grippers[0][1]
+
+        if ball_room != at_robby:
+            plan.append(f"(move {at_robby} {ball_room})")
+            at_robby = ball_room
+
+        plan.append(f"(pick {ball} {ball_room} {gripper})")
+        plan.append(f"(move {at_robby} {target_room})")
+        plan.append(f"(drop {ball} {target_room} {gripper})")
+        at_robby = target_room
+        init.remove(('free', gripper))
+        init.add(('carry', ball, gripper))
+        init.remove(('at', ball, ball_room))
+        init.add(('at', ball, target_room))
+
+    return plan
