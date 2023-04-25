@@ -1,0 +1,20 @@
+(define (problem heavy-pack-prob)
+	(:domain heavy-pack)
+	(:objects o525 o579 o722 o846)
+
+(:init
+    (box-empty)
+    (unpacked o525)
+    (unpacked o579)
+    (unpacked o722)
+    (unpacked o846)
+    (heavier o722 o846)
+    (heavier o722 o579)
+    (heavier o722 o525)
+    (heavier o846 o579)
+    (heavier o846 o525)
+    (heavier o579 o525)
+)
+
+(:goal (and (packed o525) (packed o579) (packed o722) (packed o846)))
+)
