@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    # Helper functions
+    def find_location(obj, init_atoms):
+        for atom in init_atoms:
+            if atom[0] == "at" and atom[1] == obj:
+                return atom[2]
+        return None
+
+    def find_robby_location(init_atoms):
+        for atom in init_atoms:
+            if atom[0] == "at-robby":
+                return atom[1]
+        return None
+
+    # Create plan
+    plan = []
+    robby_location = find_robby_location(init)
+    gripper = "gripper0"
+
+    for g in goal:
+        if g[0] == "at":
+            ball = g[1]
+            goal_room = g[2]
+
+            # Move to the room with the ball
+            ball_location = find_location(ball, init)
+            if robby_location != ball_location:
+                plan.append(f"(move {robby_location} {ball_location})")
+                robby_location = ball_location
+
+            # Pick up the ball
+            plan.append(f"(pick {ball} {robby_location} {gripper})")
+
+            # Move to the goal room
+            if robby_location != goal_room:
+                plan.append(f"(move {robby_location} {goal_room})")
+                robby_location = goal_room
+
+            # Drop the ball
+            plan.append(f"(drop {ball} {robby_location} {gripper})")
+
+    return plan
