@@ -1,0 +1,80 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper functions
+    def is_at(atom):
+        return atom[0] == 'at'
+
+    def is_link(atom):
+        return atom[0] == 'link'
+
+    def is_loose(atom):
+        return atom[0] == 'loose'
+
+    def is_useable(atom):
+        return atom[0] == 'useable'
+
+    def is_tightened(atom):
+        return atom[0] == 'tightened'
+
+    # Extract information from init
+    locations = [obj for obj in objects if obj[1] == 'location']
+    nuts = [obj[0] for obj in objects if obj[1] == 'nut']
+    spanners = [obj[0] for obj in objects if obj[1] == 'spanner']
+    man = [obj[0] for obj in objects if obj[1] == 'man'][0]
+    at = {tuple(atom[1:]) for atom in init if is_at(atom)}
+    links = {tuple(atom[1:]) for atom in init if is_link(atom)}
+    loose_nuts = {atom[1] for atom in init if is_loose(atom)}
+    useable_spanners = {atom[1] for atom in init if is_useable(atom)}
+
+    # Helper functions
+    def get_location(obj):
+        return [loc for (o, loc) in at if o == obj][0]
+
+    def get_connected_location(loc, visited):
+        return [loc2 for (loc1, loc2) in links if loc1 == loc and loc2 not in visited] + [loc1 for (loc1, loc2) in links if loc2 == loc and loc1 not in visited]
+
+    # Start planning
+    man_location = get_location(man)
+    visited_locations = set()
+
+    for nut in nuts:
+        nut_location = get_location(nut)
+
+        # Go to the nut location
+        while man_location != nut_location:
+            visited_locations.add(man_location)
+            next_location = get_connected_location(man_location, visited_locations)[0]
+            plan.append(f"(walk {man_location} {next_location} {man})")
+            at.remove((man, man_location))
+            at.add((man, next_location))
+            man_location = next_location
+
+        # Pick up a spanner
+        for spanner in spanners:
+            if spanner in useable_spanners:
+                spanner_location = get_location(spanner)
+                visited_locations = set()
+
+                # Go to the spanner location
+                while man_location != spanner_location:
+                    visited_locations.add(man_location)
+                    next_location = get_connected_location(man_location, visited_locations)[0]
+                    plan.append(f"(walk {man_location} {next_location} {man})")
+                    at.remove((man, man_location))
+                    at.add((man, next_location))
+                    man_location = next_location
+
+                # Pick up the spanner
+                plan.append(f"(pickup_spanner {spanner_location} {spanner} {man})")
+                at.remove((spanner, spanner_location))
+                useable_spanners.remove(spanner)
+
+                # Go back to the nut location
+                visited_locations = set()
+                while man_location != nut_location:
+                    visited_locations.add(man_location)
+                    next_location = get_connected_location(man_location, visited_locations)[0]
+                    plan.append(f"(walk {man_location} {next_location} {man})")
+                    at.remove((man, man_location))
+                    at.add((man, next_location
