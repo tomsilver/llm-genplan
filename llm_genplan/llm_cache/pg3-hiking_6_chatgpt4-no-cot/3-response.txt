@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Extract the location, trail, hill, and water information from the init predicates
+    current_location = None
+    trails = {}
+    hills = set()
+    water = set()
+    
+    for pred in init:
+        if pred[0] == 'at':
+            current_location = pred[1]
+        elif pred[0] == 'ontrail':
+            from_loc, to_loc = pred[1], pred[2]
+            if from_loc not in trails:
+                trails[from_loc] = []
+            trails[from_loc].append(to_loc)
+        elif pred[0] == 'ishill':
+            hills.add(pred[1])
+        elif pred[0] == 'iswater':
+            water.add(pred[1])
+            
+    # Follow the trail while avoiding water and hills
+    while not any(pred[0] == 'at' and pred[1] == current_location for pred in goal):
+        next_locations = trails[current_location]
+        for next_loc in next_locations:
+            if next_loc not in water:
+                if next_loc in hills:
+                    action = f'(climb {current_location} {next_loc})'
+                else:
+                    action = f'(walk {current_location} {next_loc})'
+                plan.append(action)
+                current_location = next_loc
+                break
+                
+    return plan

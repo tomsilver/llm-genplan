@@ -1,0 +1,167 @@
+Domain:
+(define (domain hiking)
+  (:requirements :strips :typing)
+  (:types loc)
+
+(:predicates
+  (at ?loc - loc)
+  (iswater ?loc - loc)
+  (ishill ?loc - loc)
+  (adjacent ?loc1 - loc ?loc2 - loc)
+  (ontrail ?from - loc ?to - loc)
+)
+
+(:action walk
+  :parameters (?from - loc ?to - loc)
+  :precondition (and
+    (not (ishill ?to))
+    (at ?from)
+    (adjacent ?from ?to)
+    (not (iswater ?from)))
+  :effect (and (at ?to) (not (at ?from)))
+)
+
+(:action climb
+  :parameters (?from - loc ?to - loc)
+  :precondition (and
+    (ishill ?to)
+    (at ?from)
+    (adjacent ?from ?to)
+    (not (iswater ?from)))
+  :effect (and (at ?to) (not (at ?from)))
+)
+
+
+)
+
+Example problems:
+(define (problem hiking (:domain hiking)
+  (:objects
+    r0_c0 - loc
+    r0_c1 - loc
+    r0_c2 - loc
+    r0_c3 - loc
+    r0_c4 - loc
+    r0_c5 - loc
+    r0_c6 - loc
+    r0_c7 - loc
+    r0_c8 - loc
+    r0_c9 - loc
+    ...
+  )
+  (:init
+    (adjacent r0_c0 r0_c1)
+    (adjacent r0_c0 r1_c0)
+    (adjacent r0_c1 r0_c0)
+    (adjacent r0_c1 r0_c2)
+    (adjacent r0_c1 r1_c1)
+    (adjacent r0_c2 r0_c1)
+    (adjacent r0_c2 r0_c3)
+    (adjacent r0_c2 r1_c2)
+    (adjacent r0_c3 r0_c2)
+    (adjacent r0_c3 r0_c4)
+    ...
+    (at r0_c0)
+    (ishill r7_c4)
+    (ishill r7_c7)
+    (iswater r0_c7)
+    (iswater r0_c8)
+    (iswater r1_c0)
+    (iswater r1_c1)
+    (iswater r1_c5)
+    (iswater r1_c6)
+    (iswater r2_c0)
+    (iswater r2_c1)
+    (iswater r2_c6)
+    (iswater r3_c0)
+    ...
+    (ontrail r0_c0 r0_c1)
+    (ontrail r0_c1 r0_c2)
+    (ontrail r0_c2 r0_c3)
+    (ontrail r0_c3 r1_c3)
+    (ontrail r1_c3 r2_c3)
+    (ontrail r1_c9 r0_c9)
+    (ontrail r2_c3 r3_c3)
+    (ontrail r2_c9 r1_c9)
+    (ontrail r3_c3 r4_c3)
+    (ontrail r3_c9 r2_c9)
+    ...
+  )
+  (:goal (and
+    (at r0_c9)
+    )
+  )    
+)
+        
+(define (problem hiking (:domain hiking)
+  (:objects
+    r0_c0 - loc
+    r0_c1 - loc
+    r0_c2 - loc
+    r0_c3 - loc
+    r0_c4 - loc
+    r0_c5 - loc
+    r0_c6 - loc
+    r0_c7 - loc
+    r0_c8 - loc
+    r0_c9 - loc
+    ...
+  )
+  (:init
+    (adjacent r0_c0 r0_c1)
+    (adjacent r0_c0 r1_c0)
+    (adjacent r0_c1 r0_c0)
+    (adjacent r0_c1 r0_c2)
+    (adjacent r0_c1 r1_c1)
+    (adjacent r0_c2 r0_c1)
+    (adjacent r0_c2 r0_c3)
+    (adjacent r0_c2 r1_c2)
+    (adjacent r0_c3 r0_c2)
+    (adjacent r0_c3 r0_c4)
+    ...
+    (at r7_c1)
+    (ishill r2_c2)
+    (ishill r2_c4)
+    (iswater r0_c6)
+    (iswater r0_c7)
+    (iswater r0_c8)
+    (iswater r0_c9)
+    (iswater r1_c6)
+    (iswater r1_c7)
+    (iswater r1_c8)
+    (iswater r1_c9)
+    (iswater r3_c6)
+    (iswater r3_c7)
+    ...
+    (ontrail r2_c0 r2_c1)
+    (ontrail r2_c1 r2_c2)
+    (ontrail r2_c2 r2_c3)
+    (ontrail r2_c3 r2_c4)
+    (ontrail r2_c4 r2_c5)
+    (ontrail r2_c5 r2_c6)
+    (ontrail r2_c6 r2_c7)
+    (ontrail r2_c7 r2_c8)
+    (ontrail r2_c8 r2_c9)
+    (ontrail r2_c9 r3_c9)
+    ...
+  )
+  (:goal (and
+    (at r4_c9)
+    )
+  )    
+)
+There is a simple strategy for solving all problems in this domain without using search. Implement the strategy as a Python function.
+
+The code should should be of the form
+
+def get_plan(objects, init, goal):
+    # Your code here
+    return plan
+
+where
+    - `objects` is a set of (object name, type name) tuples
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')
