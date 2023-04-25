@@ -1,0 +1,59 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f0_b1 - floor
+    f1_b0 - floor
+    f1_b1 - floor
+    f2_b0 - floor
+    f2_b1 - floor
+    f3_b0 - floor
+    f3_b1 - floor
+    f4_b0 - floor
+    f4_b1 - floor
+    ...
+    p0_b0 - passenger
+    p0_b1 - passenger
+    p1_b0 - passenger
+    p1_b1 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f0_b0 f5_b0)
+    (above f0_b0 f6_b0)
+    (above f0_b1 f1_b1)
+    (above f0_b1 f2_b1)
+    (above f0_b1 f3_b1)
+    (above f0_b1 f4_b1)
+    ...
+    (destin p0_b0 f0_b0)
+    (destin p0_b1 f3_b1)
+    (destin p1_b0 f5_b0)
+    (destin p1_b1 f0_b1)
+    (lift-at f1_b1)
+    (lift-at f4_b0)
+    (origin p0_b0 f5_b0)
+    (origin p0_b1 f0_b1)
+    (origin p1_b0 f0_b0)
+    (origin p1_b1 f5_b1)
+  )
+  (:goal (and
+    (served p0_b0)
+    (served p0_b1)
+    (served p1_b0)
+    (served p1_b1)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 274, in get_plan
+    if int(current_lift_floor.split('_')[1]) < int(origin_floor.split('_')[1]):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'b0'
+
+Fix the code.

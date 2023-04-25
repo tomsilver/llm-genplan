@@ -1,0 +1,72 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # First, create dictionaries for the origins, destinations, and floor relations
+    origins = {}
+    destinations = {}
+    above = {}
+
+    for fact in init:
+        if fact[0] == 'origin':
+            origins[fact[1]] = fact[2]
+        elif fact[0] == 'destin':
+            destinations[fact[1]] = fact[2]
+        elif fact[0] == 'above':
+            above[fact[1]] = fact[2]
+
+    # Add the highest floors with a value of None
+    for floor in above.keys():
+        if floor not in above.values():
+            above[floor] = None
+
+    # Find the initial lift positions
+    lift_positions = []
+    for fact in init:
+        if fact[0] == 'lift-at':
+            lift_positions.append(fact[1])
+
+    for goal_atom in goal:
+        if goal_atom[0] == 'served':
+            passenger = goal_atom[1]
+            origin_floor = origins[passenger]
+            destination_floor = destinations[passenger]
+
+            # Find the closest lift to the passenger's origin floor
+            closest_lift = None
+            min_distance = float('inf')
+            for lift in lift_positions:
+                distance = 0
+                current_floor = lift
+                while current_floor != origin_floor and current_floor is not None:
+                    current_floor = above[current_floor]
+                    distance += 1
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_lift = lift
+
+            # Move the lift to the passenger's origin floor
+            current_lift_floor = closest_lift
+            while current_lift_floor != origin_floor:
+                next_floor = above[current_lift_floor] if current_lift_floor in above else None
+                if int(current_lift_floor.split('_')[0][1:]) < int(origin_floor.split('_')[0][1:]):
+                    plan.append(f"up {current_lift_floor} {next_floor}")
+                else:
+                    plan.append(f"down {current_lift_floor} {next_floor}")
+                current_lift_floor = next_floor
+
+            # Board the passenger
+            plan.append(f"board {origin_floor} {passenger}")
+
+            # Move the lift to the passenger's destination floor
+            while current_lift_floor != destination_floor:
+                next_floor = above[current_lift_floor] if current_lift_floor in above else None
+                if int(current_lift_floor.split('_')[0][1:]) < int(destination_floor.split('_')[0][1:]):
+                    plan.append(f"up {current_lift_floor} {next_floor}")
+                else:
+                    plan.append(f"down {current_lift_floor} {next_floor}")
+                current_lift_floor = next_floor
+
+            # Serve the passenger
+            plan.append(f"depart {destination_floor} {passenger}")
+
+    return plan
