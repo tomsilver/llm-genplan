@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    plan = []
+    lifts = sorted([obj for obj, obj_type in objects if obj_type == 'floor'])
+    passengers = [obj for obj, obj_type in objects if obj_type == 'passenger']
+
+    origin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'origin']}
+    destin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'destin']}
+    lift_position = [f for atom in init if atom[0] == 'lift-at' for f in atom[1:]][0]
+
+    unserved_passengers = set(passengers)
+
+    while unserved_passengers:
+        # Pick up passengers from the current floor
+        passengers_to_pick = [p for p in passengers if p in unserved_passengers and origin[p] == lift_position]
+        for passenger in passengers_to_pick:
+            plan.append(f'(board {lift_position} {passenger})')
+            unserved_passengers.remove(passenger)
+
+        # Determine the next floor to move the lift to
+        next_floor = None
+        min_distance = float('inf')
+        for passenger in passengers:
+            if passenger in unserved_passengers:
+                distance = abs(lifts.index(lift_position) - lifts.index(origin[passenger]))
+                if distance < min_distance:
+                    min_distance = distance
+                    next_floor = origin[passenger]
+            else:
+                distance = abs(lifts.index(lift_position) - lifts.index(destin[passenger]))
+                if distance < min_distance:
+                    min_distance = distance
+                    next_floor = destin[passenger]
+
+        if next_floor is not None:
+            # Move the lift to the next floor
+            start_index = lifts.index(lift_position)
+            end_index = lifts.index(next_floor)
+            step = 1 if start_index < end_index else -1
+            for idx in range(start_index, end_index, step):
+                direction = 'up' if step == 1 else 'down'
+                plan.append(f'({direction} {lifts[idx]} {lifts[idx + step]})')
+            lift_position = next_floor
+
+            # Drop off passengers at the current floor
+            passengers_to_drop = [p for p in passengers if p not in unserved_passengers and destin[p] == lift_position]
+            for passenger in passengers_to_drop:
+                plan.append(f'(depart {lift_position} {passenger})')
+
+    return plan

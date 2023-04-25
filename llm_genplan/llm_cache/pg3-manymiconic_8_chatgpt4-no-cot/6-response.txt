@@ -1,0 +1,51 @@
+import heapq
+from collections import defaultdict
+
+def heuristic(passenger, origin, destin, current_floor):
+    return abs(origin[passenger] - current_floor) + abs(destin[passenger] - current_floor)
+
+def get_plan(objects, init, goal):
+    lifts = sorted([obj for obj, obj_type in objects if obj_type == 'floor'])
+    passengers = [obj for obj, obj_type in objects if obj_type == 'passenger']
+
+    origin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'origin']}
+    destin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'destin']}
+    lift_position = [f for atom in init if atom[0] == 'lift-at' for f in atom[1:]][0]
+
+    unserved_passengers = set(passengers)
+    served_passengers = set()
+
+    visited = set()
+    queue = [(0, [], lift_position, unserved_passengers, served_passengers)]
+
+    while queue:
+        cost, plan, current_floor, unserved, served = heapq.heappop(queue)
+        if (current_floor, frozenset(unserved), frozenset(served)) in visited:
+            continue
+        visited.add((current_floor, frozenset(unserved), frozenset(served)))
+
+        if not unserved:
+            return plan
+
+        for p in unserved:
+            if origin[p] == current_floor:
+                new_unserved = unserved - {p}
+                new_served = served | {p}
+                new_cost = cost + heuristic(p, origin, destin, current_floor)
+                new_plan = plan + [f'(board {current_floor} {p})']
+                heapq.heappush(queue, (new_cost, new_plan, current_floor, new_unserved, new_served))
+
+            if destin[p] == current_floor and p not in served:
+                new_served = served | {p}
+                new_cost = cost + heuristic(p, origin, destin, current_floor)
+                new_plan = plan + [f'(depart {current_floor} {p})']
+                heapq.heappush(queue, (new_cost, new_plan, current_floor, unserved, new_served))
+
+        for next_floor in lifts:
+            if next_floor != current_floor:
+                direction = 'up' if lifts.index(current_floor) < lifts.index(next_floor) else 'down'
+                new_cost = cost + abs(lifts.index(current_floor) - lifts.index(next_floor))
+                new_plan = plan + [f'({direction} {current_floor} {next_floor})']
+                heapq.heappush(queue, (new_cost, new_plan, next_floor, unserved, served))
+
+    return None

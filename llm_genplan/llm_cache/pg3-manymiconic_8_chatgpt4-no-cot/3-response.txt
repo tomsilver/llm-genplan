@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    plan = []
+    lifts = [obj for obj, obj_type in objects if obj_type == 'floor']
+    passengers = [obj for obj, obj_type in objects if obj_type == 'passenger']
+
+    origin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'origin']}
+    destin = {p: f for p, f in [tuple(atom[1:]) for atom in init if atom[0] == 'destin']}
+    lift_position = [f for atom in init if atom[0] == 'lift-at' for f in atom[1:]][0]
+
+    unserved_passengers = set(passengers)
+
+    while unserved_passengers:
+        for passenger in passengers:
+            if passenger in unserved_passengers and origin[passenger] == lift_position:
+                plan.append(f'(board {lift_position} {passenger})')
+                unserved_passengers.remove(passenger)
+
+        passengers_on_board = [passenger for passenger in passengers if passenger not in unserved_passengers]
+
+        for passenger in passengers_on_board:
+            destination = destin[passenger]
+            if lift_position != destination:
+                if lifts.index(lift_position) < lifts.index(destination):
+                    direction = "up"
+                else:
+                    direction = "down"
+
+                for idx in range(lifts.index(lift_position), lifts.index(destination)):
+                    plan.append(f'({direction} {lifts[idx]} {lifts[idx + 1]})')
+                lift_position = destination
+
+            plan.append(f'(depart {destination} {passenger})')
+
+        if not unserved_passengers:
+            break
+
+    return plan
