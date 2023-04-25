@@ -1,0 +1,60 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper function to find objects of a specific type
+    def find_objects_by_type(type_name):
+        return [obj for obj, obj_type in objects if obj_type == type_name]
+
+    # Find locations, spanners, nuts, and the man
+    locations = find_objects_by_type("location")
+    spanners = find_objects_by_type("spanner")
+    nuts = find_objects_by_type("nut")
+    man = find_objects_by_type("man")[0]
+
+    # Find the initial location of the man
+    man_location = None
+    for atom in init:
+        if atom[0] == "at" and atom[1] == man:
+            man_location = atom[2]
+            break
+
+    # Find the location sequence (assuming the domain has a simple sequence)
+    location_sequence = [man_location]
+    while len(location_sequence) < len(locations) + 1:
+        for atom in init:
+            if atom[0] == "link" and atom[1] == location_sequence[-1]:
+                location_sequence.append(atom[2])
+                break
+
+    # Walk through the locations, pick up spanners, and tighten nuts
+    for loc_index in range(1, len(location_sequence)):
+        start_location = location_sequence[loc_index - 1]
+        end_location = location_sequence[loc_index]
+
+        # Walk to the next location
+        plan.append(f"(walk {start_location} {end_location} {man})")
+        man_location = end_location
+
+        # Pick up spanners at the current location
+        for atom in init:
+            if atom[0] == "at" and atom[2] == man_location and atom[1] in spanners:
+                spanner = atom[1]
+                plan.append(f"(pickup_spanner {man_location} {spanner} {man})")
+
+        # Tighten nuts at the current location
+        for atom in init:
+            if atom[0] == "at" and atom[2] == man_location and atom[1] in nuts:
+                nut = atom[1]
+                # Check if the nut is loose
+                if ("loose", nut) in goal:
+                    # Tighten the nut using the first available spanner
+                    spanner = None
+                    for s in spanners:
+                        if ("carrying", man, s) in init:
+                            spanner = s
+                            break
+
+                    if spanner:
+                        plan.append(f"(tighten_nut {man_location} {spanner} {man} {nut})")
+
+    return plan

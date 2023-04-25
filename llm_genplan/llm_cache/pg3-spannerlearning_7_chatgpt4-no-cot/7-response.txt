@@ -1,0 +1,57 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_state = set(init)
+
+    def find_objects_by_type(type_name):
+        return [obj for obj, obj_type in objects if obj_type == type_name]
+
+    locations = find_objects_by_type("location")
+    spanners = find_objects_by_type("spanner")
+    nuts = find_objects_by_type("nut")
+    man = find_objects_by_type("man")[0]
+
+    man_location = None
+    for atom in current_state:
+        if atom[0] == "at" and atom[1] == man:
+            man_location = atom[2]
+            break
+
+    location_sequence = [man_location]
+    while len(location_sequence) < len(locations) + 1:
+        for atom in current_state:
+            if atom[0] == "link" and atom[1] == location_sequence[-1]:
+                location_sequence.append(atom[2])
+                break
+
+    for loc_index in range(1, len(location_sequence)):
+        start_location = location_sequence[loc_index - 1]
+        end_location = location_sequence[loc_index]
+
+        plan.append(f"(walk {start_location} {end_location} {man})")
+        man_location = end_location
+
+        for atom in list(current_state):
+            if atom[0] == "at" and atom[2] == man_location and atom[1] in spanners:
+                spanner = atom[1]
+                plan.append(f"(pickup_spanner {man_location} {spanner} {man})")
+                current_state.add(('carrying', man, spanner))
+                current_state.remove(('at', spanner, man_location))
+
+        for atom in list(current_state):
+            if atom[0] == "at" and atom[2] == man_location and atom[1] in nuts:
+                nut = atom[1]
+                if ("loose", nut) in current_state:
+                    spanner = None
+                    for s in spanners:
+                        if ('carrying', man, s) in current_state:
+                            spanner = s
+                            break
+
+                    if spanner:
+                        plan.append(f"(tighten_nut {man_location} {spanner} {man} {nut})")
+                        current_state.remove(('loose', nut))
+                        current_state.add(('tightened', nut))
+                        current_state.remove(('useable', spanner))
+                        current_state.remove(('carrying', man, spanner))
+
+    return plan
