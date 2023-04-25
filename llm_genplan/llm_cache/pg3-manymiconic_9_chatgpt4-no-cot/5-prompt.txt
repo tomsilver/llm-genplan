@@ -73,13 +73,7 @@ Given this task:
   )    
 )
         
-The code raised the following exception:
-Traceback (most recent call last):
-  File "<file-name-omitted>", line 85, in get_plan
-    for floor in find_path(lift_at, origin)[1:]:
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<file-name-omitted>", line -1, in find_path
-KeyboardInterrupt
-
-The code was interrupted because it timed out (possible infinite loop).
+The code failed. It returned the following plan: ['(up f2_b1 f4_b1)', '(board f4_b1 p3_b1)', '(down f4_b1 f1_b1)', '(depart f1_b1 p3_b1)', '(up f6_b0 f6_b1)', '(board f6_b1 p4_b1)', '(down f6_b1 f5_b1)', '(depart f5_b1 p4_b1)', '(up f5_b1 f6_b0)', '(board f6_b0 p4_b0)', '(down f6_b0 f4_b0)', '(depart f4_b0 p4_b0)', '(down f4_b0 f1_b0)', '(board f1_b0 p1_b0)', '(up f1_b0 f7_b0)', '(depart f7_b0 p1_b0)', '(down f7_b0 f4_b0)', '(board f4_b0 p0_b0)', '(down f4_b0 f1_b0)', '(depart f1_b0 p0_b0)', '(up f1_b0 f5_b1)', '(board f5_b1 p1_b1)', '(down f5_b1 f4_b1)', '(depart f4_b1 p1_b1)', '(up f4_b1 f7_b1)', '(board f7_b1 p2_b1)', '(down f7_b1 f0_b1)', '(depart f0_b1 p2_b1)', '(up f0_b1 f1_b1)', '(board f1_b1 p0_b1)', '(up f1_b1 f3_b1)', '(depart f3_b1 p0_b1)', '(down f3_b1 f3_b0)', '(board f3_b0 p3_b0)', '(up f3_b0 f5_b0)', '(depart f5_b0 p3_b0)', '(up f5_b0 f7_b0)', '(board f7_b0 p2_b0)', '(down f7_b0 f0_b0)', '(depart f0_b0 p2_b0)'].
+NOTE: (up f6_b0 f6_b1) has an unsatisfied precondition at time 4
+(Set (above f6_b0 f6_b1) to true)
 Fix the code.

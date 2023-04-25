@@ -1,47 +1,47 @@
 def get_plan(objects, init, goal):
-    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
-    floors = [obj[0] for obj in objects if obj[1] == 'floor']
-    above_relations = [rel for rel in init if rel[0] == 'above']
-    origins = {rel[1]: rel[2] for rel in init if rel[0] == 'origin'}
-    destinations = {rel[1]: rel[2] for rel in init if rel[0] == 'destin'}
-    lift_at = [rel[1] for rel in init if rel[0] == 'lift-at'][0]
-    
-    def find_path(start, end):
-        if start == end:
-            return []
-        path = [start]
-        current = start
-        while current != end:
-            for relation in above_relations:
-                if relation[1] == current:
-                    path.append(relation[2])
-                    current = relation[2]
-                    break
-        return path
-    
     plan = []
-    for passenger in passengers:
-        origin = origins[passenger]
-        destination = destinations[passenger]
-        
-        # Move lift to origin floor
-        for floor in find_path(lift_at, origin)[1:]:
-            if floor == origin:
-                break
-            plan.append('(up {} {})'.format(lift_at, floor))
-            lift_at = floor
+    
+    # Helper function to find the current lift floor
+    def lift_floor(init):
+        for atom in init:
+            if atom[0] == "lift-at":
+                return atom[1]
+        return None
 
-        # Board passenger
-        plan.append('(board {} {})'.format(origin, passenger))
+    # Extract passengers and their origin and destination floors
+    passengers = {}
+    for atom in init:
+        if atom[0] == "origin":
+            passenger, origin = atom[1], atom[2]
+            passengers[passenger] = {"origin": origin}
+        elif atom[0] == "destin":
+            passenger, destin = atom[1], atom[2]
+            passengers[passenger].update({"destin": destin})
 
-        # Move lift to destination floor
-        for floor in find_path(lift_at, destination)[1:]:
-            if floor == destination:
-                break
-            plan.append('(up {} {})'.format(lift_at, floor))
-            lift_at = floor
+    # Process each passenger
+    for passenger, info in passengers.items():
+        origin, destin = info["origin"], info["destin"]
+        lift = lift_floor(init)
 
-        # Depart passenger
-        plan.append('(depart {} {})'.format(destination, passenger))
+        # Move the lift to the passenger's origin floor if it's not there already
+        if lift != origin:
+            plan.append(f"(up {lift} {origin})" if lift < origin else f"(down {lift} {origin})")
+            init.remove(("lift-at", lift))
+            init.add(("lift-at", origin))
+
+        # Board the passenger
+        plan.append(f"(board {origin} {passenger})")
+        init.add(("boarded", passenger))
+
+        # Move the lift to the passenger's destination floor
+        lift = origin
+        plan.append(f"(up {lift} {destin})" if lift < destin else f"(down {lift} {destin})")
+        init.remove(("lift-at", lift))
+        init.add(("lift-at", destin))
+
+        # Depart the passenger
+        plan.append(f"(depart {destin} {passenger})")
+        init.remove(("boarded", passenger))
+        init.add(("served", passenger))
 
     return plan
