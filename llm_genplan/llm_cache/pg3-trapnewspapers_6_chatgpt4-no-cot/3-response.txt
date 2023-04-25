@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    loc_objs = [o for o in objects if o[1] == 'loc']
+    paper_objs = [o for o in objects if o[1] == 'paper']
+    
+    at_loc = [atom for atom in init if atom[0] == 'at'][0][1]
+    wants_paper = [atom for atom in init if atom[0] == 'wantspaper']
+    wants_paper_locs = [wp[1] for wp in wants_paper]
+    
+    safe_locs = [atom for atom in init if atom[0] == 'safe']
+    safe_locs = [sl[1] for sl in safe_locs]
+    
+    plan = []
+    
+    for loc in wants_paper_locs:
+        if loc in safe_locs:
+            for paper in paper_objs:
+                paper_name = paper[0]
+                
+                # Pick-up paper
+                pick_up_action = f'(pick-up {paper_name} {at_loc})'
+                plan.append(pick_up_action)
+                
+                # Move to target location
+                move_action = f'(move {at_loc} {loc})'
+                plan.append(move_action)
+                
+                # Deliver paper
+                deliver_action = f'(deliver {paper_name} {loc})'
+                plan.append(deliver_action)
+                
+                # Move back to home base
+                move_back_action = f'(move {loc} {at_loc})'
+                plan.append(move_back_action)
+                
+    return plan
