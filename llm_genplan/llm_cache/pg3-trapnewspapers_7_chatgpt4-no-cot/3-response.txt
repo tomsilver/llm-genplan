@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    plan = []
+    papers = [obj for obj in objects if obj[1] == 'paper']
+    locations = [obj for obj in objects if obj[1] == 'loc']
+    homebase = [loc[0] for loc in locations if ('ishomebase', loc[0]) in init][0]
+
+    for paper in papers:
+        # Pick up the paper
+        plan.append(f'(pick-up {paper[0]} {homebase})')
+
+        # Find the location that wants the paper
+        target_location = [loc[0] for loc in locations if ('wantspaper', loc[0]) in init and (paper[0], loc[0]) not in goal]
+
+        if target_location:
+            target_location = target_location[0]
+
+            # Move to the target location
+            plan.append(f'(move {homebase} {target_location})')
+
+            # Deliver the paper
+            plan.append(f'(deliver {paper[0]} {target_location})')
+
+            # Move back to homebase
+            plan.append(f'(move {target_location} {homebase})')
+
+    return plan
