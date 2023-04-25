@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    locations = [loc for loc, typ in objects if typ == "location"]
+    man = [m for m, typ in objects if typ == "man"][0]
+    nuts = [nut for nut, typ in objects if typ == "nut"]
+    spanners = [sp for sp, typ in objects if typ == "spanner"]
+
+    links = {loc: set() for loc in locations}
+    for link in [atom for atom in init if atom[0] == "link"]:
+        links[link[1]].add(link[2])
+        links[link[2]].add(link[1])  # Add reverse links
+
+    nut_locations = {nut: loc for nut, loc in [(atom[1], atom[2]) for atom in init if atom[0] == "at" and atom[1] in nuts]}
+    spanner_locations = {sp: loc for sp, loc in [(atom[1], atom[2]) for atom in init if atom[0] == "at" and atom[1] in spanners]}
+    man_location = [loc for atom in init if atom[0] == "at" and atom[1] == man for loc in [atom[2]]][0]
+
+    plan = []
+    for nut in nuts:
+        gate = nut_locations[nut]
+        for spanner in spanners:
+            sp_loc = spanner_locations[spanner]
+
+            walk_to_spanner = find_shortest_path(links, man_location, sp_loc)
+            for i in range(len(walk_to_spanner) - 1):
+                plan.append(f"(walk {walk_to_spanner[i]} {walk_to_spanner[i+1]} {man})")
+            plan.append(f"(pickup_spanner {sp_loc} {spanner} {man})")
+
+            walk_to_gate = find_shortest_path(links, sp_loc, gate)
+            for i in range(len(walk_to_gate) - 1):
+                plan.append(f"(walk {walk_to_gate[i]} {walk_to_gate[i+1]} {man})")
+            plan.append(f"(tighten_nut {gate} {spanner} {man} {nut})")
+
+            man_location = gate
+            break  # Move to the next nut after tightening the current one
+
+    return plan

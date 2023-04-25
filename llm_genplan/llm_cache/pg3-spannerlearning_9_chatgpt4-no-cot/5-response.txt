@@ -1,0 +1,16 @@
+def find_shortest_path(links, start, end, path=None):
+    if path is None:
+        path = []
+    path = path + [start]
+    if start == end:
+        return path
+    if start not in links:
+        return None
+    shortest = None
+    for node in links[start]:
+        if node not in path:
+            new_path = find_shortest_path(links, node, end, path)
+            if new_path:
+                if shortest is None or len(new_path) < len(shortest):
+                    shortest = new_path
+    return shortest

@@ -1,0 +1,182 @@
+Domain:
+(define (domain miconic)
+  (:requirements :strips)
+  (:types passenger - object
+          floor - object
+  )
+
+(:predicates
+(origin ?person - passenger ?floor - floor)
+(destin ?person - passenger ?floor - floor)
+(above ?floor1 - floor  ?floor2 - floor)
+(boarded ?person - passenger)
+(served ?person - passenger)
+(lift-at ?floor - floor)
+)
+
+(:action board
+  :parameters (?f - floor ?p - passenger)
+  :precondition (and (lift-at ?f)
+                     (origin ?p ?f)
+                )
+  :effect (and (boarded ?p)
+          )
+)
+
+(:action depart
+  :parameters (?f - floor ?p - passenger)
+  :precondition (and (lift-at ?f)
+                     (destin ?p ?f)
+                     (boarded ?p)
+                )
+  :effect (and (not (boarded ?p))
+               (served ?p)
+          )
+)
+
+(:action up
+  :parameters (?f1 - floor ?f2 - floor)
+  :precondition (and (lift-at ?f1)
+                     (above ?f1 ?f2)
+                )
+  :effect (and (lift-at ?f2)
+               (not (lift-at ?f1))
+          )
+)
+
+(:action down
+  :parameters (?f1 - floor ?f2 - floor)
+  :precondition (and (lift-at ?f1)
+                     (above ?f2 ?f1)
+                )
+  :effect (and (lift-at ?f2)
+               (not (lift-at ?f1))
+          )
+)
+)
+
+Example problems:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f0_b1 - floor
+    f1_b0 - floor
+    f1_b1 - floor
+    f2_b0 - floor
+    f2_b1 - floor
+    f3_b0 - floor
+    f3_b1 - floor
+    f4_b0 - floor
+    f4_b1 - floor
+    ...
+    p0_b0 - passenger
+    p0_b1 - passenger
+    p1_b0 - passenger
+    p1_b1 - passenger
+    p2_b0 - passenger
+    p2_b1 - passenger
+    p3_b0 - passenger
+    p3_b1 - passenger
+    p4_b0 - passenger
+    p4_b1 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f0_b0 f5_b0)
+    (above f0_b0 f6_b0)
+    (above f0_b0 f7_b0)
+    (above f0_b1 f1_b1)
+    (above f0_b1 f2_b1)
+    (above f0_b1 f3_b1)
+    ...
+    (destin p0_b0 f1_b0)
+    (destin p0_b1 f3_b1)
+    (destin p1_b0 f7_b0)
+    (destin p1_b1 f4_b1)
+    (destin p2_b0 f0_b0)
+    (destin p2_b1 f0_b1)
+    (destin p3_b0 f5_b0)
+    (destin p3_b1 f1_b1)
+    (destin p4_b0 f4_b0)
+    (destin p4_b1 f5_b1)
+    (lift-at f2_b1)
+    (lift-at f6_b0)
+    (origin p0_b0 f4_b0)
+    (origin p0_b1 f1_b1)
+    (origin p1_b0 f1_b0)
+    (origin p1_b1 f5_b1)
+    (origin p2_b0 f7_b0)
+    (origin p2_b1 f7_b1)
+    (origin p3_b0 f3_b0)
+    (origin p3_b1 f4_b1)
+    (origin p4_b0 f6_b0)
+    (origin p4_b1 f6_b1)
+  )
+  (:goal (and
+    (served p0_b0)
+    (served p0_b1)
+    (served p1_b0)
+    (served p1_b1)
+    (served p2_b0)
+    (served p2_b1)
+    (served p3_b0)
+    (served p3_b1)
+    (served p4_b0)
+    (served p4_b1)
+    )
+  )    
+)
+        
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f1_b0 - floor
+    f2_b0 - floor
+    f3_b0 - floor
+    f4_b0 - floor
+    f5_b0 - floor
+    p0_b0 - passenger
+    p1_b0 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f0_b0 f5_b0)
+    (above f1_b0 f2_b0)
+    (above f1_b0 f3_b0)
+    (above f1_b0 f4_b0)
+    (above f1_b0 f5_b0)
+    (above f2_b0 f3_b0)
+    ...
+    (destin p0_b0 f2_b0)
+    (destin p1_b0 f4_b0)
+    (lift-at f0_b0)
+    (origin p0_b0 f0_b0)
+    (origin p1_b0 f5_b0)
+  )
+  (:goal (and
+    (served p0_b0)
+    (served p1_b0)
+    )
+  )    
+)
+There is a simple strategy for solving all problems in this domain without using search. Implement the strategy as a Python function.
+
+The code should should be of the form
+
+def get_plan(objects, init, goal):
+    # Your code here
+    return plan
+
+where
+    - `objects` is a set of (object name, type name) tuples
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')

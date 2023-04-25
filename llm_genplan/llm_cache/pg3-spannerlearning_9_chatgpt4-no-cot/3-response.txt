@@ -1,0 +1,61 @@
+def find_shortest_path(links, start, end):
+    if start == end:
+        return [start]
+    queue = [(start, [start])]
+    while queue:
+        (vertex, path) = queue.pop(0)
+        for next in links[vertex] - set(path):
+            if next == end:
+                return path + [next]
+            else:
+                queue.append((next, path + [next]))
+    return []
+
+def get_plan(objects, init, goal):
+    nuts = [x[0] for x in objects if x[1] == 'nut']
+    spanners = [x[0] for x in objects if x[1] == 'spanner']
+    man = [x[0] for x in objects if x[1] == 'man'][0]
+
+    locations = [x[0] for x in objects if x[1] == 'location']
+    links = {loc: set() for loc in locations}
+    for item in init:
+        if item[0] == 'link':
+            links[item[1]].add(item[2])
+            links[item[2]].add(item[1])
+
+    at = {item[1]: item[2] for item in init if item[0] == 'at'}
+    loose_nuts = [nut for nut in nuts if ('loose', nut) in init]
+
+    plan = []
+
+    while loose_nuts:
+        path_to_spanner = None
+        spanner = None
+        for sp in spanners:
+            path = find_shortest_path(links, at[man], at[sp])
+            if not path_to_spanner or len(path) < len(path_to_spanner):
+                path_to_spanner = path
+                spanner = sp
+
+        for i in range(len(path_to_spanner) - 1):
+            plan.append(f"(walk {path_to_spanner[i]} {path_to_spanner[i + 1]} {man})")
+        plan.append(f"(pickup_spanner {at[spanner]} {spanner} {man})")
+
+        at[man] = path_to_spanner[-1]
+
+        path_to_nut = None
+        nut = None
+        for n in loose_nuts:
+            path = find_shortest_path(links, at[man], at[n])
+            if not path_to_nut or len(path) < len(path_to_nut):
+                path_to_nut = path
+                nut = n
+
+        for i in range(len(path_to_nut) - 1):
+            plan.append(f"(walk {path_to_nut[i]} {path_to_nut[i + 1]} {man})")
+        plan.append(f"(tighten_nut {at[nut]} {spanner} {man} {nut})")
+
+        at[man] = path_to_nut[-1]
+        loose_nuts.remove(nut)
+
+    return plan

@@ -1,0 +1,72 @@
+def get_plan(objects, init, goal):
+    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
+    floors = [obj[0] for obj in objects if obj[1] == 'floor']
+    above_relations = [rel for rel in init if rel[0] == 'above']
+    origins = {rel[1]: rel[2] for rel in init if rel[0] == 'origin'}
+    destinations = {rel[1]: rel[2] for rel in init if rel[0] == 'destin'}
+    lifts_at = [rel[1] for rel in init if rel[0] == 'lift-at']
+
+    def find_path(start, end):
+        if start == end:
+            return []
+        path = [start]
+        current = start
+        while current != end:
+            for relation in above_relations:
+                if relation[1] == current and relation[2] not in path:
+                    path.append(relation[2])
+                    current = relation[2]
+                    break
+                elif relation[2] == current and relation[1] not in path:
+                    path.append(relation[1])
+                    current = relation[1]
+                    break
+        return path
+
+    def find_closest_lift(origin):
+        closest_lift = lifts_at[0]
+        min_distance = len(find_path(lifts_at[0], origin)) - 1
+
+        for lift in lifts_at[1:]:
+            distance = len(find_path(lift, origin)) - 1
+            if distance < min_distance:
+                min_distance = distance
+                closest_lift = lift
+
+        return closest_lift
+
+    plan = []
+    for passenger in passengers:
+        origin = origins[passenger]
+        destination = destinations[passenger]
+
+        # Find the closest lift
+        lift_at = find_closest_lift(origin)
+
+        # Move lift to origin floor
+        for floor in find_path(lift_at, origin)[1:]:
+            if floor == origin:
+                break
+            if lift_at in [rel[1] for rel in above_relations if rel[2] == floor]:
+                plan.append('(up {} {})'.format(lift_at, floor))
+            else:
+                plan.append('(down {} {})'.format(lift_at, floor))
+            lift_at = floor
+
+        # Board passenger
+        plan.append('(board {} {})'.format(origin, passenger))
+
+        # Move lift to destination floor
+        for floor in find_path(lift_at, destination)[1:]:
+            if floor == destination:
+                break
+            if lift_at in [rel[1] for rel in above_relations if rel[2] == floor]:
+                plan.append('(up {} {})'.format(lift_at, floor))
+            else:
+                plan.append('(down {} {})'.format(lift_at, floor))
+            lift_at = floor
+
+        # Depart passenger
+        plan.append('(depart {} {})'.format(destination, passenger))
+
+    return plan
