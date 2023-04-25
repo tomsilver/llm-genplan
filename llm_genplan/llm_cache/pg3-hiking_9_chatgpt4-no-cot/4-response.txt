@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_location = None
+    goal_location = None
+    adjacent_dict = {}
+    hill_locations = set()
+    water_locations = set()
+    
+    for atom in init:
+        if atom[0] == 'at':
+            current_location = atom[1]
+        elif atom[0] == 'ishill':
+            hill_locations.add(atom[1])
+        elif atom[0] == 'iswater':
+            water_locations.add(atom[1])
+        elif atom[0] == 'adjacent':
+            if atom[1] not in adjacent_dict:
+                adjacent_dict[atom[1]] = []
+            adjacent_dict[atom[1]].append(atom[2])
+
+    for atom in goal:
+        if atom[0] == 'at':
+            goal_location = atom[1]
+
+    while current_location != goal_location:
+        for loc in adjacent_dict[current_location]:
+            if ('ontrail', current_location, loc) in init:
+                if loc in hill_locations:
+                    action = '(climb {} {})'.format(current_location, loc)
+                else:
+                    action = '(walk {} {})'.format(current_location, loc)
+                
+                if loc not in water_locations:
+                    plan.append(action)
+                    current_location = loc
+                    break
+
+    return plan
