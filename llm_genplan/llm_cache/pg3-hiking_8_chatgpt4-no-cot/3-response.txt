@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    current_location = None
+    for atom in init:
+        if atom[0] == "at":
+            current_location = atom[1]
+            break
+
+    goal_location = None
+    for atom in goal:
+        if atom[0] == "at":
+            goal_location = atom[1]
+            break
+
+    plan = []
+    visited = set()
+    while current_location != goal_location:
+        visited.add(current_location)
+        for atom in init:
+            if atom[0] == "ontrail" and atom[1] == current_location:
+                next_location = atom[2]
+                if next_location not in visited:
+                    is_hill = False
+                    for hill_atom in init:
+                        if hill_atom[0] == "ishill" and hill_atom[1] == next_location:
+                            is_hill = True
+                            break
+
+                    if is_hill:
+                        action = f"(climb {current_location} {next_location})"
+                    else:
+                        action = f"(walk {current_location} {next_location})"
+
+                    plan.append(action)
+                    current_location = next_location
+                    break
+
+    return plan
