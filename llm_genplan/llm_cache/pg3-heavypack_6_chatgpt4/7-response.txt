@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    weight_relations = {}
+    unpacked_objects = set()
+    packed_objects = set()
+
+    for predicate in init:
+        if predicate[0] == "heavier":
+            weight_relations[(predicate[1], predicate[2])] = True
+        elif predicate[0] == "unpacked":
+            unpacked_objects.add(predicate[1])
+
+    def is_heavier(o1, o2):
+        return weight_relations.get((o1, o2), False)
+
+    sorted_objects = sorted(unpacked_objects, key=lambda x: sum(is_heavier(x, y) for y in unpacked_objects), reverse=True)
+
+    plan = []
+    for obj in sorted_objects:
+        plan.append(f'(pack {obj})')
+        packed_objects.add(obj)
+
+    return plan
