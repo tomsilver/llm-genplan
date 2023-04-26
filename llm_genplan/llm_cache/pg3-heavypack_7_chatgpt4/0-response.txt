@@ -1,0 +1,14 @@
+The heavy-pack domain represents a simplified packing problem, where the goal is to pack a set of objects into a box. The objects have different weights, and the packing must adhere to the constraint that heavier objects should be placed below lighter ones. 
+
+There are four predicates in the domain:
+1. heavier(?item1, ?item2): ?item1 is heavier than ?item2.
+2. packed(?item): ?item is packed in the box.
+3. unpacked(?item): ?item is not yet packed in the box.
+4. nothing-above(?item): There is no other item above ?item in the box.
+5. box-empty: The box is empty.
+
+The domain also contains two actions:
+1. pack-first(?item): This action packs the first item into an empty box and ensures that there is nothing above the item. The box is no longer considered empty, and the item is no longer considered unpacked.
+2. stack(?bottom, ?top): This action stacks a lighter item (?top) on top of a heavier item (?bottom) that is already packed in the box. Both items are considered packed, and there is nothing above the top item. The bottom item no longer has nothing above it.
+
+The example problems provided contain different sets of objects with specified weight relationships. The goal of each problem is to pack all objects in the box, following the packing constraints.

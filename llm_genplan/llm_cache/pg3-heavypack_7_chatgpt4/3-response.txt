@@ -1,0 +1,18 @@
+def get_plan(objects, init, goal):
+    # Extract relationships from init
+    relationships = [atom for atom in init if atom[0] == 'heavier']
+
+    # Sort objects based on weights
+    sorted_objects = sorted(objects, key=lambda obj: sum(1 for r in relationships if r[1] == obj), reverse=True)
+
+    # Initialize the plan
+    plan = []
+
+    # Pack the first object
+    plan.append(f'(pack-first {sorted_objects[0]})')
+
+    # Stack the remaining objects
+    for i in range(1, len(sorted_objects)):
+        plan.append(f'(stack {sorted_objects[i - 1]} {sorted_objects[i]})')
+
+    return plan
