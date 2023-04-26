@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to sort the items in descending order based on their weights (from heaviest to lightest) and then pack them in that order. 
+
+Here are the steps to follow:
+
+1. Create a list of all the unpacked items.
+2. Sort the list in descending order based on the 'heavier' predicate relationships provided in the problem.
+3. For each item in the sorted list, execute the following actions:
+   a. If the box is empty, use the 'pack-first' action to pack the heaviest item.
+   b. If the box is not empty, use the 'stack' action to place the current item on top of the previously packed item.
+
+By following this strategy, you ensure that all items are packed in the box following the weight constraints without using search.
