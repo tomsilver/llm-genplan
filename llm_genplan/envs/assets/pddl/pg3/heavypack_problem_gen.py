@@ -84,9 +84,9 @@ def _run(
 
 if __name__ == "__main__":
     _run(
-        PDDL_DIR / "heavypack",
-        PDDL_DIR / "heavypack_test",
-        num_seed=8,
+        PDDL_DIR / "pg3" / "heavypack",
+        PDDL_DIR / "pg3" / "heavypack_test",
+        num_seed=10,
         num_train_per_seed=10,
         num_test_per_seed=30,
     )
