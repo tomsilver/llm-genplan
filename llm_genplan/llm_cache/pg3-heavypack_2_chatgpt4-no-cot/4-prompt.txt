@@ -1,0 +1,49 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o488
+    o504
+    o538
+    o619
+    o620
+    o625
+  )
+  (:init
+    (box-empty)
+    (heavier o488 o504)
+    (heavier o488 o619)
+    (heavier o538 o488)
+    (heavier o538 o504)
+    (heavier o538 o619)
+    (heavier o538 o625)
+    (heavier o619 o504)
+    (heavier o620 o488)
+    (heavier o620 o504)
+    (heavier o620 o538)
+    ...
+    (unpacked o488)
+    (unpacked o504)
+    (unpacked o538)
+    (unpacked o619)
+    (unpacked o620)
+    (unpacked o625)
+  )
+  (:goal (and
+    (packed o488)
+    (packed o504)
+    (packed o538)
+    (packed o619)
+    (packed o620)
+    (packed o625)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 11, in get_plan
+    sorted_objects = sorted(objects, key=lambda x: get_weight(x, init), reverse=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'NoneType' and 'tuple'
+
+Fix the code.

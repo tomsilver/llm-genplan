@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    def get_weight(item, weights, relations):
+        if item in weights:
+            return weights[item]
+        for relation in relations:
+            if relation[2] == item:
+                weights[item] = get_weight(relation[1], weights, relations) + 1
+                return weights[item]
+        return 0
+
+    # Extract the 'heavier' relations
+    heavier_relations = [atom for atom in init if atom[0] == 'heavier']
+
+    # Create a dictionary with object weights
+    object_weights = {}
+    for obj in objects:
+        object_weights[obj] = get_weight(obj, object_weights, heavier_relations)
+
+    # Sort the objects by their weights in descending order
+    sorted_objects = sorted(objects, key=lambda obj: object_weights[obj], reverse=True)
+
+    # Generate the plan
+    plan = []
+    for i, obj in enumerate(sorted_objects):
+        if i == 0:
+            plan.append(f'(pack-first {obj})')
+        else:
+            plan.append(f'(stack {sorted_objects[i-1]} {obj})')
+
+    return plan

@@ -1,0 +1,21 @@
+def get_weight_rank(item, init):
+    weight_rank = 0
+    for atom in init:
+        if atom[0] == 'heavier' and atom[1] == item:
+            weight_rank += 1
+    return weight_rank
+
+def get_plan(objects, init, goal):
+    # Sort objects in descending order of weight rank
+    sorted_objects = sorted(objects, key=lambda x: get_weight_rank(x, init), reverse=True)
+
+    plan = []
+
+    # Pack the heaviest object first
+    plan.append(f"(pack-first {sorted_objects[0]})")
+
+    # Stack the rest of the objects on top of the heaviest object in descending order of weight rank
+    for i in range(1, len(sorted_objects)):
+        plan.append(f"(stack {sorted_objects[i-1]} {sorted_objects[i]})")
+
+    return plan

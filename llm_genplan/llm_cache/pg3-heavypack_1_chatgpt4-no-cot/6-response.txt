@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    def build_heavier_map(heavier_relations):
+        heavier_map = {}
+        for relation in heavier_relations:
+            if relation[1] not in heavier_map:
+                heavier_map[relation[1]] = []
+            heavier_map[relation[1]].append(relation[2])
+        return heavier_map
+
+    # Extract the 'heavier' relations
+    heavier_relations = [atom for atom in init if atom[0] == 'heavier']
+    heavier_map = build_heavier_map(heavier_relations)
+
+    # Sort the objects based on the heavier_map
+    sorted_objects = sorted(objects, key=lambda obj: len(heavier_map.get(obj, [])), reverse=True)
+
+    # Generate the plan
+    plan = []
+    for i, obj in enumerate(sorted_objects):
+        if i == 0:
+            plan.append(f'(pack-first {obj})')
+        else:
+            plan.append(f'(stack {sorted_objects[i-1]} {obj})')
+
+    return plan

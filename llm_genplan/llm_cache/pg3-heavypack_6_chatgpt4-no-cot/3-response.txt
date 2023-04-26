@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    # Extract weight information from the init state
+    weight_relations = [atom for atom in init if atom[0] == "heavier"]
+
+    # Create a dictionary to store the weights
+    weights = {}
+    for relation in weight_relations:
+        _, heavier, lighter = relation
+        if heavier not in weights:
+            weights[heavier] = 0
+        if lighter not in weights:
+            weights[lighter] = weights[heavier] + 1
+        else:
+            weights[lighter] = max(weights[lighter], weights[heavier] + 1)
+
+    # Sort objects in descending order of their weight
+    sorted_objects = sorted(objects, key=lambda x: weights[x], reverse=True)
+
+    # Generate the plan
+    plan = []
+    for index, item in enumerate(sorted_objects):
+        if index == 0:
+            plan.append(f"(pack-first {item})")
+        else:
+            plan.append(f"(stack {sorted_objects[index - 1]} {item})")
+
+    return plan

@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    def dfs(item, graph, visited):
+        if item in visited:
+            return visited[item]
+        visited[item] = 0
+        for neighbor in graph[item]:
+            visited[item] = max(visited[item], dfs(neighbor, graph, visited) + 1)
+        return visited[item]
+
+    # Extract weight information from the init state
+    weight_relations = [atom for atom in init if atom[0] == "heavier"]
+
+    # Create a graph for DFS
+    graph = {item: [] for item in objects}
+    for relation in weight_relations:
+        _, heavier, lighter = relation
+        graph[heavier].append(lighter)
+
+    # Calculate weights using DFS
+    visited = {}
+    for item in objects:
+        if item not in visited:
+            visited[item] = dfs(item, graph, visited)
+
+    # Sort objects in descending order of their weight
+    sorted_objects = sorted(objects, key=lambda x: visited[x], reverse=True)
+
+    # Generate the plan
+    plan = []
+    for index, item in enumerate(sorted_objects):
+        if index == 0:
+            plan.append(f"(pack-first {item})")
+        else:
+            plan.append(f"(stack {sorted_objects[index - 1]} {item})")
+
+    return plan

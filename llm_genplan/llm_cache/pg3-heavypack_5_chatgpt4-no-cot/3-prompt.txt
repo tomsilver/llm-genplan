@@ -1,0 +1,105 @@
+Domain:
+(define (domain heavy-pack)
+   (:predicates
+		(heavier ?item1 ?item2)
+        (packed ?item)
+        (unpacked ?item)
+        (nothing-above ?item)
+        (box-empty)
+	)
+
+   (:action pack-first
+       :parameters (?item)
+       :precondition (and (box-empty))
+       :effect (and (not (box-empty)) (packed ?item) (nothing-above ?item) (not (unpacked ?item))))
+
+   (:action stack
+       :parameters (?bottom ?top)
+       :precondition (and (packed ?bottom) (nothing-above ?bottom) (heavier ?bottom ?top) (unpacked ?top))
+       :effect (and (packed ?top) (nothing-above ?top) (not (nothing-above ?bottom)) (not (unpacked ?top))))
+)
+
+Example problems:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o162
+    o692
+    o841
+  )
+  (:init
+    (box-empty)
+    (heavier o162 o692)
+    (heavier o162 o841)
+    (heavier o841 o692)
+    (unpacked o162)
+    (unpacked o692)
+    (unpacked o841)
+  )
+  (:goal (and
+    (packed o162)
+    (packed o692)
+    (packed o841)
+    )
+  )    
+)
+        
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o1
+    o203
+    o335
+    o37
+    o437
+    o503
+    o771
+    o932
+  )
+  (:init
+    (box-empty)
+    (heavier o1 o335)
+    (heavier o1 o932)
+    (heavier o203 o1)
+    (heavier o203 o335)
+    (heavier o203 o932)
+    (heavier o37 o1)
+    (heavier o37 o203)
+    (heavier o37 o335)
+    (heavier o37 o771)
+    (heavier o37 o932)
+    ...
+    (unpacked o1)
+    (unpacked o203)
+    (unpacked o335)
+    (unpacked o37)
+    (unpacked o437)
+    (unpacked o503)
+    (unpacked o771)
+    (unpacked o932)
+  )
+  (:goal (and
+    (packed o1)
+    (packed o203)
+    (packed o335)
+    (packed o37)
+    (packed o437)
+    (packed o503)
+    (packed o771)
+    (packed o932)
+    )
+  )    
+)
+There is a simple strategy for solving all problems in this domain without using search. Implement the strategy as a Python function.
+
+The code should should be of the form
+
+def get_plan(objects, init, goal):
+    # Your code here
+    return plan
+
+where
+    - `objects` is a set of objects (string names)
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')

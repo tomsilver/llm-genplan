@@ -1,0 +1,115 @@
+Domain:
+(define (domain heavy-pack)
+   (:predicates
+		(heavier ?item1 ?item2)
+        (packed ?item)
+        (unpacked ?item)
+        (nothing-above ?item)
+        (box-empty)
+	)
+
+   (:action pack-first
+       :parameters (?item)
+       :precondition (and (box-empty))
+       :effect (and (not (box-empty)) (packed ?item) (nothing-above ?item) (not (unpacked ?item))))
+
+   (:action stack
+       :parameters (?bottom ?top)
+       :precondition (and (packed ?bottom) (nothing-above ?bottom) (heavier ?bottom ?top) (unpacked ?top))
+       :effect (and (packed ?top) (nothing-above ?top) (not (nothing-above ?bottom)) (not (unpacked ?top))))
+)
+
+Example problems:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o215
+    o470
+    o639
+    o693
+    o845
+  )
+  (:init
+    (box-empty)
+    (heavier o215 o470)
+    (heavier o215 o639)
+    (heavier o215 o693)
+    (heavier o215 o845)
+    (heavier o470 o639)
+    (heavier o470 o693)
+    (heavier o470 o845)
+    (heavier o639 o693)
+    (heavier o639 o845)
+    (heavier o845 o693)
+    (unpacked o215)
+    (unpacked o470)
+    (unpacked o639)
+    (unpacked o693)
+    (unpacked o845)
+  )
+  (:goal (and
+    (packed o215)
+    (packed o470)
+    (packed o639)
+    (packed o693)
+    (packed o845)
+    )
+  )    
+)
+        
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o368
+    o457
+    o459
+    o62
+    o641
+    o770
+    o872
+  )
+  (:init
+    (box-empty)
+    (heavier o368 o457)
+    (heavier o368 o459)
+    (heavier o368 o62)
+    (heavier o368 o641)
+    (heavier o368 o872)
+    (heavier o457 o459)
+    (heavier o457 o641)
+    (heavier o459 o641)
+    (heavier o62 o457)
+    (heavier o62 o459)
+    ...
+    (unpacked o368)
+    (unpacked o457)
+    (unpacked o459)
+    (unpacked o62)
+    (unpacked o641)
+    (unpacked o770)
+    (unpacked o872)
+  )
+  (:goal (and
+    (packed o368)
+    (packed o457)
+    (packed o459)
+    (packed o62)
+    (packed o641)
+    (packed o770)
+    (packed o872)
+    )
+  )    
+)
+There is a simple strategy for solving all problems in this domain without using search. Implement the strategy as a Python function.
+
+The code should should be of the form
+
+def get_plan(objects, init, goal):
+    # Your code here
+    return plan
+
+where
+    - `objects` is a set of objects (string names)
+    - `init` is a set of ground atoms represented as tuples of predicate
+       names and arguments (e.g., ('predicate-foo', 'object-bar', ...))
+    - `goal` is also a set of ground atoms represented in the same way
+    - `plan` is a list of actions, where each action is a ground operator
+       represented as a string (e.g., '(operator-baz object-qux ...)')
