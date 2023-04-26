@@ -1,0 +1,6 @@
+The simple strategy for solving all problems in this domain without using search is to first sort the objects in descending order of their weight (from heaviest to lightest) based on the 'heavier' predicates given in the problem. Then, execute the following steps:
+
+1. Use the 'pack-first' action to place the heaviest object (the first one in the sorted list) in the empty box.
+2. Iterate through the remaining objects in the sorted list and use the 'stack' action to place each object on top of the previously packed object.
+
+By following this strategy, you ensure that every object is placed on top of a heavier object, satisfying the domain constraints and successfully packing all objects into the box.

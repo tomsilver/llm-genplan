@@ -1,6 +1,8 @@
 def get_plan(objects, init, goal):
-    def extract_weights(init):
+    def extract_weights(init, objects):
         weights = {}
+        for obj in objects:
+            weights[obj] = 0
         for atom in init:
             if atom[0] == "heavier":
                 weights[atom[1]] = weights.get(atom[1], 0) + 1
@@ -9,7 +11,7 @@ def get_plan(objects, init, goal):
     def sort_objects_by_weight(objects, weights):
         return sorted(objects, key=lambda obj: weights[obj], reverse=True)
 
-    weights = extract_weights(init)
+    weights = extract_weights(init, objects)
     sorted_objects = sort_objects_by_weight(objects, weights)
 
     plan = []
@@ -20,3 +22,4 @@ def get_plan(objects, init, goal):
             plan.append(f"(stack {sorted_objects[i-1]} {obj})")
 
     return plan
+

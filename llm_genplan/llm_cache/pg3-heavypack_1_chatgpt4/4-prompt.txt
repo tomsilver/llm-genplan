@@ -1,0 +1,51 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o215
+    o470
+    o639
+    o693
+    o845
+  )
+  (:init
+    (box-empty)
+    (heavier o215 o470)
+    (heavier o215 o639)
+    (heavier o215 o693)
+    (heavier o215 o845)
+    (heavier o470 o639)
+    (heavier o470 o693)
+    (heavier o470 o845)
+    (heavier o639 o693)
+    (heavier o639 o845)
+    (heavier o845 o693)
+    (unpacked o215)
+    (unpacked o470)
+    (unpacked o639)
+    (unpacked o693)
+    (unpacked o845)
+  )
+  (:goal (and
+    (packed o215)
+    (packed o470)
+    (packed o639)
+    (packed o693)
+    (packed o845)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 16, in get_plan
+    sorted_objects = sort_objects_by_weight(objects, weights)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 13, in sort_objects_by_weight
+    return sorted(objects, key=lambda obj: weights[obj], reverse=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 13, in <lambda>
+    return sorted(objects, key=lambda obj: weights[obj], reverse=True)
+                                           ~~~~~~~^^^^^
+KeyError: 'o693'
+
+Fix the code.
