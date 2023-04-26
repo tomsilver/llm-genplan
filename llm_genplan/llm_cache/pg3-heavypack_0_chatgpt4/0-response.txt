@@ -1,5 +1,0 @@
-The heavy-pack domain focuses on packing items into a box based on their weight. The domain consists of predicates that describe the weight relationship between items, whether an item is packed or unpacked, and if there is nothing above a specific item. There are also two actions defined in this domain: pack-first and stack.
-
-The pack-first action is responsible for packing the first item into the empty box, while the stack action is responsible for stacking an item on top of another item that is already packed, provided the item below is heavier.
-
-The example problems provided for this domain consist of several objects with different weights, which need to be packed according to the rules defined in the domain. The goal for each problem is to ensure all items are packed in the box while adhering to the weight constraints.

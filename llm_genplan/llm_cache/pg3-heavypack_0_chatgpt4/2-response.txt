@@ -1,7 +1,0 @@
-A simple strategy for solving all problems in this heavy-pack domain without using search is to follow these steps:
-
-1. Sort the items in descending order of their weight, with the heaviest item first.
-2. Use the `pack-first` action to pack the heaviest item into the empty box.
-3. Iterate through the sorted list of items, and for each item, use the `stack` action to stack it on top of the currently heaviest packed item that is lighter than the item being stacked.
-
-By following this strategy, you ensure that items are always stacked according to the weight constraints specified in the domain, and all items will be packed without the need for search.
