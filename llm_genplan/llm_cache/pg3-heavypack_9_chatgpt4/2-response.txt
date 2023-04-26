@@ -1,0 +1,7 @@
+A simple strategy for solving all problems in the heavy-pack domain without using search is as follows:
+
+1. Sort the items in descending order of their weights (heaviest to lightest).
+2. Perform the "pack-first" action on the heaviest item.
+3. Iterate through the sorted list, and for each subsequent item, perform the "stack" action on the item and the item below it in the sorted list.
+
+This strategy ensures that items are packed according to their weights without needing to perform any search. The heaviest item is placed at the bottom of the stack, and lighter items are added on top of the stack in descending order of their weights.

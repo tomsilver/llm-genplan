@@ -1,0 +1,8 @@
+The "heavy-pack" domain is a planning problem that focuses on packing a set of items in a box according to their weight. The domain contains predicates to define the relative weights of items (heavier), the packing status of the items (packed or unpacked), and whether there is nothing above an item (nothing-above). There is also a predicate to indicate if the box is empty (box-empty).
+
+There are two actions in this domain:
+
+1. pack-first: This action packs the first item in the box, considering the box is empty. The effect is that the box is no longer empty, the item is packed, nothing is above it, and it is not unpacked.
+2. stack: This action stacks an item on top of another, provided the bottom item is heavier, both items have appropriate packing statuses (packed and unpacked), and there is nothing above the bottom item. The effect is that the top item is packed, nothing is above it, and the bottom item no longer has nothing above it.
+
+The example problems provided illustrate the domain by specifying objects with different weights, initial states describing their relative weights, and unpacked status. The goal is to pack all objects in the box according to their weights.

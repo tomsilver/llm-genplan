@@ -1,0 +1,24 @@
+def get_plan(objects, init, goal):
+    # Extract the 'heavier' relations and unpacked objects
+    heavier_relations = [atom for atom in init if atom[0] == 'heavier']
+    unpacked_objects = [atom[1] for atom in init if atom[0] == 'unpacked']
+
+    def is_heavier(obj1, obj2):
+        if (obj1, obj2) in [(rel[1], rel[2]) for rel in heavier_relations]:
+            return True
+        for rel in heavier_relations:
+            if rel[1] == obj1 and is_heavier(rel[2], obj2):
+                return True
+        return False
+
+    # Sort the objects by weight (heaviest to lightest)
+    sorted_objects = sorted(unpacked_objects, key=lambda obj: sum(1 for other_obj in unpacked_objects if is_heavier(obj, other_obj)), reverse=True)
+
+    # Initialize the plan with the 'pack-first' action for the heaviest object
+    plan = [f'(pack-first {sorted_objects[0]})']
+    
+    # Add 'stack' actions for the rest of the objects in the sorted list
+    for i in range(1, len(sorted_objects)):
+        plan.append(f'(stack {sorted_objects[i-1]} {sorted_objects[i]})')
+
+    return plan

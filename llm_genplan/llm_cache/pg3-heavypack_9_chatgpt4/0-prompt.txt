@@ -1,0 +1,81 @@
+Domain:
+(define (domain heavy-pack)
+   (:predicates
+		(heavier ?item1 ?item2)
+        (packed ?item)
+        (unpacked ?item)
+        (nothing-above ?item)
+        (box-empty)
+	)
+
+   (:action pack-first
+       :parameters (?item)
+       :precondition (and (box-empty))
+       :effect (and (not (box-empty)) (packed ?item) (nothing-above ?item) (not (unpacked ?item))))
+
+   (:action stack
+       :parameters (?bottom ?top)
+       :precondition (and (packed ?bottom) (nothing-above ?bottom) (heavier ?bottom ?top) (unpacked ?top))
+       :effect (and (packed ?top) (nothing-above ?top) (not (nothing-above ?bottom)) (not (unpacked ?top))))
+)
+
+Example problems:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o260
+    o540
+    o593
+    o617
+    o642
+  )
+  (:init
+    (box-empty)
+    (heavier o260 o593)
+    (heavier o260 o617)
+    (heavier o260 o642)
+    (heavier o540 o260)
+    (heavier o540 o593)
+    (heavier o540 o617)
+    (heavier o540 o642)
+    (heavier o593 o617)
+    (heavier o642 o593)
+    (heavier o642 o617)
+    (unpacked o260)
+    (unpacked o540)
+    (unpacked o593)
+    (unpacked o617)
+    (unpacked o642)
+  )
+  (:goal (and
+    (packed o260)
+    (packed o540)
+    (packed o593)
+    (packed o617)
+    (packed o642)
+    )
+  )    
+)
+        
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o177
+    o377
+    o624
+  )
+  (:init
+    (box-empty)
+    (heavier o177 o377)
+    (heavier o177 o624)
+    (heavier o377 o624)
+    (unpacked o177)
+    (unpacked o377)
+    (unpacked o624)
+  )
+  (:goal (and
+    (packed o177)
+    (packed o377)
+    (packed o624)
+    )
+  )    
+)
+Write a short summary of this domain in words.
