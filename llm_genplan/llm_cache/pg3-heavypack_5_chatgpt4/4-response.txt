@@ -1,0 +1,20 @@
+def get_plan(objects, init, goal):
+    # Extract weight information from init
+    weight_relations = [atom for atom in init if atom[0] == 'heavier']
+    
+    # Build a dictionary with objects as keys and the number of objects they are heavier than as values
+    weights = {}
+    for obj in objects:
+        weights[obj] = len([rel for rel in weight_relations if rel[1] == obj])
+
+    # Sort the objects in descending order based on their weights
+    sorted_objects = sorted(objects, key=lambda x: weights[x], reverse=True)
+
+    # Build the plan using the sorted objects
+    plan = []
+    plan.append(f'(pack-first {sorted_objects[0]})')
+    
+    for i in range(1, len(sorted_objects)):
+        plan.append(f'(stack {sorted_objects[i-1]} {sorted_objects[i]})')
+    
+    return plan
