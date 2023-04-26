@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    # Helper function to extract weight relations from init
+    def extract_weights(init):
+        weights = {}
+        for atom in init:
+            if atom[0] == 'heavier':
+                if atom[1] not in weights:
+                    weights[atom[1]] = set()
+                weights[atom[1]].add(atom[2])
+        return weights
+
+    # Modified sorting implementation based on weight relations
+    def sort_by_weights(objects, weights):
+        sorted_items = []
+
+        while objects:
+            min_item = None
+            for item in objects:
+                if min_item is None or (
+                    item not in weights and (min_item in weights and weights[min_item])
+                ):
+                    min_item = item
+
+            if min_item is not None:
+                sorted_items.append(min_item)
+                objects.remove(min_item)
+                if min_item in weights:
+                    for heavier_item in weights[min_item]:
+                        if heavier_item in weights:
+                            weights[heavier_item].remove(min_item)
+                            if not weights[heavier_item]:
+                                del weights[heavier_item]
+
+        return sorted_items
+
+    # Extract weight relations from init
+    weights = extract_weights(init)
+
+    # Sort items by weight using the modified sort
+    sorted_items = sort_by_weights(objects.copy(), weights)
+
+    # Create the plan
+    plan = []
+    for i, item in enumerate(sorted_items):
+        if i == 0:
+            plan.append(f'(pack-first {item})')
+        else:
+            plan.append(f'(stack {item} {sorted_items[i - 1]})')
+
+    return plan

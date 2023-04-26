@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to sort the items in descending order based on their weights and then pack them in that order. This ensures that at each step, the items are packed with heavier items always below lighter ones, thus satisfying the conditions for the 'stack' action in the domain. Here's the step-by-step strategy:
+
+1. Sort the items in descending order based on their weights using the 'heavier' predicate information provided in the problem.
+2. Pack the first (heaviest) item using the 'pack-first' action.
+3. Iterate through the sorted list of items (excluding the first one, which is already packed), and for each item:
+   a. Use the 'stack' action to stack the item on top of the previously packed item.
+4. Once all items are packed, the goal is achieved.
+
+By following this strategy, you can solve all problems in this domain without the need for search algorithms.
