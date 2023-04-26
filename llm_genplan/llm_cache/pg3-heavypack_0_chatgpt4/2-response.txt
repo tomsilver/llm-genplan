@@ -1,0 +1,8 @@
+A simple strategy for solving all problems in this domain without using search is to sort the objects in descending order of weight and then pack them one by one, from the heaviest to the lightest. This approach ensures that each object is placed on top of a heavier object or directly in the empty box, fulfilling the domain's constraints. The strategy can be outlined as follows:
+
+1. Create a list of all the unpacked objects.
+2. Sort the list in descending order based on their weight.
+3. Pack the heaviest object first using the `pack-first` action.
+4. For each remaining object in the sorted list, use the `stack` action to stack the object on top of the previously packed item.
+
+By following this strategy, all the objects will be packed in the box while adhering to the condition that no object is placed above a heavier one.

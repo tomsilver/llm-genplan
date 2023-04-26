@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    def extract_weights(init):
+        weights = {}
+        for atom in init:
+            if atom[0] == "heavier":
+                weights[atom[1]] = weights.get(atom[1], 0) + 1
+        return weights
+
+    def sort_objects_by_weight(objects, weights):
+        return sorted(objects, key=lambda obj: weights[obj], reverse=True)
+
+    weights = extract_weights(init)
+    sorted_objects = sort_objects_by_weight(objects, weights)
+
+    plan = []
+    for i, obj in enumerate(sorted_objects):
+        if i == 0:
+            plan.append(f"(pack-first {obj})")
+        else:
+            plan.append(f"(stack {sorted_objects[i-1]} {obj})")
+
+    return plan
+
+
+# Example usage:
+objects = {"o215", "o470", "o639", "o693", "o845"}
+init = {("box-empty",), ("heavier", "o215", "o470"), ("heavier", "o215", "o639"), ("heavier", "o215", "o693"), ("heavier", "o215", "o845"),
+        ("heavier", "o470", "o639"), ("heavier", "o470", "o693"), ("heavier", "o470", "o845"), ("heavier", "o639", "o693"),
+        ("heavier", "o639", "o845"), ("heavier", "o845", "o693"), ("unpacked", "o215"), ("unpacked", "o470"),
+        ("unpacked", "o639"), ("unpacked", "o693"), ("unpacked", "o845")}
+goal = {("packed", "o215"), ("packed", "o470"), ("packed", "o639"), ("packed", "o693"), ("packed", "o845")}
+
+plan = get_plan(objects, init, goal)
+print(plan)

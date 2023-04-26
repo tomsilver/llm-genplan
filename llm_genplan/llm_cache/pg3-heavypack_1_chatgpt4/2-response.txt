@@ -1,0 +1,6 @@
+The simple strategy for solving all problems in this domain without using search is to first sort the objects in descending order based on their weight, and then pack them sequentially. Since the "heavier" predicate provides enough information to determine the relative weights of the objects, you can build a list of objects sorted by weight. Once the objects are sorted, follow these steps:
+
+1. Use the "pack-first" action to pack the heaviest object (first in the sorted list) into the empty box.
+2. Iterate through the remaining objects in the sorted list, and for each object, use the "stack" action to stack it on top of the previously packed object.
+
+This strategy ensures that you will always pack the objects in a way that satisfies the constraints of the heavy-pack domain, with heavier objects at the bottom and lighter ones on top.

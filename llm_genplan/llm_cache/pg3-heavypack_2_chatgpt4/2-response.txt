@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+1. Sort the items in descending order according to their weights. This can be done using the given 'heavier' predicates to determine the weight relationships between items.
+2. Perform the 'pack-first' action on the heaviest item (the first item in the sorted list).
+3. Iterate through the remaining items in the sorted list and perform the 'stack' action, placing each item on top of the previously packed item.
+
+By following this strategy, you ensure that all items are packed in the box while maintaining the required order of having heavier items below lighter ones.
