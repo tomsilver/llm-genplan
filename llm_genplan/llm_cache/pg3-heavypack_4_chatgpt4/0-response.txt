@@ -1,0 +1,5 @@
+The "heavy-pack" domain is a planning problem designed to model the process of packing objects into a box. The goal is to pack all objects such that each object can only be stacked on a heavier object or be placed at the bottom of the box. The domain includes predicates to define which objects are heavier, which ones are packed or unpacked, and whether there is nothing above a specific object or if the box is empty.
+
+There are two actions in this domain: "pack-first" and "stack." The "pack-first" action places the first object in the box, marking it as packed and with nothing above it. The "stack" action is used to stack an object on top of another object, considering that the object on the bottom is heavier than the one on the top.
+
+Example problems are provided, in which a set of objects with given heavier relationships and initial unpacked states must be packed following the rules described by the domain. The goal is to have all objects packed according to the constraints.

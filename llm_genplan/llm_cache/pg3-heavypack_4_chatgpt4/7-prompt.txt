@@ -1,0 +1,55 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o143
+    o395
+    o858
+    o904
+    o95
+    o956
+  )
+  (:init
+    (box-empty)
+    (heavier o143 o904)
+    (heavier o143 o956)
+    (heavier o395 o143)
+    (heavier o395 o858)
+    (heavier o395 o904)
+    (heavier o395 o956)
+    (heavier o858 o143)
+    (heavier o858 o904)
+    (heavier o858 o956)
+    (heavier o95 o143)
+    ...
+    (unpacked o143)
+    (unpacked o395)
+    (unpacked o858)
+    (unpacked o904)
+    (unpacked o95)
+    (unpacked o956)
+  )
+  (:goal (and
+    (packed o143)
+    (packed o395)
+    (packed o858)
+    (packed o904)
+    (packed o95)
+    (packed o956)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 155, in get_plan
+    if is_lighter_than_all(obj, unpacked_objects):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 149, in is_lighter_than_all
+    return all((obj in weight_relations[heavier]) for heavier in obj_list)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 149, in <genexpr>
+    return all((obj in weight_relations[heavier]) for heavier in obj_list)
+                       ~~~~~~~~~~~~~~~~^^^^^^^^^
+KeyError: 'o904'
+
+Fix the code.

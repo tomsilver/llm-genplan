@@ -1,0 +1,10 @@
+The simple strategy for solving all problems in this domain without using search is to sort the objects in descending order based on their weight, and then pack them one by one, following the sorted order. 
+
+Here's a step-by-step approach:
+
+1. Analyze the given 'heavier' relationships among objects and create a list of objects sorted in descending order by their weight. You can use any sorting algorithm for this purpose, like Bubble Sort, Quick Sort, or Merge Sort.
+2. Start packing objects into the box following the sorted order:
+   a. For the first object in the sorted list, use the 'pack-first' action to put it in the box.
+   b. For the remaining objects, use the 'stack' action to stack each object on top of the previous one, since the current object will always be lighter than the one below it.
+
+By following this strategy, you ensure that all objects are packed according to the constraints of the domain, with each object being stacked on a heavier object or placed at the bottom of the box.

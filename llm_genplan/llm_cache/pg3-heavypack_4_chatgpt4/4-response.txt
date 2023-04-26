@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    # Create a dictionary to store weight relationships
+    weight_relations = {}
+
+    # Populate the dictionary with given relationships
+    for atom in init:
+        if atom[0] == 'heavier':
+            heavier, lighter = atom[1], atom[2]
+            if heavier not in weight_relations:
+                weight_relations[heavier] = set()
+            weight_relations[heavier].add(lighter)
+
+    # Find the heaviest object(s) not in the weight_relations.keys()
+    unpacked_objects = [obj for obj in objects if ('unpacked', obj) in init]
+    heaviest_objects = set(unpacked_objects) - set(weight_relations.keys())
+
+    # Helper function to sort objects by weight
+    def sort_by_weight(obj):
+        sorted_list = [obj]
+        while obj in weight_relations:
+            lighter_objs = weight_relations[obj]
+            for lighter_obj in lighter_objs:
+                if lighter_obj not in sorted_list:
+                    sorted_list += sort_by_weight(lighter_obj)
+            break
+        return sorted_list
+
+    # Sort objects by weight
+    sorted_objects = []
+    for obj in heaviest_objects:
+        sorted_objects += sort_by_weight(obj)
+
+    # Create a plan by packing the objects in the sorted order
+    plan = []
+    first_obj = sorted_objects.pop(0)
+    plan.append(f'(pack-first {first_obj})')
+
+    for obj in sorted_objects:
+        plan.append(f'(stack {first_obj} {obj})')
+        first_obj = obj
+
+    return plan
