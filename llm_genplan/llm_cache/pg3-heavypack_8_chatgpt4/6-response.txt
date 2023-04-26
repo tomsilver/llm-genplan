@@ -1,0 +1,31 @@
+def get_plan(objects, init, goal):
+    weight_relationships = [atom for atom in init if atom[0] == "heavier"]
+    unpacked_items = [atom[1] for atom in init if atom[0] == "unpacked"]
+
+    def compare_weights(item1, item2):
+        for rel in weight_relationships:
+            if rel[1:] == (item1, item2):
+                return -1
+            if rel[1:] == (item2, item1):
+                return 1
+        return 0
+
+    sorted_items = sorted(unpacked_items, key=lambda x: (sum(compare_weights(x, other) for other in unpacked_items), x))
+
+    plan = []
+
+    # Pack the first (heaviest) item
+    plan.append(f"(pack-first {sorted_items[-1]})")
+
+    # Stack the remaining items
+    for i in range(len(sorted_items) - 2, -1, -1):
+        if compare_weights(sorted_items[i + 1], sorted_items[i]) == -1:
+            plan.append(f"(stack {sorted_items[i+1]} {sorted_items[i]})")
+        else:
+            # Move the item to the correct position in the sorted_items list
+            index = i
+            while index > 0 and compare_weights(sorted_items[index - 1], sorted_items[i]) != -1:
+                index -= 1
+            sorted_items.insert(index, sorted_items.pop(i))
+
+    return plan

@@ -1,0 +1,8 @@
+A simple strategy to solve all problems in this domain without using search is by sorting the items in descending order based on their weights and then packing them sequentially. Here's the step-by-step process:
+
+1. Analyze the given predicates to determine the relative weights of the items.
+2. Create a list of items and sort it in descending order based on their weights.
+3. Use the 'pack-first' action to pack the heaviest item (the first item in the sorted list) into the empty box.
+4. Iterate through the sorted list, and for each remaining item, use the 'stack' action to stack the item on top of the previously packed item.
+
+By following this strategy, all the items will be packed according to the conditions specified in the domain, with heavier items at the bottom and lighter items on top.

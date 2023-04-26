@@ -1,0 +1,55 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o209
+    o242
+    o467
+    o631
+    o704
+    o708
+    o876
+  )
+  (:init
+    (box-empty)
+    (heavier o209 o242)
+    (heavier o209 o467)
+    (heavier o209 o631)
+    (heavier o209 o704)
+    (heavier o209 o708)
+    (heavier o467 o242)
+    (heavier o467 o708)
+    (heavier o631 o242)
+    (heavier o631 o467)
+    (heavier o631 o708)
+    ...
+    (unpacked o209)
+    (unpacked o242)
+    (unpacked o467)
+    (unpacked o631)
+    (unpacked o704)
+    (unpacked o708)
+    (unpacked o876)
+  )
+  (:goal (and
+    (packed o209)
+    (packed o242)
+    (packed o467)
+    (packed o631)
+    (packed o704)
+    (packed o708)
+    (packed o876)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pack-first o242)'].
+NOTE: The goal is not satisfied
+(Follow each of:
+    (Set (packed o209) to true)
+    and (Set (packed o467) to true)
+    and (Set (packed o631) to true)
+    and (Set (packed o704) to true)
+    and (Set (packed o708) to true)
+    and (Set (packed o876) to true)
+)
+Fix the code.

@@ -1,0 +1,56 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o209
+    o242
+    o467
+    o631
+    o704
+    o708
+    o876
+  )
+  (:init
+    (box-empty)
+    (heavier o209 o242)
+    (heavier o209 o467)
+    (heavier o209 o631)
+    (heavier o209 o704)
+    (heavier o209 o708)
+    (heavier o467 o242)
+    (heavier o467 o708)
+    (heavier o631 o242)
+    (heavier o631 o467)
+    (heavier o631 o708)
+    ...
+    (unpacked o209)
+    (unpacked o242)
+    (unpacked o467)
+    (unpacked o631)
+    (unpacked o704)
+    (unpacked o708)
+    (unpacked o876)
+  )
+  (:goal (and
+    (packed o209)
+    (packed o242)
+    (packed o467)
+    (packed o631)
+    (packed o704)
+    (packed o708)
+    (packed o876)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 85, in get_plan
+    if compare_weights(sorted_items[i - 1], sorted_items[i]) == -1:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 71, in compare_weights
+    if rel[1:] == (item2, item1):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+The code was interrupted because it timed out (possible infinite loop).
+Fix the code.
