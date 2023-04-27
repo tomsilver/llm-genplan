@@ -143,9 +143,10 @@ def _create_genplan_error_table(
     tot_errs_by_type = df.sum()
     tot_errs = tot_errs_by_type.sum()
     summary = tot_errs_by_type / tot_errs
-    print(summary)
+    summary_df = summary.to_frame().rename(columns={0: "% Error Type"})
+    print(summary_df)
     if save_summary:
-        summary.to_csv("error_types_summary.csv")
+        summary_df.to_csv("error_types_summary.csv")
         print("\n\nWrote out table to error_types_summary.csv")
 
 
