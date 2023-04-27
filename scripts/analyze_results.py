@@ -6,6 +6,7 @@ import pickle
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import matplotlib
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -14,6 +15,7 @@ from llm_genplan.genplan import GENPLAN_ERROR_TYPES
 
 
 def _main() -> None:
+    matplotlib.rcParams.update({"font.size": 18})
     parser = argparse.ArgumentParser()
     parser.add_argument("--results_dir", default="results", type=str)
     args = parser.parse_args()
@@ -123,7 +125,7 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
             x_to_ys[x].append(y)
     xs = sorted(x_to_ys)
     ys = [np.mean(x_to_ys[x]) for x in xs]
-    outfile = "num_interactive_debug.png"
+    outfile = "num_automated_debug.png"
     with plt.style.context("bmh"):
         plt.figure()
         plt.plot(xs, ys)
@@ -131,8 +133,9 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
         plt.xticks(xs)
         plt.xlabel("# Debug Steps")
         plt.ylabel("% Eval Tasks Solved")
-        plt.title("Impact of Interactive Debugging")
-        plt.savefig(outfile)
+        plt.title("Automated Debugging")
+        plt.tight_layout()
+        plt.savefig(outfile, dpi=500)
         print(f"Wrote out to {outfile}.")
 
 
