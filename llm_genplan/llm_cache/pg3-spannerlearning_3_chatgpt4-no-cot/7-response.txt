@@ -1,0 +1,1 @@
+plan.append(f"(tighten_nut {current_location} {spanner[0]} bob)")

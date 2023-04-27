@@ -27,7 +27,7 @@ def get_plan(objects, init, goal):
 
     # Find the initial location of Bob, spanners, and nuts
     bob_location = next(i[1] for i in init if i[0] == "at" and i[1].startswith("bob"))
-    spanner_locations = {s[0]: s[1] for s in init if s[0].startswith("spanner")}
+    spanner_locations = {s[0]: next(i[1] for i in init if i[0] == "at" and i[1] == s[0]) for s in spanners}
     nut_locations = {n[0]: n[1] for n in init if n[0].startswith("nut")}
 
     # Calculate the shortest path to each spanner and nut from Bob's location
@@ -51,4 +51,11 @@ def get_plan(objects, init, goal):
         for nut in loose_nuts:
             distance += shortest_path(links, current_location, nut_locations[nut[1]])
             plan.append(f"(walk {current_location} {nut_locations[nut[1]]} bob)")
-            current
+            current_location = nut_locations[nut[1]]
+            plan.append(f"(tighten_nut {current_location} {spanner[0]} bob {nut[1]})")
+
+        if distance < min_distance:
+            min_distance = distance
+            best_plan = plan
+
+    return best_plan
