@@ -33,6 +33,11 @@ def _main() -> None:
     logging.info(FLAGS)
     logging.info(f"Git commit hash: {utils.get_git_commit_hash()}")
 
+    outfile = Path(FLAGS.results_dir) / f"{utils.get_config_path_str()}.pkl"
+    if outfile.exists():
+        logging.info(f"Result already found at {outfile}, terminating.")
+        return
+
     # Generate train and eval tasks.
     logging.info("Generating tasks.")
     prompt_tasks, extra_train_tasks, eval_tasks = create_tasks(
@@ -88,7 +93,6 @@ def _main() -> None:
         "gen_plan_metrics": gen_plan_metrics,
         "eval_metrics": eval_metrics,
     }
-    outfile = Path(FLAGS.results_dir) / f"{utils.get_config_path_str()}.pkl"
     with open(outfile, "wb") as f:
         pickle.dump(outdata, f)
 
