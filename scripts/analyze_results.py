@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+from llm_genplan.genplan import GENPLAN_ERROR_TYPES
+
 
 def _main() -> None:
     parser = argparse.ArgumentParser()
@@ -18,6 +20,7 @@ def _main() -> None:
     gen_plan_results, evaluation_results = _load_results(args.results_dir)
     _create_success_table(evaluation_results)
     _create_interactive_debug_plot(gen_plan_results)
+    _create_genplan_error_table(gen_plan_results)
 
 
 def _load_results(
@@ -67,9 +70,7 @@ def _load_results(
     return genplan_df, eval_df
 
 
-def _create_success_table(
-    raw_results: pd.DataFrame, save_summary: bool = True
-) -> pd.DataFrame:
+def _create_success_table(raw_results: pd.DataFrame, save_summary: bool = True) -> None:
     # Remove the non-numeric columns that we don't need anymore.
     df = raw_results.drop(columns=["task_id"])
     # Group by env, seed, and experiment ID.
@@ -102,11 +103,10 @@ def _create_success_table(
     summary_nested = pd.DataFrame(reshaped_data).transpose()
     print(summary_nested)
     # Report the total number of results.
-    print(f"\nTOTAL RESULTS: {df.shape[0]}")
+    print(f"\nTOTAL RESULTS: {raw_results.shape[0]}")
     if save_summary:
         summary_nested.to_csv("results_summary.csv")
         print("\n\nWrote out table to results_summary.csv")
-    return means.reset_index()
 
 
 def _create_interactive_debug_plot(df: pd.DataFrame):
@@ -134,6 +134,19 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
         plt.title("Impact of Interactive Debugging")
         plt.savefig(outfile)
         print(f"Wrote out to {outfile}.")
+
+
+def _create_genplan_error_table(
+    raw_results: pd.DataFrame, save_summary: bool = True
+) -> None:
+    df = raw_results[GENPLAN_ERROR_TYPES]
+    tot_errs_by_type = df.sum()
+    tot_errs = tot_errs_by_type.sum()
+    summary = tot_errs_by_type / tot_errs
+    print(summary)
+    if save_summary:
+        summary.to_csv("error_types_summary.csv")
+        print("\n\nWrote out table to error_types_summary.csv")
 
 
 if __name__ == "__main__":
