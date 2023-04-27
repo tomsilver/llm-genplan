@@ -202,7 +202,4 @@ def _literal_to_tuple(lit: Literal) -> Tuple[str, ...]:
     return (lit.predicate.name,) + tuple(arg_strs)
 
 
-# Metrics are saved during evaluation.
-TaskMetrics = Dict[str, Any]
-# Maps a task string identifier to task metrics.
-Metrics = Dict[str, TaskMetrics]
+Metrics = Dict[str, Any]

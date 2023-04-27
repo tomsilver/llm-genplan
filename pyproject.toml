@@ -11,6 +11,7 @@ requires-python = ">=3.8"
 dependencies = [
    "PyYAML",
    "types-PyYAML",
+   "matplotlib",
    "numpy",
    "pddlgym@git+https://github.com/tomsilver/pddlgym.git",
    "pathos",
@@ -60,6 +61,7 @@ follow_imports = "skip"
 
 [[tool.mypy.overrides]]
 module = [
+    "matplotlib.*",
     "pddlgym.*",
     "pyperclip.*",
     "pandas.*",

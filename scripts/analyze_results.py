@@ -4,61 +4,70 @@ import argparse
 import glob
 import pickle
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-
-from llm_genplan.structs import TaskMetrics
+from matplotlib import pyplot as plt
 
 
 def _main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results_dir", default="results", type=str)
     args = parser.parse_args()
-    results = _load_results(args.results_dir)
-    _create_summary_table(results)
+    gen_plan_results, evaluation_results = _load_results(args.results_dir)
+    _create_success_table(evaluation_results)
+    _create_interactive_debug_plot(gen_plan_results)
 
 
 def _load_results(
     results_dir: str,
-    derived_cols: Optional[Dict[str, Callable[[TaskMetrics], Any]]] = None,
-) -> pd.DataFrame:
-    all_data = []
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    all_gen_plan_data = []
+    all_evaluation_data = []
     git_commit_hashes = set()
     for filepath in sorted(glob.glob(f"{results_dir}/*")):
         with open(filepath, "rb") as f:
             outdata = pickle.load(f)
-        git_commit_hashes.add(outdata["git_commit_hash"])
-        results = outdata["results"].copy()
         env, seed, experiment_id = Path(filepath).stem.split("__")
-        for task_id, task_results in results.items():
-            datum = {
+        git_commit_hashes.add(outdata["git_commit_hash"])
+        # Evaluation results.
+        successes: List[float] = []  # include success rate in genplan dataframe
+        for task_id, task_results in outdata["eval_metrics"].items():
+            eval_datum = {
                 "env": env,
                 "seed": seed,
                 "experiment_id": experiment_id,
                 "task_id": task_id,
                 **task_results,
             }
-            if derived_cols is not None:
-                for col, derive_fn in derived_cols.items():
-                    datum[col] = derive_fn(datum)
-            all_data.append(datum)
-    if not all_data:
+            successes.append(task_results["success"])
+            all_evaluation_data.append(eval_datum)
+        # Gen plan results.
+        gen_plan_metrics = outdata["gen_plan_metrics"].copy()
+        genplan_datum = {
+            "env": env,
+            "seed": seed,
+            "experiment_id": experiment_id,
+            "success_rate": np.mean(successes),
+            **gen_plan_metrics,
+        }
+        all_gen_plan_data.append(genplan_datum)
+    if not all_evaluation_data:
         raise ValueError(f"No data found in {results_dir}/")
     # Group & aggregate data.
     pd.set_option("display.max_rows", 999999)
-    df = pd.DataFrame(all_data)
+    genplan_df = pd.DataFrame(all_gen_plan_data)
+    eval_df = pd.DataFrame(all_evaluation_data)
     print(f"Git commit hashes seen in {results_dir}/:")
     for commit_hash in git_commit_hashes:
         print(commit_hash)
-    # Uncomment the next line to print out ALL the raw data.
-    # print(df)
-    df.replace([np.inf, -np.inf], np.nan, inplace=True)
-    return df
+    genplan_df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    eval_df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    return genplan_df, eval_df
 
 
-def _create_summary_table(
+def _create_success_table(
     raw_results: pd.DataFrame, save_summary: bool = True
 ) -> pd.DataFrame:
     # Remove the non-numeric columns that we don't need anymore.
@@ -98,6 +107,33 @@ def _create_summary_table(
         summary_nested.to_csv("results_summary.csv")
         print("\n\nWrote out table to results_summary.csv")
     return means.reset_index()
+
+
+def _create_interactive_debug_plot(df: pd.DataFrame):
+    # Make plot for main approach only.
+    df = df.loc[df["experiment_id"] == "chatgpt4"]
+    max_x = df["num_interactive_debugs"].max()
+    x_to_ys: Dict[int, List[float]] = {x: [] for x in range(max_x + 1)}
+    for _, row in df.iterrows():
+        for x in range(max_x + 1):
+            if x < row.num_interactive_debugs:
+                y = 0.0
+            else:
+                y = row.success_rate
+            x_to_ys[x].append(y)
+    xs = sorted(x_to_ys)
+    ys = [np.mean(x_to_ys[x]) for x in xs]
+    outfile = "num_interactive_debug.png"
+    with plt.style.context("bmh"):
+        plt.figure()
+        plt.plot(xs, ys)
+        plt.ylim((-0.1, 1.1))
+        plt.xticks(xs)
+        plt.xlabel("# Debug Steps")
+        plt.ylabel("% Eval Tasks Solved")
+        plt.title("Impact of Interactive Debugging")
+        plt.savefig(outfile)
+        print(f"Wrote out to {outfile}.")
 
 
 if __name__ == "__main__":

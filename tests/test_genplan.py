@@ -71,7 +71,7 @@ def get_plan(objects, init, goal):
 """
 
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -83,7 +83,7 @@ def get_plan(objects, init, goal):
     # Test case where code is just garbage.
     gen_plan_code_str = """some hot garbage + bugs"""
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -92,11 +92,12 @@ def get_plan(objects, init, goal):
     assert not success
     assert "The code raised the following exception:" in info
     assert "SyntaxError: invalid syntax" in info
+    assert metrics["python-exception"] == 1
 
     # Test case where code imports something that is not available.
     gen_plan_code_str = """import not_a_real_module"""
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -104,6 +105,7 @@ def get_plan(objects, init, goal):
     )
     assert not success
     assert "ModuleNotFoundError: No module named 'not_a_real_module'" in info
+    assert metrics["python-exception"] == 1
 
     # Test case where code outputs an empty plan.
     gen_plan_code_str = """
@@ -111,7 +113,7 @@ def get_plan(objects, init, goal):
     return []
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -122,6 +124,7 @@ def get_plan(objects, init, goal):
         info
         == "Given this task:\n(define (problem strips-gripper-x-3)\n   (:domain gripper-strips)\n   (:objects rooma roomb ball8 ball7 ball6 ball5 ball4 ball3 ball2\n             ball1 left right)\n   (:init (room rooma)\n          (room roomb)\n          (ball ball8)\n          (ball ball7)\n          (ball ball6)\n          (ball ball5)\n          (ball ball4)\n          (ball ball3)\n          (ball ball2)\n          (ball ball1)\n          (at-robby rooma)\n          (free left)\n          (free right)\n          (at ball8 rooma)\n          (at ball7 rooma)\n          (at ball6 rooma)\n          (at ball5 rooma)\n          (at ball4 rooma)\n          (at ball3 rooma)\n          (at ball2 rooma)\n          (at ball1 rooma)\n          (gripper left)\n          (gripper right))\n   (:goal (and (at ball8 roomb)\n               (at ball7 roomb)\n               (at ball6 roomb)\n               (at ball5 roomb)\n               (at ball4 roomb)\n               (at ball3 roomb)\n               (at ball2 roomb)\n               (at ball1 roomb))))\nThe code failed. It returned the following plan: [].\nNOTE: The goal is not satisfied\n(Follow each of:\n    (Set (at ball8 roomb) to true)\n    and (Set (at ball7 roomb) to true)\n    and (Set (at ball6 roomb) to true)\n    and (Set (at ball5 roomb) to true)\n    and (Set (at ball4 roomb) to true)\n    and (Set (at ball3 roomb) to true)\n    and (Set (at ball2 roomb) to true)\n    and (Set (at ball1 roomb) to true)\n)"
     )
+    assert metrics["operator-semantics-invalid"] == 1
 
     # Test case where code outputs a plan that is one step away from working.
     gen_plan_code_str = """
@@ -165,7 +168,7 @@ def get_plan(objects, init, goal):
     return plan
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -176,6 +179,7 @@ def get_plan(objects, init, goal):
         info
         == "Given this task:\n(define (problem strips-gripper-x-3)\n   (:domain gripper-strips)\n   (:objects rooma roomb ball8 ball7 ball6 ball5 ball4 ball3 ball2\n             ball1 left right)\n   (:init (room rooma)\n          (room roomb)\n          (ball ball8)\n          (ball ball7)\n          (ball ball6)\n          (ball ball5)\n          (ball ball4)\n          (ball ball3)\n          (ball ball2)\n          (ball ball1)\n          (at-robby rooma)\n          (free left)\n          (free right)\n          (at ball8 rooma)\n          (at ball7 rooma)\n          (at ball6 rooma)\n          (at ball5 rooma)\n          (at ball4 rooma)\n          (at ball3 rooma)\n          (at ball2 rooma)\n          (at ball1 rooma)\n          (gripper left)\n          (gripper right))\n   (:goal (and (at ball8 roomb)\n               (at ball7 roomb)\n               (at ball6 roomb)\n               (at ball5 roomb)\n               (at ball4 roomb)\n               (at ball3 roomb)\n               (at ball2 roomb)\n               (at ball1 roomb))))\nThe code failed. It returned the following plan: ['(pick ball8 rooma left)', '(pick ball7 rooma right)', '(move rooma roomb)', '(drop ball8 roomb left)', '(drop ball7 roomb right)', '(move roomb rooma)', '(pick ball6 rooma left)', '(pick ball5 rooma right)', '(move rooma roomb)', '(drop ball6 roomb left)', '(drop ball5 roomb right)', '(move roomb rooma)', '(pick ball4 rooma left)', '(pick ball3 rooma right)', '(move rooma roomb)', '(drop ball4 roomb left)', '(drop ball3 roomb right)', '(move roomb rooma)', '(pick ball2 rooma left)', '(pick ball1 rooma right)', '(move rooma roomb)', '(drop ball2 roomb left)'].\nNOTE: The goal is not satisfied\n(Set (at ball1 roomb) to true)"
     )
+    assert metrics["operator-semantics-invalid"] == 1
 
     # Test case where a completely invalid action is returned.
     gen_plan_code_str = """
@@ -183,7 +187,7 @@ def get_plan(objects, init, goal):
     return ['(not-a-real-action ball4 rooma left)']
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -194,6 +198,7 @@ def get_plan(objects, init, goal):
         info
         == "Given this task:\n(define (problem strips-gripper-x-3)\n   (:domain gripper-strips)\n   (:objects rooma roomb ball8 ball7 ball6 ball5 ball4 ball3 ball2\n             ball1 left right)\n   (:init (room rooma)\n          (room roomb)\n          (ball ball8)\n          (ball ball7)\n          (ball ball6)\n          (ball ball5)\n          (ball ball4)\n          (ball ball3)\n          (ball ball2)\n          (ball ball1)\n          (at-robby rooma)\n          (free left)\n          (free right)\n          (at ball8 rooma)\n          (at ball7 rooma)\n          (at ball6 rooma)\n          (at ball5 rooma)\n          (at ball4 rooma)\n          (at ball3 rooma)\n          (at ball2 rooma)\n          (at ball1 rooma)\n          (gripper left)\n          (gripper right))\n   (:goal (and (at ball8 roomb)\n               (at ball7 roomb)\n               (at ball6 roomb)\n               (at ball5 roomb)\n               (at ball4 roomb)\n               (at ball3 roomb)\n               (at ball2 roomb)\n               (at ball1 roomb))))\nThe code returned this plan: ['(not-a-real-action ball4 rooma left)']\nHowever, the action (not-a-real-action ball4 rooma left) is invalid at step 0.\nNOTE: the valid operators are: (drop ?obj ?room ?gripper) (move ?from ?to) (pick ?obj ?room ?gripper)."
     )
+    assert metrics["operator-syntax-invalid"] == 1
 
     # Test case where an action has arguments in the wrong order.
     gen_plan_code_str = """
@@ -201,7 +206,7 @@ def get_plan(objects, init, goal):
     return ['(pick rooma ball4 left)']
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -212,6 +217,7 @@ def get_plan(objects, init, goal):
         info
         == "Given this task:\n(define (problem strips-gripper-x-3)\n   (:domain gripper-strips)\n   (:objects rooma roomb ball8 ball7 ball6 ball5 ball4 ball3 ball2\n             ball1 left right)\n   (:init (room rooma)\n          (room roomb)\n          (ball ball8)\n          (ball ball7)\n          (ball ball6)\n          (ball ball5)\n          (ball ball4)\n          (ball ball3)\n          (ball ball2)\n          (ball ball1)\n          (at-robby rooma)\n          (free left)\n          (free right)\n          (at ball8 rooma)\n          (at ball7 rooma)\n          (at ball6 rooma)\n          (at ball5 rooma)\n          (at ball4 rooma)\n          (at ball3 rooma)\n          (at ball2 rooma)\n          (at ball1 rooma)\n          (gripper left)\n          (gripper right))\n   (:goal (and (at ball8 roomb)\n               (at ball7 roomb)\n               (at ball6 roomb)\n               (at ball5 roomb)\n               (at ball4 roomb)\n               (at ball3 roomb)\n               (at ball2 roomb)\n               (at ball1 roomb))))\nThe code failed. It returned the following plan: ['(pick rooma ball4 left)'].\nNOTE: (pick rooma ball4 left) has an unsatisfied precondition at time 0\n(Follow each of:\n    (Set (ball rooma) to true)\n    and (Set (room ball4) to true)\n    and (Set (at rooma ball4) to true)\n    and (Set (at-robby ball4) to true)\n)"
     )
+    assert metrics["operator-semantics-invalid"] == 1
 
     # Test case where get_plan() returns None.
     gen_plan_code_str = """
@@ -219,7 +225,7 @@ def get_plan(objects, init, goal):
     return None
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -230,6 +236,7 @@ def get_plan(objects, init, goal):
         info
         == "Given this task:\n(define (problem strips-gripper-x-3)\n   (:domain gripper-strips)\n   (:objects rooma roomb ball8 ball7 ball6 ball5 ball4 ball3 ball2\n             ball1 left right)\n   (:init (room rooma)\n          (room roomb)\n          (ball ball8)\n          (ball ball7)\n          (ball ball6)\n          (ball ball5)\n          (ball ball4)\n          (ball ball3)\n          (ball ball2)\n          (ball ball1)\n          (at-robby rooma)\n          (free left)\n          (free right)\n          (at ball8 rooma)\n          (at ball7 rooma)\n          (at ball6 rooma)\n          (at ball5 rooma)\n          (at ball4 rooma)\n          (at ball3 rooma)\n          (at ball2 rooma)\n          (at ball1 rooma)\n          (gripper left)\n          (gripper right))\n   (:goal (and (at ball8 roomb)\n               (at ball7 roomb)\n               (at ball6 roomb)\n               (at ball5 roomb)\n               (at ball4 roomb)\n               (at ball3 roomb)\n               (at ball2 roomb)\n               (at ball1 roomb))))\nThe code returned None, which is not a list of actions."
     )
+    assert metrics["output-not-plan"] == 1
 
     # Test case where get_plan() times out.
     gen_plan_code_str = """
@@ -240,7 +247,7 @@ def get_plan(objects, init, goal):
 """
     generalized_plan = GeneralizedPlan(gen_plan_code_str)
     start_time = time.perf_counter()
-    success, info = run_genplan_on_task(
+    success, info, metrics = run_genplan_on_task(
         generalized_plan,
         task,
         horizon=FLAGS.horizon,
@@ -253,3 +260,4 @@ def get_plan(objects, init, goal):
         in info
     )
     assert duration < 5  # add some padding
+    assert metrics["timeout"] == 1

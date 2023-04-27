@@ -15,7 +15,7 @@ from llm_genplan import utils
 from llm_genplan.envs import create_tasks
 from llm_genplan.flags import FLAGS, parse_flags
 from llm_genplan.genplan import get_genplan_from_llm, run_genplan_on_task
-from llm_genplan.structs import Metrics, TaskMetrics
+from llm_genplan.structs import Metrics
 
 
 def _main() -> None:
@@ -51,7 +51,7 @@ def _main() -> None:
         load_experiment_id = FLAGS.experiment_id
     save_path = utils.CACHE_DIR / f"{FLAGS.env}_{FLAGS.seed}_{load_experiment_id}"
     os.makedirs(save_path, exist_ok=True)
-    generalized_plan = get_genplan_from_llm(
+    generalized_plan, gen_plan_metrics = get_genplan_from_llm(
         prompt_tasks,
         extra_train_tasks,
         save_path,
@@ -61,14 +61,11 @@ def _main() -> None:
     )
 
     # Evaluate the generalized plan on the held-out evaluation tasks.
-    results: Metrics = {}
+    eval_metrics: Metrics = {}
     num_successes = 0
     num_eval = len(eval_tasks)
     for i, eval_task in enumerate(eval_tasks):
-        task_id = f"{eval_task.domain_name}_seed{FLAGS.seed}_problem{i}"
-        task_metrics: TaskMetrics = {}
-        results[task_id] = task_metrics
-        success, info = run_genplan_on_task(
+        success, info, task_metrics = run_genplan_on_task(
             generalized_plan, eval_task, horizon=FLAGS.horizon, timeout=FLAGS.timeout
         )
         success_str = "Solved" if success else "Failed"
@@ -76,6 +73,8 @@ def _main() -> None:
         if success:
             num_successes += 1
         task_metrics["success"] = success
+        task_id = f"{eval_task.domain_name}_seed{FLAGS.seed}_problem{i}"
+        eval_metrics[task_id] = task_metrics
     logging.info(
         f"Generalized plan solved {num_successes}/{num_eval} "
         "held-out evaluation tasks."
@@ -85,8 +84,9 @@ def _main() -> None:
     os.makedirs(FLAGS.results_dir, exist_ok=True)
     outdata = {
         "config": FLAGS,
-        "results": results.copy(),
         "git_commit_hash": utils.get_git_commit_hash(),
+        "gen_plan_metrics": gen_plan_metrics,
+        "eval_metrics": eval_metrics,
     }
     outfile = Path(FLAGS.results_dir) / f"{utils.get_config_path_str()}.pkl"
     with open(outfile, "wb") as f:

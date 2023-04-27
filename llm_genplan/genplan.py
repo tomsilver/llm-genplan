@@ -7,6 +7,7 @@ import os
 import signal
 import sys
 import tempfile
+import time
 import traceback
 from argparse import Namespace
 from dataclasses import dataclass
@@ -15,11 +16,20 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import pyperclip
+from numpy import NaN
 
 from llm_genplan import utils
 from llm_genplan.envs import get_prompt_problem_distribution
 from llm_genplan.flags import FLAGS
-from llm_genplan.structs import Task
+from llm_genplan.structs import Metrics, Task
+
+GENPLAN_ERROR_TYPES = [
+    "timeout",
+    "python-exception",
+    "output-not-plan",
+    "operator-syntax-invalid",
+    "operator-semantics-invalid",
+]
 
 
 @dataclass(frozen=True)
@@ -58,8 +68,10 @@ def get_genplan_from_llm(
     horizon: int,
     timeout: int,
     max_debug_attempts: int = 4,
-) -> GeneralizedPlan:
+) -> Tuple[GeneralizedPlan, Metrics]:
     """Interact with an LLM to get a generalized plan."""
+    metrics: Metrics = {}
+
     # Initial prompt with domain and example problems.
     all_train_tasks = prompt_tasks + extra_train_tasks
     domain_str = all_train_tasks[0].domain_str
@@ -131,6 +143,9 @@ where
 
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""
+    metrics["num_interactive_debugs"] = 0
+    for err in GENPLAN_ERROR_TYPES:
+        metrics[err] = 0
 
     for t in range(max_debug_attempts + 1):
         # Get the prompt.
@@ -139,6 +154,7 @@ where
         else:
             assert last_error_info is not None
             prompt = f"{last_error_info}\nFix the code."
+            metrics["num_interactive_debugs"] += 1
 
         # Query.
         response = run_prompt(prompt, save_path, prompt_num=3 + t)
@@ -157,7 +173,11 @@ where
         gen_plan_succeeded = True
         parsing_error_found = False
         for task in all_train_tasks:
-            success, info = run_genplan_on_task(gen_plan, task, horizon, timeout)
+            success, info, task_metrics = run_genplan_on_task(
+                gen_plan, task, horizon, timeout
+            )
+            for err in GENPLAN_ERROR_TYPES:
+                metrics[err] += task_metrics[err]
             if "SyntaxError" in info:
                 parsing_error_found = True
             if not success:
@@ -173,7 +193,7 @@ where
         if gen_plan_succeeded:
             break
 
-    return GeneralizedPlan(gen_plan_code_str)
+    return GeneralizedPlan(gen_plan_code_str), metrics
 
 
 def run_prompt(prompt: str, save_path: Path, prompt_num: int) -> Optional[str]:
@@ -265,15 +285,15 @@ def _run_genplan_on_task_no_timeout(
         tb_str = "".join(tb_lines)
         msg = f"The code raised the following exception:\n{tb_str}"
         result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+        result_dict["error-type"] = "python-exception"
         return
     if not isinstance(plan, list):
         msg = f"The code returned {plan}, which is not a list of actions."  # type: ignore[unreachable] # pylint:disable=line-too-long
         result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+        result_dict["error-type"] = "output-not-plan"
         return
-    if len(plan) > horizon:
-        msg = f"The code returned too long of a plan (horizon={horizon})."
-        result_dict["info"] = _create_genplan_error_info(task, msg, flags)
-        return
+    assert len(plan) <= horizon, "Horizon not currently used."
+    result_dict["plan-length"] = len(plan)
 
     # Check syntax.
     for t, action in enumerate(plan):
@@ -284,6 +304,7 @@ def _run_genplan_on_task_no_timeout(
                 f"NOTE: the valid operators are: {task.actions_hint}."
             )
             result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+            result_dict["error-type"] = "operator-syntax-invalid"
             return
 
     # Check semantics.
@@ -294,6 +315,7 @@ def _run_genplan_on_task_no_timeout(
         return
     msg = f"The code failed. It returned the following plan: {plan}.\n{info}"
     result_dict["info"] = _create_genplan_error_info(task, msg, flags)
+    result_dict["error-type"] = "operator-semantics-invalid"
     return
 
 
@@ -302,8 +324,11 @@ def run_genplan_on_task(
     task: Task,
     horizon: int,
     timeout: Optional[int],
-) -> Tuple[bool, str]:
+) -> Tuple[bool, str, Metrics]:
     """Returns bool success and an info string."""
+
+    timed_out = False
+    start_time = time.perf_counter()
 
     # For debugging and tests.
     if timeout is None:
@@ -334,6 +359,18 @@ def run_genplan_on_task(
                 "\nThe code was interrupted because it timed out "
                 "(possible infinite loop)."
             )
+            timed_out = True
         result_dict = dict(result_proxy_dict)
 
-    return result_dict["success"], result_dict["info"]
+    duration = time.perf_counter() - start_time
+    task_metrics: Metrics = {err: 0 for err in GENPLAN_ERROR_TYPES}
+    task_metrics["duration"] = duration
+    task_metrics["plan-length"] = result_dict.get("plan-length", NaN)
+    if timed_out:
+        assert timeout is not None
+        assert duration > timeout
+        task_metrics["timeout"] = 1
+    if "error-type" in result_dict:
+        task_metrics[result_dict["error-type"]] = 1
+
+    return result_dict["success"], result_dict["info"], task_metrics
