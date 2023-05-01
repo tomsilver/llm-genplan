@@ -143,11 +143,24 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
 def _create_genplan_error_table(
     raw_results: pd.DataFrame, save_summary: bool = True
 ) -> None:
-    df = raw_results[GENPLAN_ERROR_TYPES]
-    tot_errs_by_type = df.sum()
-    tot_errs = tot_errs_by_type.sum()
-    summary = tot_errs_by_type / tot_errs
-    summary_df = summary.to_frame().rename(columns={0: "% Error Type"})
+    group_dfs: List[pd.DataFrame] = []
+    for group_name in ["All", "Success", "Fail"]:
+        if group_name == "All":
+            filtered_results = raw_results
+        elif group_name == "Success":
+            mask = raw_results["success_rate"] >= (1.0 - 1e-6)
+            filtered_results = raw_results.loc[mask]
+        else:
+            assert group_name == "Fail"
+            mask = raw_results["success_rate"] < (1.0 - 1e-6)
+            filtered_results = raw_results.loc[mask]
+        df = filtered_results[GENPLAN_ERROR_TYPES]
+        tot_errs_by_type = df.sum()
+        tot_errs = tot_errs_by_type.sum()
+        summary = tot_errs_by_type / tot_errs
+        group_df = summary.to_frame().rename(columns={0: group_name})
+        group_dfs.append(group_df)
+    summary_df = pd.concat(group_dfs, axis=1)
     print(summary_df)
     if save_summary:
         summary_df.to_csv("error_types_summary.csv")
