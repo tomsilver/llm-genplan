@@ -15,7 +15,7 @@ from llm_genplan.genplan import GENPLAN_ERROR_TYPES
 
 
 def _main() -> None:
-    matplotlib.rcParams.update({"font.size": 18})
+    matplotlib.rcParams.update({"font.size": 16})
     parser = argparse.ArgumentParser()
     parser.add_argument("--results_dir", default="results", type=str)
     args = parser.parse_args()
@@ -23,6 +23,7 @@ def _main() -> None:
     _create_success_table(evaluation_results)
     _create_interactive_debug_plot(gen_plan_results)
     _create_genplan_error_table(gen_plan_results)
+    _create_num_training_tasks_plot(gen_plan_results)
 
 
 def _load_results(
@@ -151,6 +152,34 @@ def _create_genplan_error_table(
     if save_summary:
         summary_df.to_csv("error_types_summary.csv")
         print("\n\nWrote out table to error_types_summary.csv")
+
+
+def _create_num_training_tasks_plot(df: pd.DataFrame):
+    # Make plot for main approach only.
+    df = df.loc[df["experiment_id"] == "chatgpt4"]
+    min_x = df["num_influential_training_tasks"].min()
+    max_x = df["num_influential_training_tasks"].max()
+    x_to_count = {x: 0 for x in range(min_x, max_x + 1)}
+    total = 0.0
+    for _, row in df.iterrows():
+        # Successes only.
+        if row.success_rate < 1.0 - 1e-6:
+            continue
+        x_to_count[row.num_influential_training_tasks] += 1
+        total += 1.0
+    xs = sorted(x_to_count)
+    heights = [x_to_count[x] / total for x in xs]
+    outfile = "num_necessary_training_tasks.png"
+    with plt.style.context("bmh"):
+        plt.figure()
+        plt.bar(xs, heights)
+        plt.xticks(xs)
+        plt.xlabel("# Used Training Tasks")
+        plt.ylabel("Fraction")
+        plt.title("Training Tasks Used for Successes")
+        plt.tight_layout()
+        plt.savefig(outfile, dpi=500)
+        print(f"Wrote out to {outfile}.")
 
 
 if __name__ == "__main__":

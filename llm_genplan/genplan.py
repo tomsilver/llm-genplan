@@ -144,6 +144,7 @@ where
     last_error_info: Optional[str] = None
     gen_plan_code_str = ""
     metrics["num_interactive_debugs"] = 0
+    metrics["num_influential_training_tasks"] = len(prompt_tasks)
     for err in GENPLAN_ERROR_TYPES:
         metrics[err] = 0
 
@@ -172,7 +173,7 @@ where
         # Test the generalized plan.
         gen_plan_succeeded = True
         parsing_error_found = False
-        for task in all_train_tasks:
+        for i, task in enumerate(all_train_tasks):
             success, info, task_metrics = run_genplan_on_task(
                 gen_plan, task, horizon, timeout
             )
@@ -183,6 +184,10 @@ where
             if not success:
                 gen_plan_succeeded = False
                 last_error_info = info
+                metrics["num_influential_training_tasks"] = max(
+                    metrics["num_influential_training_tasks"],
+                    i + 1,
+                )
                 break
 
         # See note above about parsing errors.
