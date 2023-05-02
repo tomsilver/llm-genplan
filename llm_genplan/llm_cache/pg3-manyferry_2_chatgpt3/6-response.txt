@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    # Get the location of the ferry from the initial state
+    ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0][0]
+    
+    # Define a helper function to check if an object is on the ferry
+    def on_ferry(obj):
+        return any([pred == 'on' and arg == obj for pred, arg in init if pred != 'at' or arg != ferry_loc])
+    
+    # Initialize the plan and current state
+    plan = []
+    current_state = set(init)
+    
+    # Move the ferry and objects to their destination
+    for obj, dest in goal:
+        if not on_ferry(obj):
+            # Board the object onto the ferry
+            plan.append('(board {0} {1})'.format(obj, ferry_loc))
+            current_state.remove(('at', obj, dest))
+            current_state.add(('at-ferry', ferry_loc))
+            current_state.add(('on', obj))
+            if 'empty-ferry' in [pred for pred, _ in current_state]:
+                current_state.remove(('empty-ferry',))
+        else:
+            # The object is already on the ferry
+            pass
+        
+        # Sail to the destination
+        plan.append('(sail {0} {1})'.format(ferry_loc, dest))
+        current_state.remove(('at-ferry', ferry_loc))
+        current_state.add(('at-ferry', dest))
+        ferry_loc = dest
+        
+        if on_ferry(obj):
+            # Debark the object from the ferry
+            plan.append('(debark {0} {1})'.format(obj, dest))
+            current_state.remove(('on', obj))
+            current_state.add(('at', obj, dest))
+            if not any([pred == 'on' for pred, _ in current_state]):
+                current_state.add(('empty-ferry',))
+        else:
+            # The object was not on the ferry
+            pass
+    
+    return plan

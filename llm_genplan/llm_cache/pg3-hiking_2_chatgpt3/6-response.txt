@@ -1,0 +1,7 @@
+To fix the code and avoid an infinite loop, we need to make sure that the current location of the agent is not included in the adjacent locations set. Otherwise, the agent could potentially move back to the current location, leading to an infinite loop. To fix this, we can simply exclude the current location from the adjacent locations set:
+
+```
+adjacent_locs = {atom[2] for atom in init if atom[0] == "adjacent" and atom[1] == current_loc and atom[2] != current_loc}
+```
+
+This ensures that the agent cannot move back to the current location and prevents the infinite loop.

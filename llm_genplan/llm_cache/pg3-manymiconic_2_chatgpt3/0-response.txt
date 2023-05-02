@@ -1,0 +1,3 @@
+
+
+The Miconic domain is a simple elevator simulation domain where passengers need to move from their starting floor to their destination floor using an elevator. The domain includes predicates to represent the origin and destination floors of each passenger, as well as predicates to track whether a passenger has boarded the elevator and whether they have been served (i.e., arrived at their destination). The domain also includes actions to board the elevator, depart from a floor, and move the elevator up or down between floors. The goal of the problem is to ensure that all passengers are served by the end of the simulation.

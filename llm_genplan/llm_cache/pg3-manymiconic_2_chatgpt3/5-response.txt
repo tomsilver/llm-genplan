@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    # Find the starting floor and the destination floors for each passenger
+    floors = {(name, *args[1:]): args[2] for (name, args) in init if name in ['origin', 'destin']}
+    # Initialize the elevator to be at the first floor and empty
+    current_floor = 'f0_b0'
+    passengers_on_board = set()
+    # Move the elevator up from the ground floor, picking up passengers along the way
+    actions = [f'(up {current_floor} {next_floor})' for floor in sorted(floors.values())
+               for next_floor in floors.keys()
+               if next_floor[-1] > current_floor and next_floor[-1] <= floor]
+    for floor in sorted(floors.values()):
+        current_floor = next(f for f in floors.keys() if f[-1] > current_floor and f[-1] <= floor)
+        passengers_to_pick_up = {args[0] for (name, args) in init if name == 'origin' and args[2] == floor}
+        passengers_on_board.update(passengers_to_pick_up)
+        actions += [f'(board {floor} {passenger})' for passenger in passengers_to_pick_up]
+    # Move the elevator down, dropping off passengers at their destination floors along the way
+    while current_floor != 'f0_b0':
+        next_floor = next(f for f in reversed(sorted(floors.values())) if f[-1] < current_floor)
+        actions.append(f'(down {current_floor} {next_floor})')
+        current_floor = next_floor
+        passengers_to_drop_off = {args[0] for (name, args) in init if name == 'destin' and args[2] == current_floor}
+        passengers_on_board.difference_update(passengers_to_drop_off)
+        actions += [f'(depart {current_floor} {passenger})' for passenger in passengers_to_drop_off]
+    # Return the empty plan if the goal has been achieved
+    if all(atom in init for atom in goal):
+        return []
+    # Otherwise, return None to indicate that the plan is incomplete
+    return None if not actions else actions

@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    plan = []
+    balls = list(filter(lambda x: x[0] == 'ball', objects)) # find all balls
+    grippers = list(filter(lambda x: x[0] == 'gripper', objects)) # find all grippers
+    for ball, goal_room in [(ball, room) for (pred, ball, room) in goal if pred == 'at']:
+        # pick up the ball and move it to its goal room
+        for gripper in grippers:
+            carrying_ball = next((b for (p, b, g) in init if p == 'carry' and g == gripper), None)
+            if carrying_ball == ball:
+                # the ball is already being carried by this gripper, no need to pick it up again
+                break
+            elif carrying_ball is not None:
+                # the gripper is carrying a different ball, drop it first
+                current_room = next((r for (p, o, r) in init if p == 'at' and o == carrying_ball), None)
+                if current_room is not None:
+                    plan.append(f'(move {current_room} {goal_room})')
+                    init.remove(('at', carrying_ball, current_room))
+                    init.append(('at', carrying_ball, goal_room))
+                plan.append(f'(drop {carrying_ball} {goal_room} {gripper})')
+                init.remove(('carry', carrying_ball, gripper))
+                init.append(('free', gripper))
+            elif ('free', gripper) in init:
+                # pick up the ball
+                plan.append(f'(pick {ball} {goal_room} {gripper})')
+                init.remove(('free', gripper))
+                init.append(('carry', ball, gripper))
+                # move to the goal room
+                current_room = next((r for (p, o, r) in init if p == 'at-robby'), None)
+                if current_room != goal_room:
+                    plan.append(f'(move {current_room} {goal_room})')
+                    init.remove(('at-robby', current_room))
+                    init.append(('at-robby', goal_room))
+                # drop the ball
+                plan.append(f'(drop {ball} {goal_room} {gripper})')
+                init.remove(('carry', ball, gripper))
+                init.append(('at', ball, goal_room))
+                init.append(('free', gripper))
+                break # found a free gripper or carried ball, stop searching for grippers
+    return plan

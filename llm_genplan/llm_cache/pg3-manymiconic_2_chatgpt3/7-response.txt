@@ -1,0 +1,20 @@
+def get_plan(objects, init, goal):
+    floors = {(name, arg1, *rest): rest[0] for (name, arg1, *rest) in init if name in ['origin', 'destin']}
+    lifts = [args[0] for (name, args) in init if name == 'lift-at']
+    boarded = {args[0] for (name, args) in init if name == 'boarded'}
+    actions = []
+    current_lift = lifts[0]
+    for (name, args) in goal:
+        if name == 'served' and args[0] not in boarded:
+            floors_to_go = [floor for (predicate, floor) in floors.items() if predicate[1] == args[0]]
+            floors_to_go.sort(key=lambda f: abs(int(f[1].split('_')[0][1:]) - int(current_lift.split('_')[0][1:])))
+            for floor in floors_to_go:
+                if floor[1] != current_lift:
+                    if int(floor[1].split('_')[0][1:]) > int(current_lift.split('_')[0][1:]):
+                        action = f'(up {current_lift} {floor[1]})'
+                    else:
+                        action = f'(down {current_lift} {floor[1]})'
+                    actions.append(action)
+                    current_lift = floor[1]
+            actions.append(f'(depart {current_lift} {args[0]})')
+    return actions[::-1]

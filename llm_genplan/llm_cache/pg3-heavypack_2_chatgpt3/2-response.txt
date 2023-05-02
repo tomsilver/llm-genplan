@@ -1,0 +1,9 @@
+Yes, there is a simple strategy for solving all problems in this domain without using search, which involves the following steps:
+
+1. Sort the objects in decreasing order of weight.
+2. Pack the heaviest object using the "pack-first" action.
+3. For each remaining object, try to stack it on top of an already packed object that is heavier than it, and has nothing above it (as specified by the "stack" action).
+4. If there is no such object, pack the object using the "pack-first" action.
+5. Repeat steps 3-4 until all objects are packed.
+
+This strategy guarantees a solution in this domain because it always packs the heaviest object first, and then tries to stack lighter objects on top of already packed heavier objects. By doing so, it ensures that no object is stacked on top of a lighter object, and no two objects are stacked on top of each other without a heavier object in between them.

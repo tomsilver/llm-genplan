@@ -1,0 +1,33 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # sort objects in decreasing order of weight
+    objects = sorted(objects, key=lambda x: -1 * int(x[1:]))
+    
+    # pack the heaviest object first
+    heaviest_obj = objects[0]
+    plan.append('(pack-first {})'.format(heaviest_obj))
+    init.remove(('box-empty',))
+    init.add(('packed', heaviest_obj))
+    init.add(('nothing-above', heaviest_obj))
+    init.remove(('unpacked', heaviest_obj))
+    
+    # try to stack each remaining object on top of a heavier already packed object
+    for obj in objects[1:]:
+        stacked = False
+        for packed_obj in objects:
+            if ('heavier', packed_obj, obj) in init and ('packed', packed_obj) in init and ('nothing-above', packed_obj) in init:
+                plan.append('(stack {} {})'.format(packed_obj, obj))
+                init.add(('packed', obj))
+                init.add(('nothing-above', obj))
+                init.remove(('unpacked', obj))
+                stacked = True
+                break
+        # if object couldn't be stacked, pack it first
+        if not stacked:
+            plan.append('(pack-first {})'.format(obj))
+            init.add(('packed', obj))
+            init.add(('nothing-above', obj))
+            init.remove(('unpacked', obj))
+    
+    return plan

@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    homebase_locs = [obj[0] for obj in objects if obj[1] == "loc" and ("ishomebase", obj[0]) in init]
+    if not homebase_locs:
+        raise ValueError("No homebase location found in initial state")
+    homebase = homebase_locs[0]
+    papers = [obj[0] for obj in objects if obj[1] == "paper"]
+    locations = [obj[0] for obj in objects if obj[1] == "loc" and obj[0] != homebase]
+
+    plan = []
+    carrying = None
+    satisfied = set()
+
+    timeout = 1000
+    iterations = 0
+
+    while len(satisfied) < len(locations) and iterations < timeout:
+        iterations += 1
+        print(f"Iteration {iterations}")
+        print(f"Plan: {plan}")
+        print(f"Satisfied: {satisfied}")
+        print(f"Carrying: {carrying}")
+
+        # Find the closest unsatisfied location
+        distance, closest = min([(1 if loc in satisfied else 0, loc) for loc in locations])
+
+        # If we are at the closest location, deliver the paper if carrying one
+        if carrying and closest in init and ("wantspaper", closest) in init:
+            plan.append(f"deliver {carrying} {closest}")
+            carrying = None
+            satisfied.add(closest)
+
+        # Otherwise, go to the closest location and pick up a paper if not carrying one
+        else:
+            plan.append(f"move {homebase} {closest}")
+            if carrying is None:
+                carrying = papers.pop()
+                plan.append(f"pick-up {carrying} {homebase}")
+
+    print(f"Final plan: {plan}")
+    return plan

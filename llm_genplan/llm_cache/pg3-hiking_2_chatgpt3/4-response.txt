@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    # Extract information from the init state
+    locs = set(obj[1] for obj in objects if obj[0].startswith("r"))
+    at_locs = {atom[1] for atom in init if atom[0] == "at"}
+
+    # Find the goal location
+    goal_loc = next(atom[1] for atom in goal if atom[0] == "at")
+
+    # Follow the trail towards the goal while avoiding hills and water
+    current_loc = next(iter(at_locs))
+    plan = []
+    while current_loc != goal_loc:
+        adjacent_locs = {atom[2] for atom in init if atom[0] == "adjacent" and atom[1] == current_loc}
+        non_obstacles = adjacent_locs - {loc for loc in locs if (loc, ) in init and (init, loc) in [("iswater",), ("ishill",)]}
+        next_loc = next(iter(non_obstacles), None)
+        if next_loc is None:
+            return None  # No valid path to goal
+        at_locs.remove(current_loc)
+        at_locs.add(next_loc)
+        plan.append("(walk {} {})".format(current_loc, next_loc))
+        current_loc = next_loc
+
+    return plan

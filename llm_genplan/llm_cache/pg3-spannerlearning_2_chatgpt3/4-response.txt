@@ -1,0 +1,16 @@
+def get_distance(location1, location2):
+    # Check that the locations are not empty strings
+    if not location1 or not location2:
+        return float('inf')
+
+    # Check that the locations have the expected format
+    if not location1.startswith('location') or not location2.startswith('location'):
+        return float('inf')
+
+    # Parse the coordinates and compute the Manhattan distance
+    try:
+        x1, y1 = map(int, location1[7:-1].split(','))
+        x2, y2 = map(int, location2[7:-1].split(','))
+        return abs(x1 - x2) + abs(y1 - y2)
+    except ValueError:
+        return float('inf')

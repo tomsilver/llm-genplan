@@ -1,0 +1,16 @@
+def get_plan(objects, init, goal):
+    current_loc = next(atom[1] for atom in init if atom[0] == "at")
+    plan = []
+    while True:
+        if (current_loc,) in goal:
+            break
+        adjacent_locs = {atom[2] for atom in init if atom[0] == "adjacent" and atom[1] == current_loc and atom[2] != current_loc}
+        for next_loc in adjacent_locs:
+            if ("ontrail", current_loc, next_loc) in init:
+                plan.append("(walk {} {})".format(current_loc, next_loc))
+                plan.append("(at {})".format(next_loc))
+                current_loc = next_loc
+                break
+        else:
+            return None
+    return plan

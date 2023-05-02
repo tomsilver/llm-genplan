@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    steps = []
+    while set(init) != set(goal):
+        # Move the ferry to the next location that has cars waiting to board
+        ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0]
+        cars_waiting = [arg for pred, arg in init if pred == 'at' and arg != 'ferry']
+        dest_loc = None
+        for car in cars_waiting:
+            if dest_loc is None or abs(objects.index(car) - objects.index(dest_loc)) > abs(objects.index(car) - objects.index(ferry_loc)):
+                dest_loc = car
+        if dest_loc != ferry_loc:
+            steps.append('(sail {} {})'.format(ferry_loc, dest_loc))
+            init = [tuple(('at-ferry', dest_loc) if pred == 'at-ferry' else (pred, arg) for pred, arg in init)]
+        # Board cars that are waiting at the current location
+        cars_boarded = [arg for pred, arg in init if pred == 'at' and arg != 'ferry' and arg == ferry_loc]
+        if cars_boarded:
+            steps.append('(board {} {})'.format(cars_boarded[0], ferry_loc))
+            init = [tuple(('empty-ferry',) if pred == 'empty-ferry' else ('on', cars_boarded[0]) if pred == 'at' and arg == cars_boarded[0] else (pred, arg) for pred, arg in init)]
+        else:
+            # If there are no cars to board, the ferry is empty
+            init = [tuple(('empty-ferry',) if pred == 'empty-ferry' else (pred, arg) for pred, arg in init)]
+        # Debark cars that are at the goal location
+        cars_debarked = [arg for pred, arg in init if pred == 'at' and arg != 'ferry' and arg == goal[objects.index(arg)][1]]
+        if cars_debarked:
+            steps.append('(debark {} {})'.format(cars_debarked[0], goal[objects.index(cars_debarked[0])][1]))
+            init = [tuple(('at', cars_debarked[0], goal[objects.index(cars_debarked[0])][1]) if pred == 'on' and arg == cars_debarked[0] else ('empty-ferry',) if pred == 'empty-ferry' else (pred, arg) for pred, arg in init)]
+        else:
+            # If there are no cars to debark, the ferry is empty
+            init = [tuple(('empty-ferry',) if pred == 'empty-ferry' else (pred, arg) for pred, arg in init)]
+    return steps

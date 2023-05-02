@@ -1,0 +1,142 @@
+Domain:
+(define (domain ferry)
+   (:predicates (not-eq ?x ?y)
+        (car ?c)
+        (location ?l)
+        (at-ferry ?l)
+        (at ?c ?l)
+        (empty-ferry)
+        (on ?c))
+
+   (:action sail
+       :parameters  (?from ?to)
+       :precondition (and (not-eq ?from ?to) 
+                          (location ?from) (location ?to) (at-ferry ?from))
+       :effect (and  (at-ferry ?to)
+             (not (at-ferry ?from))))
+
+
+   (:action board
+       :parameters (?car ?loc)
+       :precondition  (and  (car ?car) (location ?loc)
+                (at ?car ?loc) (at-ferry ?loc) (empty-ferry))
+       :effect (and (on ?car)
+            (not (at ?car ?loc)) 
+            (not (empty-ferry))))
+
+   (:action debark
+       :parameters  (?car  ?loc)
+       :precondition  (and  (car ?car) (location ?loc)
+                (on ?car) (at-ferry ?loc))
+       :effect (and (at ?car ?loc)
+            (empty-ferry)
+            (not (on ?car)))))
+
+Example problems:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    l0
+    l1
+    l2
+    l3
+    l4
+    l5
+    l6
+    ...
+  )
+  (:init
+    (at c0 l1)
+    (at c1 l5)
+    (at c2 l2)
+    (at-ferry l4)
+    (car c0)
+    (car c1)
+    (car c2)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    (location l9)
+    (not-eq l0 l1)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    (not-eq l1 l0)
+    ...
+  )
+  (:goal (and
+    (at c0 l4)
+    (at c1 l9)
+    (at c2 l3)
+    )
+  )    
+)
+        
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    l0
+    l1
+    l10
+    l11
+    l12
+    l13
+    l2
+    ...
+  )
+  (:init
+    (at c0 l9)
+    (at c1 l10)
+    (at c2 l2)
+    (at-ferry l6)
+    (car c0)
+    (car c1)
+    (car c2)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l10)
+    (location l11)
+    (location l12)
+    (location l13)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    ...
+    (not-eq l0 l1)
+    (not-eq l0 l10)
+    (not-eq l0 l11)
+    (not-eq l0 l12)
+    (not-eq l0 l13)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    ...
+  )
+  (:goal (and
+    (at c0 l10)
+    (at c1 l6)
+    (at c2 l12)
+    )
+  )    
+)
+Write a short summary of this domain in words.

@@ -1,0 +1,42 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f1_b0 - floor
+    f2_b0 - floor
+    f3_b0 - floor
+    f4_b0 - floor
+    p0_b0 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f1_b0 f2_b0)
+    (above f1_b0 f3_b0)
+    (above f1_b0 f4_b0)
+    (above f2_b0 f3_b0)
+    (above f2_b0 f4_b0)
+    (above f3_b0 f4_b0)
+    (destin p0_b0 f1_b0)
+    (lift-at f2_b0)
+    (origin p0_b0 f2_b0)
+  )
+  (:goal (and
+    (served p0_b0)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 70, in get_plan
+    floors = {(name, *args[1:]): args[2] for (name, args) in init if name in ['origin', 'destin']}
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 70, in <dictcomp>
+    floors = {(name, *args[1:]): args[2] for (name, args) in init if name in ['origin', 'destin']}
+                                             ^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 2)
+
+Fix the code.

@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+    car_loc = {arg for pred, arg in init if pred == 'at'}
+    ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0][0]
+    goal_locs = {arg for pred, arg in goal if pred == 'at'}
+    
+    while car_loc != goal_locs:
+        # If no car is at the ferry's location, move the ferry to an adjacent location with a car
+        if not any(loc == ferry_loc for _, loc in car_loc):
+            adj_locs = set(adj for adj, curr in ADJACENCY_LIST if curr == ferry_loc)
+            for adj in adj_locs:
+                if any(loc == adj for _, loc in car_loc):
+                    plan.append(f'(sail {ferry_loc} {adj})')
+                    ferry_loc = adj
+                    break
+            else:
+                raise Exception('Plan not found')
+        
+        # Move the car at the ferry's location to an adjacent empty location
+        for car, loc in car_loc:
+            if loc == ferry_loc:
+                adj_locs = {adj for adj, curr in ADJACENCY_LIST if curr == ferry_loc}
+                empty_locs = adj_locs - {loc for _, loc in car_loc}
+                if empty_locs:
+                    dest = empty_locs.pop()
+                    plan.append(f'(debark {car} {dest})')
+                    plan.append(f'(board {car} {ferry_loc})')
+                    car_loc.remove((car, loc))
+                    car_loc.add((car, dest))
+                    break
+        else:
+            raise Exception('Plan not found')
+    
+    return plan

@@ -1,0 +1,33 @@
+Given this task:
+(define (problem miconicprob (:domain miconic)
+  (:objects
+    f0_b0 - floor
+    f1_b0 - floor
+    f2_b0 - floor
+    f3_b0 - floor
+    f4_b0 - floor
+    p0_b0 - passenger
+  )
+  (:init
+    (above f0_b0 f1_b0)
+    (above f0_b0 f2_b0)
+    (above f0_b0 f3_b0)
+    (above f0_b0 f4_b0)
+    (above f1_b0 f2_b0)
+    (above f1_b0 f3_b0)
+    (above f1_b0 f4_b0)
+    (above f2_b0 f3_b0)
+    (above f2_b0 f4_b0)
+    (above f3_b0 f4_b0)
+    (destin p0_b0 f1_b0)
+    (lift-at f2_b0)
+    (origin p0_b0 f2_b0)
+  )
+  (:goal (and
+    (served p0_b0)
+    )
+  )    
+)
+        
+The code returned <generator object get_plan at 0x13793f8b0>, which is not a list of actions.
+Fix the code.

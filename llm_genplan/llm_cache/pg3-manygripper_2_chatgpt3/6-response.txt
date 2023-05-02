@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    plan = []
+    balls = list(filter(lambda x: x[0] == 'ball', objects)) # find all balls
+    grippers = list(filter(lambda x: x[0] == 'gripper', objects)) # find all grippers
+    for ball, goal_room in [(ball, room) for (pred, ball, room) in goal if pred == 'at']:
+        # pick up the ball and move it to its goal room
+        gripper_with_ball = None
+        try:
+            gripper_with_ball = next((g for (p, b, g) in init if p == 'carry' and b == ball))
+        except ValueError:
+            pass # ignore the element that caused the error
+        if gripper_with_ball is not None:
+            # the ball is already being carried by a gripper, move and drop it at the goal room
+            current_room = next((r for (p, o, r) in init if p == 'at' and o == ball), None)
+            if current_room is not None and current_room != goal_room:
+                plan.append(f'(move {current_room} {goal_room})')
+                init.remove(('at', ball, current_room))
+                init.append(('at', ball, goal_room))
+            plan.append(f'(drop {ball} {goal_room} {gripper_with_ball})')
+            init.remove(('carry', ball, gripper_with_ball))
+            init.append(('at', ball, goal_room))
+            init.append(('free', gripper_with_ball))
+        else:
+            # the ball is not being carried by any gripper, pick it up and move it to the goal room
+            for gripper in grippers:
+                carrying_ball = None
+                try:
+                    carrying_ball = next((b for (p, b, g) in init if p == 'carry' and g == gripper))
+                except ValueError:
+                    pass # ignore the element that caused the error
+                if carrying_ball == ball:
+                    # the ball is already being carried by this gripper, no need to pick it up again
+                    break
+                elif carrying_ball is not None:
+                    # the gripper is carrying a different ball, drop it first
+                    current_room = next((r for (p, o, r) in init if p == 'at' and o == carrying_ball), None)
+                    if current_room is not None:
+                        plan.append(f'(move {current_room} {goal_room})')
+                        init.remove(('at', carrying_ball, current_room))
+                        init.append(('at', carrying_ball, goal_room))
+                    plan.append(f'(drop {carrying_ball} {goal_room} {gripper})')
+                    init.remove(('carry', carrying_ball,

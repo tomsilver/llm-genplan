@@ -1,0 +1,71 @@
+def get_plan(objects, init, goal):
+    # Find the initial location of Bob
+    bob_location = None
+    for atom in init:
+        if atom[0] == 'at' and atom[1] == 'bob':
+            bob_location = atom[2]
+            break
+    if bob_location is None:
+        return None
+
+    # Find all usable spanners
+    usable_spanners = set()
+    for atom in init:
+        if atom[0] == 'useable' and atom[1].startswith('spanner'):
+            usable_spanners.add(atom[1])
+
+    # Initialize the plan and the set of tightened nuts
+    plan = []
+    tightened_nuts = set()
+
+    # Repeat until all nuts have been tightened
+    while len(tightened_nuts) < 3:
+        # Find the nearest usable spanner
+        nearest_spanner = None
+        nearest_distance = float('inf')
+        for spanner in usable_spanners:
+            spanner_location = None
+            for atom in init:
+                if atom[0] == 'at' and atom[1] == spanner:
+                    spanner_location = atom[2]
+                    break
+            if spanner_location is not None:
+                distance = get_distance(bob_location, spanner_location)
+                if distance < nearest_distance:
+                    nearest_spanner = spanner
+                    nearest_distance = distance
+
+        if nearest_spanner is None:
+            return None
+
+        # Find the nearest loose nut at the same location as the spanner
+        nearest_nut = None
+        nearest_distance = float('inf')
+        for atom in init:
+            if atom[0] == 'loose' and atom[1].startswith('nut'):
+                nut_location = None
+                for atom2 in init:
+                    if atom2[0] == 'at' and atom2[1] == atom[1]:
+                        nut_location = atom2[2]
+                        break
+                if nut_location is not None and nut_location == spanner_location:
+                    distance = get_distance(bob_location, nut_location)
+                    if distance < nearest_distance:
+                        nearest_nut = atom[1]
+                        nearest_distance = distance
+
+        if nearest_nut is None:
+            return None
+
+        # Tighten the nut with the spanner and update the plan and the set of tightened nuts
+        action = f'tighten_nut {bob_location} {nearest_spanner} bob {nearest_nut}'
+        plan.append(action)
+        tightened_nuts.add(nearest_nut)
+
+    return plan
+
+def get_distance(location1, location2):
+    # Compute the Manhattan distance between two locations
+    x1, y1 = map(int, location1[7:-1].split(','))
+    x2, y2 = map(int, location2[7:-1].split(','))
+    return abs(x1 - x2) + abs(y1 - y2)

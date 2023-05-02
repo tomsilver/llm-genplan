@@ -1,0 +1,45 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o488
+    o504
+    o538
+    o619
+    o620
+    o625
+  )
+  (:init
+    (box-empty)
+    (heavier o488 o504)
+    (heavier o488 o619)
+    (heavier o538 o488)
+    (heavier o538 o504)
+    (heavier o538 o619)
+    (heavier o538 o625)
+    (heavier o619 o504)
+    (heavier o620 o488)
+    (heavier o620 o504)
+    (heavier o620 o538)
+    ...
+    (unpacked o488)
+    (unpacked o504)
+    (unpacked o538)
+    (unpacked o619)
+    (unpacked o620)
+    (unpacked o625)
+  )
+  (:goal (and
+    (packed o488)
+    (packed o504)
+    (packed o538)
+    (packed o619)
+    (packed o620)
+    (packed o625)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pack-first o625)', '(pack-first o620)', '(stack o625 o619)', '(stack o620 o538)', '(stack o625 o504)', '(stack o625 o488)'].
+NOTE: (pack-first o620) has an unsatisfied precondition at time 1
+(Set (box-empty) to true)
+Fix the code.

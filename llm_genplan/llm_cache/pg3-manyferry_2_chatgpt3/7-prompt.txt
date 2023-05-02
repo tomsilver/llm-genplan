@@ -1,0 +1,65 @@
+Given this task:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    l0
+    l1
+    l2
+    l3
+    l4
+    l5
+    l6
+    ...
+  )
+  (:init
+    (at c0 l1)
+    (at c1 l5)
+    (at c2 l2)
+    (at-ferry l4)
+    (car c0)
+    (car c1)
+    (car c2)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    (location l9)
+    (not-eq l0 l1)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    (not-eq l1 l0)
+    ...
+  )
+  (:goal (and
+    (at c0 l4)
+    (at c1 l9)
+    (at c2 l3)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 105, in get_plan
+    ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0][0]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 105, in <listcomp>
+    ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0][0]
+                         ^^^^^^^^^
+ValueError: too many values to unpack (expected 2)
+
+Fix the code.

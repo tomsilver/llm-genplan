@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    plan = []
+    balls = list(filter(lambda x: x[0] == 'ball', objects)) # find all balls
+    grippers = list(filter(lambda x: x[0] == 'gripper', objects)) # find all grippers
+    for ball, goal_room in [(ball, room) for (pred, ball, room) in goal if pred == 'at']:
+        # pick up the ball and move it to its goal room
+        for gripper in grippers:
+            # find a free gripper
+            if ('free', gripper) in init:
+                # pick up the ball
+                plan.append(f'(pick {ball} {goal_room} {gripper})')
+                init.remove(('free', gripper))
+                init.append(('carry', ball, gripper))
+                # move to the goal room
+                current_room = [room for (pred, obj, room) in init if pred == 'at-robby'][0]
+                if current_room != goal_room:
+                    plan.append(f'(move {current_room} {goal_room})')
+                    init.remove(('at-robby', current_room))
+                    init.append(('at-robby', goal_room))
+                # drop the ball
+                plan.append(f'(drop {ball} {goal_room} {gripper})')
+                init.remove(('carry', ball, gripper))
+                init.append(('at', ball, goal_room))
+                init.append(('free', gripper))
+                break # found a free gripper, stop searching for grippers
+    return plan

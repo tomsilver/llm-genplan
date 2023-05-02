@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in the Gripper-Strips domain without using search is to use a basic form of planning by constructing a sequence of actions that directly achieve the goal state. This strategy involves reasoning about the preconditions and effects of the domain's actions and applying them in a sequential manner to reach the goal.
+
+In this domain, the strategy involves finding a sequence of pick and drop actions that directly moves each ball to its desired room. To do this, one can start with an empty gripper and repeatedly execute the pick and drop actions for each ball in the order specified by the goal until all the balls have been moved to their desired rooms.
+
+Specifically, for each ball, the following sequence of actions can be used:
+- Move Robby to the room where the ball is located.
+- Pick up the ball with an empty gripper.
+- Move Robby to the room where the ball should be placed.
+- Drop the ball in the room.
+
+By repeating this sequence of actions for each ball, the goal state can be achieved without using any search.

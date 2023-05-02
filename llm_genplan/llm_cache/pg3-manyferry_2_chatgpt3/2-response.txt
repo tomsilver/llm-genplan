@@ -1,0 +1,5 @@
+The simple strategy for solving all problems in the "ferry" domain without using search is to use a "macro" approach, where all possible actions are defined upfront in the problem definition, and then the problem is solved by simulating the effects of each action in order until the goal state is reached. 
+
+To implement this strategy, the problem is first transformed into a sequence of steps, where each step represents the movement of the ferry or the boarding/debarking of a car. The steps are ordered in a way that ensures the ferry is always moving in the right direction, and that the cars are boarded and debarked at the appropriate locations. Once the sequence of steps is defined, it is executed by simulating the effects of each step until the goal state is reached.
+
+This strategy is possible because the "ferry" domain is relatively simple, and the number of possible actions is limited. However, for more complex domains, using search algorithms may be necessary to find an optimal solution.

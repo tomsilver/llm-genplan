@@ -1,0 +1,63 @@
+Given this task:
+(define (problem manygripper (:domain gripper-strips)
+  (:objects
+    ball0
+    ball1
+    ball2
+    ball3
+    ball4
+    gripper0
+    gripper1
+    room0
+    room1
+    room10
+    ...
+  )
+  (:init
+    (at ball0 room8)
+    (at ball1 room11)
+    (at ball2 room18)
+    (at ball3 room11)
+    (at ball4 room8)
+    (at-robby room0)
+    (ball ball0)
+    (ball ball1)
+    (ball ball2)
+    (ball ball3)
+    (ball ball4)
+    (free gripper0)
+    (free gripper1)
+    (gripper gripper0)
+    (gripper gripper1)
+    (room room0)
+    (room room1)
+    (room room10)
+    (room room11)
+    (room room12)
+    (room room13)
+    (room room14)
+    (room room15)
+    (room room16)
+    (room room17)
+    ...
+  )
+  (:goal (and
+    (at ball0 room5)
+    (at ball1 room6)
+    (at ball2 room4)
+    (at ball3 room3)
+    (at ball4 room7)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: [].
+NOTE: The goal is not satisfied
+(Follow each of:
+    (Set (at ball0 room5) to true)
+    and (Set (at ball4 room7) to true)
+    and (Set (at ball3 room3) to true)
+    and (Set (at ball1 room6) to true)
+    and (Set (at ball2 room4) to true)
+)
+Fix the code.
