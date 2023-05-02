@@ -1,0 +1,1 @@
+Unfortunately, I cannot see the code provided in line 113. Therefore, I cannot provide a specific fix. However, the error message suggests that there is an unterminated string literal, meaning a string that is not closed properly with a closing quotation mark. Check the code for missing quotation marks or other syntax errors in the vicinity of line 113.

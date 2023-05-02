@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    # extract objects of interest
+    nuts = set(obj for (obj, typ) in objects if typ == 'nut')
+    spanners = set(obj for (obj, typ) in objects if typ == 'spanner')
+
+    # initialize plan
+    plan = []
+
+    # iterate over loose nuts and tighten them
+    for nut in nuts:
+        while (nut, 'loose') in init:
+            # find a usable spanner at the same location as the man
+            usable_spanners = set(spanner for spanner in spanners
+                                  if (spanner, 'useable') in init
+                                  and (spanner, 'location') in init
+                                  and ('bob', init[(spanner, 'location')]) in init)
+            if not usable_spanners:
+                raise ValueError("No usable spanner found")
+
+            # pick up the first usable spanner
+            spanner = next(iter(usable_spanners))
+            plan.append(f'(pickup_spanner {init[(spanner, "location")]} {spanner} bob)')
+
+            # walk to the location of the loose nut
+            plan.append(f'(walk {init[("bob", "location")]} {init[(nut, "location")]} bob)')
+
+            # tighten the nut using the spanner
+            plan.append(f'(tighten_nut {init[("bob", "location")]} {spanner} bob {nut})')
+            init.remove((nut, 'loose'))
+            init.add((nut, 'tightened'))
+
+    if all(atom in init for atom in goal):
+        return plan
+    else:
+        raise ValueError(f"Goal not satisfied\n(Follow each of:\n    {goal})")

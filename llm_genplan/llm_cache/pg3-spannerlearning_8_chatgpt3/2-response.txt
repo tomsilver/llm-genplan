@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to use a centralized planner that can generate a plan by following a fixed sequence of steps. Specifically, the planner should perform the following steps:
+
+1. Pick up a usable spanner that is located at the same place as the man.
+2. Move to the location of a loose nut.
+3. Tighten the nut using the spanner that is being carried.
+4. Repeat steps 1-3 until all nuts are tightened.
+
+This strategy does not require search because the sequence of steps is fixed and deterministic, and there is only one way to achieve the goal of tightening all nuts. This means that a centralized planner can simply apply the above strategy to generate a plan that achieves the goal.

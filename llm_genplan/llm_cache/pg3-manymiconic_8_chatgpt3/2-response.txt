@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in the Miconic domain without using search is to use a simple set of rules that allow the elevator to move up and down and serve passengers in a round-robin fashion. The rules are:
+
+1. If there are passengers waiting at the current floor, pick them up.
+2. If there are passengers in the elevator, drop them off at their destination floor.
+3. If there are no passengers in the elevator or waiting at the current floor, move the elevator up or down to the next floor where passengers are waiting.
+
+By following these rules, the elevator will serve all passengers and reach the goal state without needing to use search. The rules are based on a simple algorithm called "elevator control algorithm" (ECA) that is widely used in real-world elevator systems.

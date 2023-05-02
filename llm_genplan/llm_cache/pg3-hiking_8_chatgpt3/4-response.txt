@@ -1,0 +1,61 @@
+import heapq
+
+def get_plan(objects, init, goal):
+    # create graph of map
+    graph = {}
+    for obj in objects:
+        if obj[1] == 'loc':
+            graph[obj[0]] = set()
+    
+    for pred in init:
+        if pred[0] == 'adjacent':
+            graph[pred[1]].add(pred[2])
+            graph[pred[2]].add(pred[1])
+    
+    # create priority queue for Dijkstra's algorithm
+    queue = [(0, init)]
+    visited = set()
+    parent = {}
+    cost = {str(init): 0}
+    
+    while queue:
+        curr_cost, curr_state = heapq.heappop(queue)
+        curr_state_str = str(curr_state)
+        if curr_state_str in visited:
+            continue
+        
+        visited.add(curr_state_str)
+        
+        if set(goal).issubset(set(curr_state)):
+            # build plan from goal state back to initial state
+            plan = []
+            curr_pred = str(goal)
+            while curr_pred != str(init):
+                curr_action = parent[curr_pred]
+                plan.append(curr_action)
+                curr_pred = curr_action[1]
+            return list(reversed(plan))
+        
+        for action in ['walk', 'climb']:
+            for loc1 in graph:
+                if ('at', loc1) not in curr_state:
+                    continue
+                
+                for loc2 in graph[loc1]:
+                    if action == 'walk' and ('ishill', loc2) in curr_state:
+                        continue
+                    if action == 'climb' and ('iswater', loc2) in curr_state:
+                        continue
+                    
+                    new_state = set(curr_state)
+                    new_state.remove(('at', loc1))
+                    new_state.add(('at', loc2))
+                    new_cost = curr_cost + 1
+                    new_state_str = str(new_state)
+                    
+                    if new_state_str not in cost or new_cost < cost[new_state_str]:
+                        heapq.heappush(queue, (new_cost, new_state))
+                        cost[new_state_str] = new_cost
+                        parent[new_state_str] = (action, curr_state_str)
+                        
+    return None

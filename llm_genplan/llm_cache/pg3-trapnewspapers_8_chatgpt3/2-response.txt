@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search involves the following steps:
+
+1. Pick up all unpacked papers at the home base.
+2. Move to the location that wants a paper.
+3. Deliver the paper to that location.
+4. Repeat steps 2-3 until all desired locations have been satisfied.
+
+This strategy assumes that it is always safe to move from one location to another, and that there is only one home base where all papers are initially available. The strategy does not involve any decision-making or planning beyond simply delivering papers to the locations that want them, in the order that they are encountered.

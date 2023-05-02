@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    # Convert objects to a dictionary mapping types to objects
+    objects_dict = {}
+    for obj, typ in objects:
+        if typ not in objects_dict:
+            objects_dict[typ] = []
+        objects_dict[typ].append(obj)
+    # Create initial state as a set of strings
+    init_str = {to_string(atom) for atom in init}
+    # Create goal state as a set of strings
+    goal_str = {to_string(atom) for atom in goal}
+    # Initialize the queue and the parent dictionary
+    queue = deque([init_str])
+    parent = {}
+    # Breadth-first search
+    while queue:
+        curr_state_str = queue.popleft()
+        curr_state = from_string_set(curr_state_str)
+        # Check if goal is satisfied
+        if goal_str.issubset(curr_state_str):
+            # Construct the plan
+            plan = []
+            curr_pred = to_string(('at', objects_dict['loc'][0]))
+            while curr_pred in parent:
+                action, curr_pred = parent[curr_pred]
+                plan.append(action)
+            plan.reverse()
+            return plan
+        # Generate next states
+        for action in get_actions(objects_dict):
+            if is_applicable(action, curr_state):
+                new_state = apply(action, curr_state)
+                new_state_str = {to_string(atom) for atom in new_state}
+                if new_state_str not in parent:
+                    queue.append(new_state_str)
+                    parent[new_state_str] = (action.name, to_string(action.precondition))
+    # No plan found
+    return []

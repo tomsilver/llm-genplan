@@ -1,0 +1,48 @@
+def get_plan(objects, init, goal):
+    plan = []
+    curr_loc = None
+
+    while goal - set(init):
+        # Check if there are any cars at the current location that need to be transported
+        cars_to_board = set()
+        for atom in init:
+            if atom[0] == 'at' and atom[2] == curr_loc:
+                car = atom[1]
+                cars_to_board.add(car)
+
+        # Board any cars that need to be transported
+        for car in cars_to_board:
+            plan.append(f"(board {car} {curr_loc})")
+            init.remove(('at', car, curr_loc))
+            init.add(('on', car))
+            init.add(('empty-ferry', False))
+
+        # Sail the ferry to the other side
+        next_loc = None
+        for atom in init:
+            if atom[0] == 'at-ferry' and atom[1] != curr_loc:
+                next_loc = atom[1]
+                break
+        if next_loc is None:
+            # No more valid destinations, assume problem is solved
+            break
+        plan.append(f"(sail {curr_loc} {next_loc})")
+        init.remove(('at-ferry', curr_loc))
+        init.add(('at-ferry', next_loc))
+
+        # Debark any cars that need to be delivered
+        cars_to_debark = set()
+        for atom in init:
+            if atom[0] == 'at' and atom[2] == next_loc:
+                car = atom[1]
+                cars_to_debark.add(car)
+
+        for car in cars_to_debark:
+            plan.append(f"(debark {car} {next_loc})")
+            init.remove(('on', car))
+            init.remove(('empty-ferry', False))
+            init.add(('at', car, next_loc))
+
+        curr_loc = next_loc
+
+    return plan

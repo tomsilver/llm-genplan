@@ -1,0 +1,8 @@
+Yes, there is a simple strategy for solving all problems in this domain without using search, and it involves a straightforward application of the domain's two actions:
+
+1. Start with an empty box.
+2. Pack the heaviest item first using the "pack-first" action.
+3. For each remaining item, check if it is heavier than any of the packed items. If it is, use the "stack" action to stack the item on top of the heaviest packed item it is heavier than. If it is not, pack the item using the "pack-first" action.
+4. Repeat step 3 until all items are packed.
+
+This strategy guarantees a solution because it always packs the heaviest item first, and then stacks lighter items on top of the heavier ones. The preconditions of the "stack" action ensure that the items are stacked in the correct order. The strategy does not require any search, as each action to be performed is determined based on the current state of the items.

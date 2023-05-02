@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    home_base = None
+    papers = set()
+    desired_locs = set()
+    for predicate, *args in init:
+        if predicate == 'at' and ('ishomebase', *args) in init:
+            home_base = args[0]
+        elif predicate == 'unpacked':
+            papers.add(args[0])
+        elif predicate == 'wantspaper':
+            desired_locs.add(args[0])
+
+    plan = []
+    current_loc = home_base
+    prev_loc = None
+    while desired_locs:
+        for predicate, *args in init:
+            if predicate == 'wantspaper' and args[0] == current_loc:
+                if papers:
+                    paper = next(iter(papers))
+                    papers.remove(paper)
+                    plan.append(f"(deliver {paper} {current_loc})")
+                    if current_loc in desired_locs:
+                        desired_locs.remove(current_loc)
+                break
+        else:
+            unvisited_locs = desired_locs - {current_loc}
+            if unvisited_locs:
+                new_loc = min(unvisited_locs, key=lambda loc: heuristic(loc, current_loc))
+                if new_loc != prev_loc:
+                    plan.append(f"(move {current_loc} {new_loc})")
+                    prev_loc = current_loc
+                    current_loc = new_loc
+            else:
+                break
+    return plan
+
+def heuristic(loc1, loc2):
+    return abs(int(loc1[4:]) - int(loc2[4:]))

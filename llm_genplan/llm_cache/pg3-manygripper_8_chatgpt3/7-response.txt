@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    while goal:
+        # Find the closest ball to the robot's current location
+        distances = []
+        robot_position = [atom[2] for atom in init if atom[0] == 'at-robby'][0]
+        for atom in init:
+            if atom[0] == 'at' and atom[1].startswith('ball'):
+                ball = atom[1]
+                position = atom[2]
+                distance = abs(int(position[4:]) - int(robot_position[4:]))
+                distances.append((ball, position, distance))
+        closest_ball = min(distances, key=lambda x: x[2])[0]
+        
+        # Move the robot to the room where the closest ball is located
+        closest_room = [atom[2] for atom in init if atom[0] == 'at' and atom[1] == closest_ball][0]
+        if robot_position != closest_room:
+            plan.append('(move {} {})'.format(robot_position, closest_room))
+            init = [(atom[0], atom[1], closest_room) if atom[0] == 'at-robby' else atom for atom in init]
+            robot_position = closest_room
+        
+        # Pick up the closest ball
+        plan.append('(pick {} {} {})'.format(closest_ball, closest_room, 'gripper0'))
+        init = [(atom[0], atom[1], 'gripper0') if atom[0] == 'carry' and atom[1] == closest_ball else atom for atom in init]
+        init.remove(('at', closest_ball, closest_room))
+        init.append(('free', 'gripper0'))
+        
+        # Update the goal state and repeat
+        goal = set([(atom[0], atom[1]) for atom in init if atom[0] == 'at' and atom[1].startswith('ball')])
+    
+    # Drop all the balls in the goal state
+    for ball, room in goal:
+        plan.append('(drop {} {} {})'.format(ball, room, 'gripper0'))
+        init = [(atom[0], atom[1], room) if atom[0] == 'at' and atom[1] == ball else atom for atom in init]
+        init = [(atom[0], atom[1], 'gripper0') if atom[0] == 'free' else atom for atom in init]
+        init.remove(('carry', ball, 'gripper0'))
+        
+    return plan

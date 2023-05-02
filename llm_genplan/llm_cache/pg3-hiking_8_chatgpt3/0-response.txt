@@ -1,0 +1,3 @@
+
+
+This is a domain for a hiking problem where a person can walk or climb from one location to another location. The locations are either hills or water sources, and they are connected by trails. The goal is to reach a specific location on the map while avoiding hills and staying on the trails. The domain uses predicates to represent the location of the hiker and the properties of each location, such as whether it is a hill or water source. The actions available to the hiker are walking and climbing, and they have preconditions that ensure the hiker can only move to certain locations.

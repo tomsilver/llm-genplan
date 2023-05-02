@@ -1,0 +1,63 @@
+Given this task:
+(define (problem manygripper (:domain gripper-strips)
+  (:objects
+    ball0
+    ball1
+    ball2
+    ball3
+    ball4
+    ball5
+    ball6
+    ball7
+    gripper0
+    gripper1
+    ...
+  )
+  (:init
+    (at ball0 room17)
+    (at ball1 room9)
+    (at ball2 room5)
+    (at ball3 room8)
+    (at ball4 room8)
+    (at ball5 room16)
+    (at ball6 room13)
+    (at ball7 room17)
+    (at-robby room0)
+    (ball ball0)
+    (ball ball1)
+    (ball ball2)
+    (ball ball3)
+    (ball ball4)
+    (ball ball5)
+    (ball ball6)
+    (ball ball7)
+    (free gripper0)
+    (free gripper1)
+    (gripper gripper0)
+    (gripper gripper1)
+    (room room0)
+    (room room1)
+    (room room10)
+    (room room11)
+    (room room12)
+    (room room13)
+    (room room14)
+    (room room15)
+    (room room16)
+    (room room17)
+    ...
+  )
+  (:goal (and
+    (at ball0 room14)
+    (at ball1 room4)
+    (at ball5 room9)
+    (at ball6 room6)
+    (at ball7 room18)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pick ball1 room9 gripper0)', '(move room0 room9)', '(drop ball1 room9 gripper0)', '(pick ball5 room16 gripper0)', '(move room9 room16)', '(drop ball5 room9 gripper0)', '(pick ball7 room17 gripper0)', '(move room16 room17)', '(drop ball7 room18 gripper0)', '(pick ball0 room17 gripper0)', '(move room17 room17)', '(drop ball0 room14 gripper0)', '(pick ball2 room5 gripper0)', '(move room17 room5)', '(drop ball2 room5 gripper0)', '(pick ball4 room8 gripper0)', '(move room5 room8)', '(drop ball4 room8 gripper0)', '(pick ball3 room8 gripper0)', '(move room8 room8)', '(drop ball3 room8 gripper0)', '(pick ball6 room13 gripper0)', '(move room8 room13)', '(drop ball6 room6 gripper0)'].
+NOTE: (pick ball1 room9 gripper0) has an unsatisfied precondition at time 0
+(Set (at-robby room9) to true)
+Fix the code.

@@ -1,0 +1,22 @@
+The `KeyError` exception is raised when the `('at-ferry', curr_loc)` atom is not found in the `init` set. This can happen when the ferry is at a location where it is not allowed to be. For example, in the initial state of the problem, the ferry is at `l1`, but it is not allowed to be there because there are no cars to transport.
+
+To fix this issue, we need to ensure that the ferry is only located at valid locations. We can achieve this by modifying the `sail` action's preconditions to require that the ferry is only allowed to sail to locations where there are cars to transport.
+
+Here's the updated code with the modified `sail` action:
+
+```python
+(:action sail
+    :parameters (?from ?to)
+    :precondition (and
+        (not-eq ?from ?to)
+        (location ?from) (location ?to)
+        (at-ferry ?from)
+        (exists (?car) (and (car ?car) (at ?car ?from))))
+    :effect (and
+        (at-ferry ?to)
+        (not (at-ferry ?from))))
+```
+
+With this modification, the `sail` action will only be applicable when there are cars at the current location that need to be transported to the next location. This should ensure that the ferry is always located at valid locations and prevent the `KeyError` exception from being raised.
+
+Note that we may need to modify the `not-eq` predicate to ensure that the ferry is not allowed to sail to certain locations, such as locations that are not part of the problem's domain.

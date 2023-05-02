@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    # Initialize the plan and the set of packed items
+    plan = []
+    packed_items = set()
+
+    # Pack the heaviest item first
+    heaviest_item = max(objects, key=lambda x: any((x, y) in init and ('heavier', y, x) in init for y in objects))
+    plan.append(f"(pack-first {heaviest_item})")
+    packed_items.add(heaviest_item)
+
+    # Pack or stack each remaining item
+    for item in objects:
+        if item in packed_items:
+            continue
+
+        heavier_packed_items = [x for x in packed_items if ('heavier', item, x) in init]
+        if heavier_packed_items:
+            heaviest_packed_item = max(heavier_packed_items, key=lambda x: any((x, y) in init and ('heavier', y, x) in init for y in objects))
+            plan.append(f"(stack {heaviest_packed_item} {item})")
+        else:
+            plan.append(f"(pack-first {item})")
+
+        packed_items.add(item)
+
+    return plan

@@ -1,0 +1,55 @@
+def get_plan(objects, init, goal):
+    # Extract relevant information from init and objects
+    floors = [obj for obj, obj_type in objects if obj_type == 'floor']
+    passengers = [obj for obj, obj_type in objects if obj_type == 'passenger']
+    current_floor = next((floor for floor in floors if ('lift-at', floor) in init))
+    waiting_passengers = {floor: set(passengers) & set(pred[1] for pred in init if pred[0] == 'origin' and pred[2] == floor) for floor in floors}
+    in_elevator = set(pred[1] for pred in init if pred[0] == 'boarded')
+
+    # Initialize plan and visited states
+    plan = []
+    visited = set()
+
+    # Loop until all passengers have been served or a deadlock is detected
+    while any(('served', passenger) not in init for passenger in passengers):
+        # Check if we have already visited the current state
+        state = (current_floor, frozenset(in_elevator), frozenset(waiting_passengers.items()))
+        if state in visited:
+            raise Exception('Deadlock detected')
+        visited.add(state)
+
+        # Check if there are passengers waiting at the current floor
+        if waiting_passengers[current_floor]:
+            # Board passengers and update state
+            for passenger in list(waiting_passengers[current_floor]):
+                plan.append('(board %s %s)' % (current_floor, passenger))
+                init.add(('boarded', passenger))
+                waiting_passengers[current_floor].remove(passenger)
+                in_elevator.add(passenger)
+
+        # Check if there are passengers in the elevator
+        if in_elevator:
+            # Drop off passengers and update state
+            for passenger in list(in_elevator):
+                if ('destin', passenger, current_floor) in init:
+                    plan.append('(depart %s %s)' % (current_floor, passenger))
+                    init.discard(('boarded', passenger))
+                    init.add(('served', passenger))
+                    in_elevator.remove(passenger)
+
+        # Move the elevator up or down to the next floor where passengers are waiting
+        if not waiting_passengers[current_floor]:
+            next_floor = None
+            for floor in floors:
+                if waiting_passengers[floor]:
+                    next_floor = floor
+                    break
+            if next_floor is not None:
+                if current_floor < next_floor:
+                    plan.append('(up %s %s)' % (current_floor, next_floor))
+                else:
+                    plan.append('(down %s %s)' % (current_floor, next_floor))
+                current_floor = next_floor
+
+    # Return the plan
+    return plan

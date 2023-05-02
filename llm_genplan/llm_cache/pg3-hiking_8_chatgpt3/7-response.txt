@@ -1,0 +1,15 @@
+The `to_string` function is not defined in the given code. It seems that the function is supposed to convert a predicate atom tuple into a string. Here's one way to define such a function:
+
+```
+def to_string(atom):
+    return '(' + ' '.join(atom) + ')'
+```
+
+You can then use this function to convert the `init` and `goal` sets into strings:
+
+```
+init_str = {to_string(atom) for atom in init}
+goal_str = {to_string(atom) for atom in goal}
+```
+
+Make sure to define the `to_string` function before using it in the `get_plan` function.

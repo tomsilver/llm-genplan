@@ -1,0 +1,30 @@
+import math
+
+def get_plan(objects, init, goal):
+    # extract ball and room names from objects
+    balls = [o for o in objects if o.startswith('ball')]
+    rooms = [o for o in objects if o.startswith('room')]
+
+    # extract initial ball positions from init
+    ball_positions = {}
+    for atom in init:
+        if atom[0] == 'at' and atom[1] in balls:
+            ball_positions[atom[1]] = atom[2]
+
+    # find closest ball to robot and move it to its goal position
+    plan = []
+    robot_position = [atom[1] for atom in init if atom[0] == 'at-robby'][0]
+    while ball_positions:
+        closest_ball, closest_distance = None, math.inf
+        for ball, position in ball_positions.items():
+            distance = rooms.index(robot_position) - rooms.index(position)
+            if distance < closest_distance:
+                closest_ball = ball
+                closest_distance = distance
+        plan.append('(pick {} {} {})'.format(closest_ball, ball_positions[closest_ball], 'gripper0'))
+        plan.append('(move {} {})'.format(robot_position, ball_positions[closest_ball]))
+        plan.append('(drop {} {} {})'.format(closest_ball, goal[goal.index(('at', closest_ball))+1], 'gripper0'))
+        robot_position = ball_positions[closest_ball]
+        del ball_positions[closest_ball]
+
+    return plan

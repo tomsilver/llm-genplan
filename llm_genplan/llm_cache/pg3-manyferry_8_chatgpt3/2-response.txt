@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is to iteratively apply the actions in a fixed sequence until the goal is achieved. The sequence of actions is:
+
+1. Board any cars that are at the current location and need to be transported to the other side.
+2. Sail the ferry to the other side.
+3. Debark any cars that are on the ferry and need to be delivered to the current location.
+
+This process is repeated until all cars have been transported to their desired locations. This strategy is guaranteed to work because the actions are designed such that they can only be applied in valid states, and the fixed sequence of actions ensures that the ferry and cars are always in valid states. Moreover, since the domain is small and the sequence of actions is simple, it is possible to compute the plan for the problem by hand.

@@ -1,0 +1,10 @@
+To fix the error, we need to ensure that only hashable objects are used in the state tuple. In particular, we can't use sets, as they are not hashable. 
+
+One solution would be to convert the sets to sorted tuples, which are hashable. We can do this by modifying the `in_elevator` and `waiting_passengers` variables as follows:
+
+```
+in_elevator = tuple(sorted(in_elevator))
+waiting_passengers = tuple(sorted(waiting_passengers.items()))
+```
+
+With this modification, the code should run without error.
