@@ -1,0 +1,57 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o214
+    o309
+    o383
+    o419
+    o572
+    o59
+    o725
+    o808
+    o835
+    o873
+  )
+  (:init
+    (box-empty)
+    (heavier o214 o59)
+    (heavier o309 o214)
+    (heavier o309 o59)
+    (heavier o383 o214)
+    (heavier o383 o309)
+    (heavier o383 o572)
+    (heavier o383 o59)
+    (heavier o383 o725)
+    (heavier o383 o808)
+    (heavier o383 o835)
+    ...
+    (unpacked o214)
+    (unpacked o309)
+    (unpacked o383)
+    (unpacked o419)
+    (unpacked o572)
+    (unpacked o59)
+    (unpacked o725)
+    (unpacked o808)
+    (unpacked o835)
+    (unpacked o873)
+  )
+  (:goal (and
+    (packed o214)
+    (packed o309)
+    (packed o383)
+    (packed o419)
+    (packed o572)
+    (packed o59)
+    (packed o725)
+    (packed o808)
+    (packed o835)
+    (packed o873)
+    )
+  )    
+)
+        
+The code returned this plan: ['pack-first(o572)', 'stack(o572, o214)', 'stack(o572, o725)', 'stack(o572, o808)', 'stack(o572, o383)', 'stack(o572, o419)', 'stack(o572, o309)', 'stack(o572, o835)', 'stack(o572, o873)', 'stack(o572, o59)']
+However, the action pack-first(o572) is invalid at step 0.
+NOTE: the valid operators are: (pack-first ?item) (stack ?bottom ?top).
+Fix the code.

@@ -1,0 +1,3 @@
+
+
+The ferry domain describes a situation where cars need to be transported across a river using a ferry. The domain defines predicates such as car, location, at, empty-ferry, on, and at-ferry, which are used to model the state of the world. Actions such as sail, board, and debark are defined to model the transitions between states. The sail action moves the ferry from one location to another, the board action loads a car onto the ferry, and the debark action unloads a car from the ferry. The domain can be used to solve problems where the goal is to transport a set of cars from one side of the river to the other, subject to certain constraints.

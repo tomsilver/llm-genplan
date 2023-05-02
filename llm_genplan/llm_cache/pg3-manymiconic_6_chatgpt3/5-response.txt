@@ -1,0 +1,39 @@
+from pddl_planning import *
+
+def get_plan(objects, init, goal):
+    # Generate the PDDL domain and problem instances
+    domain = create_domain(domain_path='miconic-domain.pddl')
+    problem = create_problem(domain_path='miconic-domain.pddl', problem_path='miconic-problem.pddl', 
+                             objects=objects, init=init, goal=goal)
+
+    # Define the priority function for ordering passengers
+    def priority_fn(state, passenger):
+        return (abs(state.lift_at - state.origin[passenger]), 
+                1 if state.origin[passenger] > state.lift_at else -1)
+
+    # Define the policy function that implements the strategy
+    def policy_fn(state):
+        # Find the passenger with the highest priority
+        passenger = max([p for p in state.passengers if not state.served[p]],
+                         key=lambda p: priority_fn(state, p))
+        # Move the elevator to the passenger's floor
+        if state.lift_at > state.origin[passenger]:
+            action = Action('down', ['f1', state.lift_at])
+            state = action.apply(state)
+        elif state.lift_at < state.origin[passenger]:
+            action = Action('up', ['f1', state.lift_at])
+            state = action.apply(state)
+        # Board the passenger and move to the destination floor
+        action = Action('board', [state.origin[passenger], passenger])
+        state = action.apply(state)
+        action = Action('up', [state.lift_at, state.destin[passenger]])
+        state = action.apply(state)
+        # Disembark the passenger
+        action = Action('depart', [state.destin[passenger], passenger])
+        state = action.apply(state)
+        return state
+
+    # Solve the problem using the policy function
+    plan = iterative_deepening_astar(problem, heuristic=None, successor_fn=get_successors,
+                                     is_goal_fn=is_goal, policy_fn=policy_fn)
+    return [str(action) for action in plan]

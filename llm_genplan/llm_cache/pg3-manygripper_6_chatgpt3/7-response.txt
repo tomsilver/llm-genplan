@@ -1,0 +1,16 @@
+The code has a multiline string literal that is not properly terminated. Here's how to fix it:
+
+Replace:
+
+```
+plan.append(f'(drop {ball_name}
+              {ball_room}
+              {gripper_name})')
+```
+
+with:
+
+```
+plan.append(f'(drop {ball_name} {ball_room} {gripper_name})')
+```
+

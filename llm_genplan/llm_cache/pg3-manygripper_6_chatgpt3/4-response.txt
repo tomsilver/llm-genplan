@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Loop over all balls in the goal state
+    for ball in [atom for atom in goal if atom[0] == 'at']:
+        ball_name, goal_room = ball[1:]
+
+        # Find a free gripper
+        gripper = next((obj for obj in objects if obj.startswith('gripper') and ('free', obj) in init), None)
+        if gripper is None:
+            return None  # No free gripper, can't complete the plan
+
+        # Move gripper to the room where the ball is located
+        try:
+            ball_room = next(atom[1] for atom in init if atom[0] == 'at' and atom[1] != goal_room and atom[2] == ball_name)
+        except StopIteration:
+            return None  # Ball not found in any room, can't complete the plan
+        plan.append(f'(move {ball_room} {gripper})')
+
+        # Pick up the ball using the gripper
+        plan.append(f'(pick {ball_name} {ball_room} {gripper})')
+
+        # Move gripper to the room where the ball should be dropped
+        plan.append(f'(move {goal_room} {gripper})')
+
+        # Drop the ball in the goal room
+        plan.append(f'(drop {ball_name} {goal_room} {gripper})')
+
+    return plan

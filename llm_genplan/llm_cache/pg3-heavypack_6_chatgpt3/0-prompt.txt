@@ -1,0 +1,123 @@
+Domain:
+(define (domain heavy-pack)
+   (:predicates
+		(heavier ?item1 ?item2)
+        (packed ?item)
+        (unpacked ?item)
+        (nothing-above ?item)
+        (box-empty)
+	)
+
+   (:action pack-first
+       :parameters (?item)
+       :precondition (and (box-empty))
+       :effect (and (not (box-empty)) (packed ?item) (nothing-above ?item) (not (unpacked ?item))))
+
+   (:action stack
+       :parameters (?bottom ?top)
+       :precondition (and (packed ?bottom) (nothing-above ?bottom) (heavier ?bottom ?top) (unpacked ?top))
+       :effect (and (packed ?top) (nothing-above ?top) (not (nothing-above ?bottom)) (not (unpacked ?top))))
+)
+
+Example problems:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o214
+    o309
+    o383
+    o419
+    o572
+    o59
+    o725
+    o808
+    o835
+    o873
+  )
+  (:init
+    (box-empty)
+    (heavier o214 o59)
+    (heavier o309 o214)
+    (heavier o309 o59)
+    (heavier o383 o214)
+    (heavier o383 o309)
+    (heavier o383 o572)
+    (heavier o383 o59)
+    (heavier o383 o725)
+    (heavier o383 o808)
+    (heavier o383 o835)
+    ...
+    (unpacked o214)
+    (unpacked o309)
+    (unpacked o383)
+    (unpacked o419)
+    (unpacked o572)
+    (unpacked o59)
+    (unpacked o725)
+    (unpacked o808)
+    (unpacked o835)
+    (unpacked o873)
+  )
+  (:goal (and
+    (packed o214)
+    (packed o309)
+    (packed o383)
+    (packed o419)
+    (packed o572)
+    (packed o59)
+    (packed o725)
+    (packed o808)
+    (packed o835)
+    (packed o873)
+    )
+  )    
+)
+        
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o239
+    o309
+    o59
+    o703
+    o713
+    o773
+    o775
+    o828
+    o895
+  )
+  (:init
+    (box-empty)
+    (heavier o239 o59)
+    (heavier o239 o703)
+    (heavier o239 o895)
+    (heavier o309 o239)
+    (heavier o309 o59)
+    (heavier o309 o703)
+    (heavier o309 o713)
+    (heavier o309 o773)
+    (heavier o309 o775)
+    (heavier o309 o828)
+    ...
+    (unpacked o239)
+    (unpacked o309)
+    (unpacked o59)
+    (unpacked o703)
+    (unpacked o713)
+    (unpacked o773)
+    (unpacked o775)
+    (unpacked o828)
+    (unpacked o895)
+  )
+  (:goal (and
+    (packed o239)
+    (packed o309)
+    (packed o59)
+    (packed o703)
+    (packed o713)
+    (packed o773)
+    (packed o775)
+    (packed o828)
+    (packed o895)
+    )
+  )    
+)
+Write a short summary of this domain in words.

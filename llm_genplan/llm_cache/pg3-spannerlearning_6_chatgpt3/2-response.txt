@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in the "Spanner" domain without using search is to use a simple algorithm called "dependency-directed backtracking" or "chronological backtracking". This algorithm consists of the following steps:
+
+1. Pick the first action in the plan.
+2. Check if its preconditions are satisfied in the current state. If they are not, backtrack to the previous action and try the next one.
+3. If the preconditions are satisfied, apply the action and update the current state accordingly.
+4. Repeat steps 1-3 until all actions in the plan have been applied or a dead-end is reached.
+5. If a dead-end is reached, backtrack to the previous action and try the next one.
+
+In this domain, the order of actions in the plan does not matter, as long as all actions are applied eventually. Therefore, we can generate a plan by generating all possible orders of actions and applying them using the above algorithm. This can be done efficiently by using a depth-first search with backtracking.
+
+Alternatively, one can generate a linear plan of all actions, and then apply them in order using the above algorithm. However, this requires searching for a valid linear plan, which may not be efficient for larger problems.

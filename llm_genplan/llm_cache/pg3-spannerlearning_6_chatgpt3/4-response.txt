@@ -1,0 +1,82 @@
+from itertools import permutations
+
+def get_plan(objects, init, goal):
+    # define the domain operators
+    def walk(start, end, man):
+        return [('not', ('at', man, start)), ('at', man, end)]
+
+    def pickup_spanner(location, spanner, man):
+        return [('not', ('at', spanner, location)), ('carrying', man, spanner)]
+
+    def tighten_nut(location, spanner, man, nut):
+        return [('not', ('loose', nut)), ('not', ('useable', spanner)), ('tightened', nut)]
+
+    # define the domain predicates
+    def at(object_name, location_name):
+        return ('at', object_name, location_name)
+
+    def carrying(man_name, object_name):
+        return ('carrying', man_name, object_name)
+
+    def useable(spanner_name):
+        return ('useable', spanner_name)
+
+    def link(location1_name, location2_name):
+        return ('link', location1_name, location2_name)
+
+    def tightened(nut_name):
+        return ('tightened', nut_name)
+
+    def loose(nut_name):
+        return ('loose', nut_name)
+
+    # define the possible orders of actions
+    orders = permutations(['walk', 'pickup_spanner', 'tighten_nut'])
+
+    # try each order of actions
+    for order in orders:
+        # initialize the state
+        state = set(init)
+
+        # apply the actions in the order
+        for action in order:
+            # find the parameters for the action
+            params = []
+            for obj_type in action_types[action]:
+                obj_names = [obj_name for obj_name, t in objects if t == obj_type]
+                obj_params = [obj_name for obj_name in obj_names if ('at', obj_name, _) in state]
+                if not obj_params:
+                    break
+                params.append(obj_params[0])
+            else:
+                # apply the action
+                preconds = action_preconds[action](*params)
+                if all(precond in state for precond in preconds):
+                    state = state.difference(set(preconds)).union(set(action_effects[action](*params)))
+                else:
+                    break
+        else:
+            # check if the goal is satisfied
+            if all(goal_pred in state for goal_pred in goal):
+                # return the plan
+                return [action_strs[action](*params) for action in order]
+
+    # if no plan is found, return None
+    return None
+
+# define the action types
+action_types = {
+    'walk': ['location', 'location', 'man'],
+    'pickup_spanner': ['location', 'spanner', 'man'],
+    'tighten_nut': ['location', 'spanner', 'man', 'nut']
+}
+
+# define the action preconditions and effects
+action_preconds = {
+    'walk': lambda start, end, man: [at(man, start), link(start, end)],
+    'pickup_spanner': lambda location, spanner, man: [at(man, location), at(spanner, location)],
+    'tighten_nut': lambda location, spanner, man, nut: [at(man, location), at(nut, location), carrying(man, spanner), useable(spanner), loose(nut)]
+}
+
+action_effects = {
+    'walk': lambda start, end, man: [('not', ('at', man, start)), ('at', man, end)],

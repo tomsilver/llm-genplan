@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to implement a policy that follows the following steps:
+
+1. While there are passengers who have not been served, move the elevator up or down to pick up the next passenger who has the highest priority.
+2. Board the passenger onto the elevator and move the elevator to the destination floor.
+3. Disembark the passenger from the elevator.
+
+The priority of a passenger is determined by their location and destination floors. Specifically, the elevator should prioritize picking up the passenger who is closest to the elevator's current location and whose destination floor is in the direction that the elevator is currently traveling.
+
+This policy guarantees that all passengers will eventually be served without the need for any explicit search. It is equivalent to a greedy search algorithm that always chooses the locally optimal action at each step.

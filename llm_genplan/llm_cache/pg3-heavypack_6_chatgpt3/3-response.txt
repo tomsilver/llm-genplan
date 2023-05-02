@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    # Define the domain predicates and actions
+    predicates = ["heavier", "packed", "unpacked", "nothing-above", "box-empty"]
+    actions = [
+        {
+            "name": "pack-first",
+            "parameters": ["?item"],
+            "precondition": ["box-empty"],
+            "effect": ["packed(?item)", "nothing-above(?item)", "not(box-empty)", "not(unpacked(?item))"]
+        },
+        {
+            "name": "stack",
+            "parameters": ["?bottom", "?top"],
+            "precondition": ["packed(?bottom)", "nothing-above(?bottom)", "heavier(?bottom, ?top)", "unpacked(?top)"],
+            "effect": ["packed(?top)", "nothing-above(?top)", "not(nothing-above(?bottom))", "not(unpacked(?top))"]
+        }
+    ]
+
+    # Define a helper function to generate ground atoms
+    def ground_atoms(pred, *args):
+        return (f"{pred}({', '.join(args)})")
+
+    # Initialize the plan as an empty list
+    plan = []
+
+    # Pack the heaviest item first
+    heaviest = max(objects, key=lambda o: any(i[1] == o for i in init if i[0] == "heavier"))
+    plan.append(ground_atoms("pack-first", heaviest))
+
+    # Sort the remaining items by weight, heaviest first
+    remaining = [o for o in objects if o != heaviest]
+    remaining.sort(key=lambda o: any(i[1] == o for i in init if i[0] == "heavier"), reverse=True)
+
+    # Pack the remaining items using the "stack" action
+    for item in remaining:
+        # Find the heaviest item that has already been packed
+        packed_items = [i[1] for i in init if i[0] == "packed"]
+        heaviest_packed_item = max(packed_items, key=lambda o: any(i[1] == o for i in init if i[0] == "heavier"))
+
+        # Apply the "stack" action to pack the current item on top of the heaviest packed item
+        plan.append(ground_atoms("stack", heaviest_packed_item, item))
+
+    # Return the plan
+    return plan

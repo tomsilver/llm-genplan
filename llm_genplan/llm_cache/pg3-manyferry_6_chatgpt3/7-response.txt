@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    state = set(init)
+    plan = []
+
+    while True:
+        # Check if all goal atoms are satisfied
+        if all(g in state for g in goal):
+            return plan
+
+        # Extract the location of the current state
+        current_location = next((loc for (p, _, loc) in state if p == 'at' and loc in objects), None)
+        if current_location is None:
+            raise ValueError(f"No valid current location found in {state}")
+
+        # Find the nearest reachable goal location
+        reachable_goal_locations = {loc for (p, _, loc) in goal if p == 'at' and is_reachable(current_location, loc, state)}
+        if not reachable_goal_locations:
+            raise ValueError(f"No reachable goal location found in {goal}")
+        nearest_goal_location = min(reachable_goal_locations, key=lambda loc: distance(current_location, loc))
+
+        # Move towards the nearest goal location
+        if current_location != nearest_goal_location:
+            plan.append(f"sail {current_location} {nearest_goal_location}")
+            state = apply_action(state, ('sail', current_location, nearest_goal_location))
+        else:
+            car_to_move = next((obj for (p, obj, loc) in state if p == 'at' and loc == current_location and obj.startswith('c')), None)
+            if car_to_move is None:
+                raise ValueError(f"No car to move at location {current_location}")
+            plan.append(f"board {car_to_move} {current_location}")
+            state = apply_action(state, ('board', car_to_move, current_location))

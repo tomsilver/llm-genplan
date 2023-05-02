@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search involves repeatedly applying the board and debark actions to move the cars from their initial locations to the goal locations. Specifically, the strategy involves the following steps:
+
+1. Board all cars that are initially located on the same side of the river as the goal location.
+2. Sail to the other side of the river.
+3. Debark all cars that are now at their goal locations.
+4. Repeat steps 1-3 until all cars are at their goal locations.
+
+Note that this strategy assumes that the ferry always starts on the same side of the river as the initial locations of the cars, and that the goal locations are all on the opposite side of the river. If the initial state or goal state violates these assumptions, then this strategy may not work and a more sophisticated approach may be necessary.

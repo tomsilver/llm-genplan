@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    plan = []  # Initialize the plan variable as an empty list
+    # Create a dictionary to keep track of the state of each location
+    locs = {obj: False for obj, obj_type in objects if obj_type == 'loc'}
+    
+    # Loop through all locations and newspapers
+    for loc, paper in [(obj1, obj2) for (obj1, t1) in objects for (obj2, t2) in objects 
+                       if t1 == 'loc' and t2 == 'paper']:
+        # Check if the location wants a newspaper and has not been satisfied yet
+        if ('wantspaper', loc) in init and not locs[loc]:
+            # Pick up an unpacked newspaper from the home base
+            if ('at', 'loc-0') in init and ('ishomebase', 'loc-0') in init and ('unpacked', paper) in init:
+                if ('unpacked', paper) in init:  # Check for precondition
+                    plan.append('(pick-up {} {})'.format(paper, 'loc-0'))
+            # Move to the location and deliver the newspaper
+            if ('at', loc) in init and ('safe', loc) in init and ('carrying', paper) in init:
+                if ('carrying', paper) in init:  # Check for precondition
+                    plan.append('(move {} {})'.format(loc, 'loc-0'))
+                    plan.append('(deliver {} {})'.format(paper, loc))
+                    locs[loc] = True
+                
+    # Check if the goal has been achieved for all locations that want newspapers
+    if all([('satisfied', loc) in init for (loc, _) in goal]):
+        return plan
+    else:
+        return None if not plan else plan

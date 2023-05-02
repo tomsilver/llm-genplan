@@ -1,0 +1,20 @@
+def get_plan(objects, init, goal):
+    plan = []
+    packed_items = set(obj for (pred, obj) in init if pred == "packed")
+    while len(packed_items) < len(objects):
+        # Find the heaviest item that is not packed yet
+        unpacked_items = set(obj for (pred, obj) in init if pred == "unpacked")
+        heaviest_unpacked_item = max(unpacked_items, key=lambda o: any(i[1] == o for i in init if i[0] == "heavier" and i[2] in packed_items))
+        # Pack the heaviest item
+        plan.append(f"pack-first({heaviest_unpacked_item})")
+        init.append(("packed", heaviest_unpacked_item))
+        init.remove(("unpacked", heaviest_unpacked_item))
+        packed_items.add(heaviest_unpacked_item)
+        # Stack items on top of the packed item
+        for item in objects:
+            if item != heaviest_unpacked_item and item not in packed_items:
+                plan.append(f"stack({heaviest_unpacked_item}, {item})")
+                init.append(("nothing-above", item))
+                init.remove(("unpacked", item))
+                packed_items.add(item)
+    return plan

@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_location = None
+    
+    # Find the initial location of the ferry
+    for atom in init:
+        if atom[0] == 'at-ferry':
+            current_location = atom[1]
+            break
+    
+    while goal - set(init):
+        # Find the cars on the same side of the river as the ferry
+        cars_on_same_side = set()
+        for atom in init:
+            if atom[0] == 'at' and atom[2] == current_location:
+                cars_on_same_side.add(atom[1])
+        
+        # Board the cars
+        for car in cars_on_same_side:
+            plan.append(f'(board {car} {current_location})')
+            init.remove(('at', car, current_location))
+            init.add(('on', car))
+        init.remove(('empty-ferry',))
+        
+        # Sail to the other side
+        valid_goal_locations = goal.intersection({('location', l) for l in objects})
+        valid_goal_locations |= goal.intersection({('at-ferry', l) for l in objects})
+        if len(valid_goal_locations) == 0:
+            raise ValueError(f"No valid goal location found in {goal}")
+        
+        try:
+            if current_location == valid_goal_locations.pop()[1]:
+                current_location = goal.intersection({('at-ferry', l) for l in objects}).pop()[1]
+            else:
+                current_location = goal.intersection({('at-ferry', l) for l in objects}).pop()[1]
+                plan.append(f'(sail {current_location} {valid_goal_locations.pop()[1]})')
+        except KeyError:
+            raise ValueError(f"No valid goal location found in {goal}")
+        
+        # Debark the cars
+        cars_on_ferry = {atom[1] for atom in init if atom[0] == 'on'}
+        for car in cars_on_ferry:
+            if ('at', car, current_location) in goal:
+                plan.append(f'(debark {car} {current_location})')
+                init.remove(('on', car))
+                init.add(('at', car, current_location))
+        init.add(('empty-ferry',))
+    
+    return plan

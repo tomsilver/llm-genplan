@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+1. Move the gripper to the room where the ball to be picked is located.
+2. Pick up the ball using the gripper.
+3. Move the gripper to the room where the ball is to be dropped.
+4. Drop the ball.
+
+This strategy can be repeated until all balls are moved to their respective goal rooms. It does not require any planning or decision making, and the actions can be executed sequentially without the need for search. However, this strategy assumes that there are no obstacles or other constraints that could prevent the gripper from reaching the ball or the goal room.

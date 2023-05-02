@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    # Extract the locations and trails from the initial state
+    locs = [obj[0] for obj in objects if obj[1] == 'loc']
+    trails = [atom for atom in init if atom[0] == 'ontrail']
+
+    # Find the trail from the initial location to the goal location
+    current_loc = [atom[1] for atom in init if atom[0] == 'at'][0]
+    goal_loc = [atom[1] for atom in goal if atom[0] == 'at'][0]
+    trail = []
+    while current_loc != goal_loc:
+        for atom in trails:
+            if atom[1] == current_loc:
+                trail.append((current_loc, atom[2]))
+                current_loc = atom[2]
+                break
+
+    # Generate the plan by walking or climbing along the trail
+    plan = []
+    for i in range(len(trail)):
+        from_loc, to_loc = trail[i]
+        if 'iswater' in [atom[0] for atom in init if atom[1] == from_loc]:
+            raise ValueError(f"Cannot traverse water from {from_loc} to {to_loc}")
+        if 'ishill' in [atom[0] for atom in init if atom[1] == to_loc]:
+            plan.append(f"(climb {from_loc} {to_loc})")
+        else:
+            plan.append(f"(walk {from_loc} {to_loc})")
+
+    return plan
