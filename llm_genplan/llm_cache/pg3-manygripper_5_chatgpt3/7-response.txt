@@ -1,0 +1,45 @@
+def get_plan(objects, init, goal):
+    ball_pos = {}
+    for obj in objects:
+        if obj.startswith('ball'):
+            ball_pos[obj] = next((arg for pred, *args in init if pred == 'at' and args[0] == obj), None)
+
+    robot_pos = next((args[0] for pred, *args in init if pred == 'at-robby'), None)
+    free_gripper = next((args[0] for pred, *args in init if pred == 'free' and args[1].startswith('gripper')), None)
+
+    plan = []
+    for ball in ball_pos:
+        if ball_pos[ball] is None:
+            continue
+
+        if free_gripper is not None:
+            plan.append(f'(pick {ball} {ball_pos[ball]} {free_gripper})')
+            plan.append(f'(move {ball_pos[ball]} {robot_pos})')
+            plan.append(f'(drop {ball} {robot_pos} {free_gripper})')
+            free_gripper = None
+        else:
+            target_ball = None
+            for other_ball in ball_pos:
+                if ball_pos[other_ball] is not None and other_ball != ball:
+                    if target_ball is None or distance(ball_pos[ball], ball_pos[other_ball]) < distance(ball_pos[ball], ball_pos[target_ball]):
+                        target_ball = other_ball
+
+            plan.append(f'(move {robot_pos} {ball_pos[target_ball]})')
+            plan.append(f'(pick {target_ball} {ball_pos[target_ball]} {free_gripper})')
+            plan.append(f'(move {ball_pos[target_ball]} {robot_pos})')
+            plan.append(f'(drop {target_ball} {robot_pos} {free_gripper})')
+            plan.append(f'(move {robot_pos} {ball_pos[ball]})')
+            plan.append(f'(pick {ball} {ball_pos[ball]} {free_gripper})')
+            plan.append(f'(move {ball_pos[ball]} {robot_pos})')
+            plan.append(f'(drop {ball} {robot_pos} {free_gripper})')
+            free_gripper = None
+
+    return plan
+
+
+def distance(pos1, pos2):
+    if pos1 is None or pos2 is None:
+        return float('inf')
+    x1, y1 = map(int, pos1.split('_'))
+    x2, y2 = map(int, pos2.split('_'))
+    return abs(x1 - x2) + abs(y1 - y2)

@@ -1,0 +1,3 @@
+
+
+The Miconic domain is a classic benchmark problem in the field of automated planning, and it involves the control of an elevator system. The domain defines a set of actions, such as boarding and departing, and a set of predicates, such as above and served, that describe the state of the system. The goal is to transport a set of passengers to their respective destinations using the elevator system, and the challenge lies in finding a sequence of actions that achieves this goal while satisfying the various constraints and preconditions of the domain. The Miconic domain is often used as a testbed for planning algorithms and techniques.

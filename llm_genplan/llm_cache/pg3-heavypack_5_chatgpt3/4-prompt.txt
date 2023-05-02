@@ -1,0 +1,28 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o162
+    o692
+    o841
+  )
+  (:init
+    (box-empty)
+    (heavier o162 o692)
+    (heavier o162 o841)
+    (heavier o841 o692)
+    (unpacked o162)
+    (unpacked o692)
+    (unpacked o841)
+  )
+  (:goal (and
+    (packed o162)
+    (packed o692)
+    (packed o841)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pack-first o841)', '(pack-first o692)', '(pack-first o162)'].
+NOTE: (pack-first o692) has an unsatisfied precondition at time 1
+(Set (box-empty) to true)
+Fix the code.

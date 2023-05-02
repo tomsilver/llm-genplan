@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    # Extract locations from objects
+    locations = [o[0] for o in objects if o[1] == 'loc']
+
+    # Initialize variables
+    visited = set()
+    stack = [next(iter(filter(lambda x: ('at', x) in init, locations)))]
+    plan = []
+
+    # Search for a path to the goal
+    while stack:
+        current = stack.pop()
+        visited.add(current)
+
+        # Check if the goal is reached
+        if ('at', current) in goal:
+            return plan
+
+        # Explore adjacent locations
+        for loc in locations:
+            if ('ontrail', current, loc) in init and loc not in visited:
+                if ('ishill', loc) not in init and ('iswater', loc) not in init:
+                    stack.append(loc)
+                    plan.append('(walk {} {})'.format(current, loc))
+                elif ('ishill', loc) in init:
+                    stack.append(loc)
+                    plan.append('(climb {} {})'.format(current, loc))
+
+    # Return empty plan if the goal is not reachable
+    return []

@@ -1,0 +1,3 @@
+
+
+This domain represents a hiking scenario where the agent can walk or climb from one location to another. The locations can be hills or water bodies, and they are connected by trails. The agent has to reach a specific location while avoiding hills and water bodies. The domain uses STRIPS and typing requirements and defines predicates for the agent's location, adjacency, presence of water or hills, and being on a trail. The domain also defines two actions, walk and climb, which move the agent from one location to another based on preconditions and effects. Two example problems are defined in this domain where the agent has to reach different goals.

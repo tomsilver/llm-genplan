@@ -1,0 +1,13 @@
+The simple strategy for solving all problems in the "trapnewspapers" domain without using search is to loop through each location that wants a newspaper, pick up an unpacked newspaper at the home base, move to that location, and deliver the newspaper. This strategy can be implemented using a simple loop that repeats until all locations that want newspapers are satisfied.
+
+Here's the pseudocode for the strategy:
+
+```
+while there exists a location that wants a newspaper and is not satisfied:
+    choose a location that wants a newspaper and is not satisfied
+    pick up an unpacked newspaper at the home base
+    move to the chosen location
+    deliver the newspaper
+```
+
+Note that this strategy assumes that there is always at least one unpacked newspaper available at the home base. If there are not enough unpacked newspapers, or if some locations cannot be safely reached, then search or more sophisticated strategies may be necessary to solve the problem.

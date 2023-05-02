@@ -1,0 +1,6 @@
+def distance(pos1, pos2):
+    if not pos1.startswith('room_') or not pos2.startswith('room_'):
+        raise ValueError('Invalid position format')
+    x1, y1 = map(int, pos1[5:].split('_'))
+    x2, y2 = map(int, pos2[5:].split('_'))
+    return abs(x1 - x2) + abs(y1 - y2)

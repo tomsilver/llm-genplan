@@ -1,0 +1,7 @@
+The error suggests that the code is expecting a tuple with two elements to be returned from the list comprehension. However, the list comprehension is only returning the `arg` value and not the `(pred, arg)` tuple. To fix the code, we can update the list comprehension to return the tuple instead:
+
+```
+lift_at = [(pred, arg) for (pred, arg) in init if pred == 'lift-at'][0][1]
+```
+
+This should correctly return the argument value for the `lift-at` predicate.

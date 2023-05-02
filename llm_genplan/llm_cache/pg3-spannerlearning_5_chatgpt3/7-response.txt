@@ -1,0 +1,1 @@
+The code is not provided, but based on the previous tasks, it seems that the `init` variable has not been defined. The `init` variable should contain the initial state of the problem. It can be defined in the problem file or passed as an argument to the planning function. Make sure that the `init` variable is properly defined before using it.

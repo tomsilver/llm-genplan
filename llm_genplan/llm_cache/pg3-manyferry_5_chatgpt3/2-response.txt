@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to move the cars to their destinations one by one, starting with the car closest to its desired destination. The strategy involves repeatedly executing the following steps until all cars are at their desired locations:
+
+1. Sail the ferry to the location of the closest car to its destination.
+2. Board the car onto the ferry.
+3. Sail the ferry to the car's destination location.
+4. Debark the car from the ferry.
+
+This strategy ensures that all cars are moved to their destinations while minimizing the number of trips the ferry makes. If two cars are equidistant from their desired locations, the strategy can move either of them first. The strategy assumes that it is always possible to move the cars to their desired locations without violating any of the domain constraints.

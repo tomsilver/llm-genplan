@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    # Extract the lift-at predicate from the initial state
+    lift_at = [arg for (pred, arg) in init if pred == 'lift-at'][0]
+
+    # Create a dictionary of destinations for each passenger
+    destinations = {}
+    for (pred, passenger, floor) in init:
+        if pred == 'origin':
+            destinations[passenger] = [arg for (p, arg) in init if p == 'destin' and passenger == arg][0]
+
+    # Initialize the plan
+    plan = []
+
+    # Continue until all passengers have been served
+    while any([(p, ) not in goal for (p, ) in destinations.keys()]):
+        # Find the highest floor among the floors that have waiting passengers
+        highest_floor = max([floor for (pred, passenger, floor) in init if pred == 'origin'])
+
+        # Move the elevator to the highest floor
+        if lift_at != highest_floor:
+            plan.append('(up {} {})'.format(lift_at, highest_floor))
+            lift_at = highest_floor
+
+        # Stop at all floors on the way down to pick up and drop off passengers
+        for floor in range(highest_floor, 0, -1):
+            # Board passengers at this floor
+            passengers_to_board = [passenger for (pred, passenger, f) in init if pred == 'origin' and f == floor]
+            for passenger in passengers_to_board:
+                plan.append('(board {} {})'.format(floor, passenger))
+
+            # Depart with passengers who have reached their destination
+            passengers_to_depart = [passenger for (pred, passenger, f) in init if pred == 'destin' and f == floor and passenger in destinations and destinations[passenger] == floor]
+            for passenger in passengers_to_depart:
+                plan.append('(depart {} {})'.format(floor, passenger))
+                del destinations[passenger]
+
+            # Move the elevator down one floor
+            if floor > 1:
+                plan.append('(down {} {})'.format(floor, floor - 1))
+                lift_at = floor - 1
+
+    return plan

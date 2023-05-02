@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    # Sort objects by weight in descending order
+    sorted_objects = sorted(objects, key=lambda obj: -1 * int(obj[1:]))
+    # Create a plan to pack all objects
+    plan = []
+    for obj in sorted_objects:
+        # Check if object is already packed
+        if ('packed', obj) not in init:
+            # Pack the object if the box is empty
+            if ('box-empty',) in init:
+                plan.append('(pack-first {})'.format(obj))
+            # Otherwise, find an already packed object that can support the weight
+            else:
+                for packed_obj in sorted_objects:
+                    if ('packed', packed_obj) in init and ('nothing-above', packed_obj) in init and (not ('heavier', packed_obj, obj) in init):
+                        plan.append('(stack {} {})'.format(packed_obj, obj))
+                        break
+    # Check if all objects are packed in the goal state
+    if all(('packed', obj) in goal for obj in objects):
+        return plan
+    else:
+        return None

@@ -1,0 +1,20 @@
+The error "IndexError: list index out of range" suggests that the `man` object is not present in the `init` list, so the code is trying to access an element that does not exist.
+
+To fix the code, we need to make sure that the `man` object is included in the `init` list. One way to do this is to add the following line to the `:init` section of the problem definition:
+
+```
+(at bob shed)
+```
+
+This line sets the initial location of the `bob` object (the man) to the `shed` location. With this modification, the `init` list should contain the `(at bob shed)` atom, which will allow the code to find the `man` object.
+
+Alternatively, if the `man` object is not needed in the problem, we can remove the line of code that tries to find it in the `init` list:
+
+```python
+# Find the man, spanners, and nuts in the initial state
+# man = [obj[0] for obj in init if obj[1] == 'man'][0]
+spanners = [obj[0] for obj in init if obj[1] == 'spanner']
+nuts = [obj[0] for obj in init if obj[1] == 'nut']
+```
+
+With this modification, the code will no longer look for the `man` object and will only find the `spanners` and `nuts` objects. This may be appropriate if the man is not needed in the strategy for solving the problem.

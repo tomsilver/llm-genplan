@@ -1,0 +1,5 @@
+The strategy for solving all problems in this domain without using search is to follow the trails that lead to the goal location while avoiding hills and water bodies. The agent can use a simple depth-first search algorithm to traverse the graph of locations and find a path to the goal. The agent can keep track of the visited locations and backtrack when it reaches a dead end. 
+
+To implement this strategy, the agent starts at the initial location and checks if it is the goal location. If not, the agent chooses an adjacent location that is not a hill or a water body and moves to that location. The agent continues this process until it reaches the goal location. If the agent reaches a dead end, it backtracks to the previous location and tries a different path until it finds a way to the goal.
+
+This strategy works well for small problems in the hiking domain, where the graph of locations is relatively simple, and the agent can explore all paths easily. However, for larger problems, this strategy may not be optimal or efficient, and using search algorithms like A* or BFS may be necessary.

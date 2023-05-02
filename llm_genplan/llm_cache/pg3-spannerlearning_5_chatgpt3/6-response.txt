@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    # get the name of the man object
+    man = [obj[0] for obj in init if obj[1] == 'man'][0]
+    
+    # get the names of the nut objects
+    nuts = [obj[0] for obj in init if obj[1] == 'nut']
+    
+    # get the names of the spanner objects
+    spanners = [obj[0] for obj in init if obj[1] == 'spanner']
+    
+    # construct the plan
+    plan = []
+    for nut in nuts:
+        for spanner in spanners:
+            if f"(carrying {man} {spanner})" in [act for act,_ in goal]:
+                plan.append(f"(walk {man} location5 {spanner})")
+                plan.append(f"(pickup_spanner location5 {spanner} {man})")
+                plan.append(f"(walk {man} location1 {nut})")
+                plan.append(f"(tighten_nut location1 {spanner} {man} {nut})")
+                break
+                
+    return plan

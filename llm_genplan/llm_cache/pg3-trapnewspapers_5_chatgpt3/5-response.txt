@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    # Extract the list of locations that want newspapers
+    wants_paper = set([atom[1] for atom in goal if atom[0] == 'wantspaper'])
+    
+    # Initialize the plan and the current location
+    current_loc = None
+    for loc in ['loc-1', 'loc-2', 'loc-3', 'loc-4', 'loc-5', 'loc-6', 'loc-7']:
+        if ('at', loc) in init and ('safe', loc) in init:
+            current_loc = loc
+            break
+    assert current_loc is not None, "Agent location not specified in initial state"
+    plan = []
+    
+    # Loop through each location that wants a newspaper
+    while wants_paper:
+        # Choose a location that wants a newspaper and is not satisfied
+        chosen_loc = None
+        for loc in wants_paper:
+            if ('satisfied', loc) not in init:
+                chosen_loc = loc
+                break
+        
+        # If no location is found, return failure
+        if chosen_loc is None:
+            return None
+        
+        # Pick up an unpacked newspaper at the home base
+        plan.append('(pick-up paper-0 loc-0)')
+        
+        # Move to the chosen location
+        path = find_path(current_loc, chosen_loc, init, objects)
+        if path is None:
+            return None
+        for loc in path:
+            plan.append(f'(move {current_loc} {loc})')
+            current_loc = loc
+        
+        # Deliver the newspaper
+        plan.append(f'(deliver paper-0 {chosen_loc})')
+        
+        # Update the initial state to reflect the delivery
+        init.add(('carrying', 'paper-0'))
+        init.remove(('unpacked', 'paper-0'))
+        init.remove(('wantspaper', chosen_loc))
+        init.add(('satisfied', chosen_loc))
+        wants_paper.remove(chosen_loc)
+    
+    # If all locations are satisfied, return the plan
+    return plan

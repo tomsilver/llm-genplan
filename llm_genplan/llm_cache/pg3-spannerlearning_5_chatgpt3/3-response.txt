@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    # Extract the types of objects in the domain
+    types = set(obj[1] for obj in objects)
+    
+    # Find the man, spanners, and nuts in the initial state
+    man = [obj[0] for obj in init if obj[1] == 'man'][0]
+    spanners = [obj[0] for obj in init if obj[1] == 'spanner']
+    nuts = [obj[0] for obj in init if obj[1] == 'nut']
+    
+    # Create a dictionary mapping nuts to their required spanners
+    nut_spanner_map = {
+        'nut1': 'spanner1',
+        'nut2': 'spanner2',
+        'nut3': 'spanner3',
+        'nut4': 'spanner4',
+    }
+    
+    # Initialize the plan as an empty list
+    plan = []
+    
+    # Iterate over the nuts and perform the necessary actions for each nut
+    for nut in nuts:
+        # Find the required spanner for the nut
+        spanner = nut_spanner_map[nut]
+        
+        # Find the locations of the spanner and nut in the initial state
+        spanner_loc = [obj[1] for obj in init if obj[0] == spanner][0]
+        nut_loc = [obj[1] for obj in init if obj[0] == nut][0]
+        
+        # Walk to the location of the required spanner
+        plan.append('(walk {} {})'.format(man, spanner_loc))
+        
+        # Pick up the required spanner
+        plan.append('(pickup_spanner {} {} {})'.format(spanner_loc, spanner, man))
+        
+        # Walk to the location of the nut
+        plan.append('(walk {} {})'.format(man, nut_loc))
+        
+        # Tighten the nut with the required spanner
+        plan.append('(tighten_nut {} {} {} {} {})'.format(nut_loc, spanner, man, nut, types))
+    
+    # Check if the goal state has been achieved
+    goal_atoms = set(atom for atom in goal)
+    achieved_atoms = set(atom for atom in init if atom not in plan)
+    if goal_atoms.issubset(achieved_atoms):
+        # Return the plan if the goal state has been achieved
+        return plan
+    else:
+        # Otherwise, return None to indicate failure
+        return None

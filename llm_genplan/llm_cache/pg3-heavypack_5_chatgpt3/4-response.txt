@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    # Sort objects by weight in descending order
+    sorted_objects = sorted(objects, key=lambda obj: -1 * int(obj[1:]))
+    # Create a plan to pack all objects
+    plan = build_plan(sorted_objects, init, goal)
+    return plan
+
+def build_plan(objects, init, goal):
+    # Base case: all objects are packed in the goal state
+    if all(('packed', obj) in goal for obj in objects):
+        return []
+    # Recursive case: try to pack the first object in the list
+    first_obj = objects[0]
+    # Check if object is already packed
+    if ('packed', first_obj) in init:
+        return build_plan(objects[1:], init, goal)
+    # Pack the object if the box is empty
+    if ('box-empty',) in init:
+        return ['(pack-first {})'.format(first_obj)] + build_plan(objects[1:], [('packed', first_obj)] + init, goal)
+    # Otherwise, find an already packed object that can support the weight
+    for packed_obj in objects[1:]:
+        if ('packed', packed_obj) in init and ('nothing-above', packed_obj) in init and (not ('heavier', packed_obj, first_obj) in init):
+            subplan = build_plan(objects[1:], [('nothing-above', first_obj), ('packed', first_obj)] + init, goal)
+            if subplan is not None:
+                return ['(stack {} {})'.format(packed_obj, first_obj)] + subplan
+    # Backtrack if no suitable object is found
+    return None

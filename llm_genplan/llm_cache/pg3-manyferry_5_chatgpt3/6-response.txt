@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    # Extract the locations of the cars and the ferry from the initial state
+    car_locs = [arg for pred, arg in init if pred == 'at' and arg[0] == 'c']
+    ferry_loc = [arg for pred, arg in init if pred == 'at-ferry'][0]
+
+    # Initialize the state with the initial state
+    state = init
+
+    # Compute the plan to reach the goal state
+    plan = []
+    for atom in goal:
+        if atom not in state:
+            if atom[0] == 'at':
+                car = atom[1]
+                closest_car_loc = min(car_locs, key=lambda loc: heuristic(loc, atom[2]))
+                if closest_car_loc != ferry_loc:
+                    sail_action = f'(sail {ferry_loc} {closest_car_loc})'
+                    plan.append(sail_action)
+                    ferry_loc = closest_car_loc
+                board_action = f'(board {car} {ferry_loc})'
+                plan.append(board_action)
+                car_locs.remove(closest_car_loc)
+                state = [(pred, arg) for pred, arg in state if arg != car] + [(atom[0], (car, ferry_loc)), ('empty-ferry',)]
+            elif atom[0] == 'on':
+                car = atom[1]
+                car_loc = next(arg for pred, arg in state if pred == 'at' and arg[0] == car)
+                debark_action = f'(debark {car} {car_loc})'
+                plan.append(debark_action)
+                state = [(pred, arg) for pred, arg in state if arg != (car, car_loc)] + [(atom[0], car), ('at', (car, ferry_loc)), ('empty-ferry',)]
+    return plan

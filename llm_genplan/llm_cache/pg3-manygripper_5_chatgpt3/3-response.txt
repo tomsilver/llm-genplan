@@ -1,0 +1,52 @@
+def get_plan(objects, init, goal):
+    # Extract relevant objects and positions from initial state
+    balls = [obj for obj in objects if obj.startswith('ball')]
+    grippers = [obj for obj in objects if obj.startswith('gripper')]
+    robot_pos = [atom[1] for atom in init if atom[0] == 'at-robby'][0]
+    ball_pos = {atom[1]: atom[2] for atom in init if atom[0] == 'at'}
+
+    # Define helper function to calculate distance between two positions
+    def distance(pos1, pos2):
+        x1, y1 = map(int, pos1[4:].split('_'))
+        x2, y2 = map(int, pos2[4:].split('_'))
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    # Define helper function to find closest object to a position
+    def find_closest(pos, objs):
+        return min(objs, key=lambda obj: distance(pos, ball_pos[obj]))
+
+    # Initialize plan and gripper assignments
+    plan = []
+    gripper_assignments = {gripper: None for gripper in grippers}
+
+    # Repeat until all goal balls are in their positions
+    while any(atom not in init for atom in goal):
+        # Find closest ball that is not yet in its goal position
+        target_ball = None
+        for ball in balls:
+            if (ball_pos[ball], ball) not in goal:
+                if target_ball is None or distance(robot_pos, ball_pos[ball]) < distance(robot_pos, ball_pos[target_ball]):
+                    target_ball = ball
+
+        # Find closest gripper to the target ball
+        closest_gripper = find_closest(ball_pos[target_ball], [gripper for gripper in grippers if gripper_assignments[gripper] is None])
+
+        # Move robot towards closest gripper
+        plan.append(f"(move {robot_pos} {ball_pos[closest_gripper]})")
+        robot_pos = ball_pos[closest_gripper]
+
+        # Pick up target ball with gripper
+        plan.append(f"(pick {target_ball} {ball_pos[target_ball]} {closest_gripper})")
+        ball_pos[target_ball] = closest_gripper
+        gripper_assignments[closest_gripper] = target_ball
+
+        # Move robot towards goal position of target ball
+        plan.append(f"(move {robot_pos} {ball_pos[target_ball]})")
+        robot_pos = ball_pos[target_ball]
+
+        # Drop target ball in goal position
+        plan.append(f"(drop {target_ball} {ball_pos[target_ball]} {closest_gripper})")
+        ball_pos[target_ball] = goal[(ball_pos[target_ball], target_ball)]
+        gripper_assignments[closest_gripper] = None
+
+    return plan

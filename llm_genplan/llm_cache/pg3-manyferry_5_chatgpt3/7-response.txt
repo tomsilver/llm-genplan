@@ -1,0 +1,14 @@
+def get_plan(objects, init, goal):
+    state = set(init)
+    actions = []
+    while state != set(goal):
+        car_locs = [arg[1] for pred, arg in init if pred == 'at' and arg[0] == 'c']
+        empty_loc = [arg[0] for pred, arg in state if pred == 'at-ferry'][0]
+        closest_car = min(car_locs, key=lambda loc: distance(loc, empty_loc))
+        if distance(closest_car, empty_loc) == 1:
+            action = board_action(objects, state, closest_car)
+        else:
+            action = sail_action(objects, state, empty_loc, closest_car)
+        state = apply_action(state, action)
+        actions.append(action)
+    return actions

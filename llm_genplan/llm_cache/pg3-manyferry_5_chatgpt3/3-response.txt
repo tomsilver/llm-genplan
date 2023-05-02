@@ -1,0 +1,60 @@
+def get_plan(objects, init, goal):
+    # Extract locations and cars from objects
+    locations = [obj for obj in objects if obj.startswith('l')]
+    cars = [obj for obj in objects if obj.startswith('c')]
+    
+    # Find the closest car to its goal location
+    def find_closest_car():
+        closest_car = None
+        closest_distance = float('inf')
+        for car in cars:
+            if ('at', car, '?loc') in init and ('at', '?', car_goal[car]) in goal:
+                for loc in locations:
+                    if ('at-ferry', loc) in init and ('not', ('at', car, loc)) in init:
+                        distance = abs(int(car[1:]) - int(loc[1:]))
+                        if distance < closest_distance:
+                            closest_car = car
+                            closest_distance = distance
+        return closest_car
+    
+    # Initialize plan and current state
+    plan = []
+    state = set(init)
+    
+    # Move cars to their goal locations one by one
+    while cars:
+        closest_car = find_closest_car()
+        car_loc = next(arg for pred, arg in state if pred == 'at' and arg == closest_car)
+        car_goal = {car: next(arg for pred, arg in goal if pred == 'at' and arg.startswith('l') and ('at', '?', car) in goal) for car in cars}
+        goal_loc = car_goal[closest_car]
+        
+        # Sail to the closest location where the car can be boarded
+        ferry_loc = next(arg for pred, arg in state if pred == 'at-ferry')
+        if ferry_loc != car_loc:
+            sail_action = f'(sail {ferry_loc} {car_loc})'
+            state.remove(('at-ferry', ferry_loc))
+            state.add(('at-ferry', car_loc))
+            plan.append(sail_action)
+        
+        # Board the car onto the ferry
+        board_action = f'(board {closest_car} {car_loc})'
+        state.remove(('at', closest_car, car_loc))
+        state.remove(('empty-ferry',))
+        state.add(('on', closest_car))
+        plan.append(board_action)
+        
+        # Sail to the goal location and debark the car
+        if goal_loc != car_loc:
+            sail_action = f'(sail {car_loc} {goal_loc})'
+            state.remove(('at-ferry', car_loc))
+            state.add(('at-ferry', goal_loc))
+            plan.append(sail_action)
+        debark_action = f'(debark {closest_car} {goal_loc})'
+        state.remove(('on', closest_car))
+        state.add(('at', closest_car, goal_loc))
+        state.add(('empty-ferry',))
+        plan.append(debark_action)
+        
+        cars.remove(closest_car)
+    
+    return plan
