@@ -1,0 +1,51 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o143
+    o395
+    o858
+    o904
+    o95
+    o956
+  )
+  (:init
+    (box-empty)
+    (heavier o143 o904)
+    (heavier o143 o956)
+    (heavier o395 o143)
+    (heavier o395 o858)
+    (heavier o395 o904)
+    (heavier o395 o956)
+    (heavier o858 o143)
+    (heavier o858 o904)
+    (heavier o858 o956)
+    (heavier o95 o143)
+    ...
+    (unpacked o143)
+    (unpacked o395)
+    (unpacked o858)
+    (unpacked o904)
+    (unpacked o95)
+    (unpacked o956)
+  )
+  (:goal (and
+    (packed o143)
+    (packed o395)
+    (packed o858)
+    (packed o904)
+    (packed o95)
+    (packed o956)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(pack-first o95)'].
+NOTE: The goal is not satisfied
+(Follow each of:
+    (Set (packed o143) to true)
+    and (Set (packed o395) to true)
+    and (Set (packed o858) to true)
+    and (Set (packed o904) to true)
+    and (Set (packed o956) to true)
+)
+Fix the code.

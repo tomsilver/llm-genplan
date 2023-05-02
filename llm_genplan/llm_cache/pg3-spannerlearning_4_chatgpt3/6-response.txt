@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    # Create a dictionary to keep track of the current location of each object
+    locations = {}
+    for obj, obj_type in objects:
+        if obj_type == 'location':
+            locations[obj] = obj
+    
+    # Create a dictionary to keep track of which spanners can be used to tighten each nut
+    spanner_for_nut = {}
+    for atom in init:
+        if atom[0] == 'useable':
+            spanner = atom[1]
+            nut = atom[2]
+            if nut not in spanner_for_nut:
+                spanner_for_nut[nut] = []
+            spanner_for_nut[nut].append(spanner)
+    
+    # Initialize the plan as an empty list
+    plan = []
+    
+    # Loop over the spanners
+    for spanner in [obj for obj, obj_type in objects if obj_type == 'spanner']:
+        # Find the nuts that can be tightened with this spanner
+        nuts_to_tighten = [nut for nut in spanner_for_nut if spanner in spanner_for_nut[nut]]
+        
+        # Pick up the spanner
+        plan.append('(pickup_spanner {} {})'.format(locations[spanner], spanner))
+        init.remove(('at', spanner, locations[spanner]))
+        init.append(('carrying', 'bob', spanner))
+        locations[spanner] = 'bob'
+        
+        # Tighten the nuts that can be tightened with this spanner
+        for nut in nuts_to_tighten:
+            plan.append('(tighten_nut {} {} {} {})'.format(locations[spanner], spanner, 'bob', nut))
+        
+        # Drop the spanner
+        plan.append('(walk {} {} {})'.format(locations[spanner], locations['shed'], 'bob'))
+        init.remove(('carrying', 'bob', spanner))
+        init.append(('at', spanner, locations['shed']))
+        locations[spanner] = 'shed'
+    
+    return plan

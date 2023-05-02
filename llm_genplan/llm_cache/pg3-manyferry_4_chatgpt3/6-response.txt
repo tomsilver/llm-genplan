@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    # Initialize the state and planner
+    state = set(init)
+    planner = Planner()
+
+    # Initialize the plan generation loop
+    plan = []
+    last_state = set()
+    plan_counter = 0
+
+    # Generate the plan
+    while state != last_state:
+        last_state = set(state)
+        plan_counter += 1
+        if plan_counter > 100:
+            # If we cannot find a plan after 100 iterations, assume there is no solution
+            return []
+        for action in get_applicable_actions(state):
+            for atom in get_effects(action):
+                state.add(atom)
+            plan.append(action)
+            if goal <= state:
+                # We found a plan
+                return plan
+            break
+    # If we get here, there is no solution
+    return []

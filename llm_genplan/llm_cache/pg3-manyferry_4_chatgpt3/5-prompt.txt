@@ -1,0 +1,69 @@
+Given this task:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    c3
+    l0
+    l1
+    l10
+    l2
+    l3
+    l4
+    ...
+  )
+  (:init
+    (at c0 l1)
+    (at c1 l6)
+    (at c2 l7)
+    (at c3 l2)
+    (at-ferry l1)
+    (car c0)
+    (car c1)
+    (car c2)
+    (car c3)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l10)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    ...
+    (not-eq l0 l1)
+    (not-eq l0 l10)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    ...
+  )
+  (:goal (and
+    (at c0 l1)
+    (at c1 l0)
+    (at c2 l6)
+    (at c3 l8)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 40, in get_plan
+    for atom in get_effects(action):
+                ^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 62, in get_effects
+    return [('(at-ferry', action.split()[2]), ('not', ('at-ferry', action.split()[3]))]
+                                                                   ~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+Fix the code.

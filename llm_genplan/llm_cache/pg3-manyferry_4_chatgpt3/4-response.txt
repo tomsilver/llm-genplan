@@ -1,0 +1,10 @@
+def get_effects(action):
+    # Helper function to get the effects of an action
+    if action.startswith('(sail'):
+        return [('(at-ferry', action.split()[2]), ('not', ('at-ferry', action.split()[3]))]
+    elif action.startswith('(board'):
+        return [(('on',) + tuple(action.split()[1:])), ('not', ('at',) + tuple(action.split()[1:]))]
+    elif action.startswith('(debark'):
+        return [(('at',) + tuple(action.split()[1:])), ('empty-ferry',), ('not', ('on',) + tuple(action.split()[1:]))]
+    else:
+        return []

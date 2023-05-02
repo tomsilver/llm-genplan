@@ -1,0 +1,3 @@
+
+
+The spanner domain models a simple scenario where a man, equipped with a set of spanners, has to tighten a set of nuts in order to achieve a goal. The environment consists of several locations (including a shed, a gate, and a few intermediate locations), and the man can walk between them using links connecting the locations. The man can carry one spanner at a time and must pick it up from a location before using it to tighten a nut at the same or nearby location. A nut can only be tightened once, and the spanner becomes unusable after a single use. The goal of the domain is to tighten all the nuts in the environment.

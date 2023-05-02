@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    # Initialize the gripper state to "free"
+    grippers = {g: "free" for g in objects if "gripper" in g}
+    # Initialize the robot location
+    robby_location = next(arg for (pred, arg) in init if pred == "at-robby")
+    # Initialize the ball locations
+    ball_locations = {arg: next((pred2, arg2) for (pred2, arg2) in init if pred2 == "at" and arg2 == arg) for arg in objects if "ball" in arg}
+
+    # Define a set of rules for the reflex agent to follow
+    rules = [
+        # Rule 1: Move to a room with a ball
+        (lambda: True if any(pred == "at" and "ball" in arg and arg2 != robby_location for (pred, arg, arg2) in init) else False,
+         lambda: "(move {} {})".format(robby_location, ball_locations[next(arg for (pred, arg) in init if pred == "at" and "ball" in arg and arg2 != robby_location)])),
+        # Rule 2: Pick up a ball with an available gripper
+        (lambda: True if any(pred == "at" and "ball" in arg and pred2 == "free" for (pred, arg, pred2) in init for (pred2, gripper) in grippers.items()) else False,
+         lambda: "(pick {} {} {})".format(next(arg for (pred, arg) in init if pred == "at" and "ball" in arg and arg2 != robby_location),
+                                          robby_location,
+                                          next(gripper for (pred, gripper) in grippers.items() if pred == "free"))),
+        # Rule 3: Move to a room to drop off a ball
+        (lambda: True if any(pred == "carry" and arg2 != robby_location for (pred, arg, arg2) in init) else False,
+         lambda: "(move {} {})".format(robby_location, next(arg2 for (pred, arg, arg2) in init if pred == "carry" and arg2 != robby_location))),
+        # Rule 4: Drop off a ball in a target room
+        (lambda: True if any(pred == "carry" and pred2 == next(arg2 for (pred2, arg2) in goal if pred2 == "at" and arg == arg2) for (pred, arg, pred2) in init) else False,
+         lambda: "(drop {} {} {})".format(next(arg for (pred, arg) in init if pred == "carry"),
+                                          robby_location,
+                                          next(gripper for (pred, gripper) in grippers.items() if pred == "carry")))
+    ]
+
+    # Execute the rules until the goal state is reached
+    plan = []
+    while True:
+        # Check if the goal state has been reached
+        if all(atom in init for atom in goal):
+            break
+        # Check each rule in turn and execute the first one that applies
+        rule_ap

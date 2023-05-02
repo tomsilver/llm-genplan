@@ -1,0 +1,9 @@
+from pddlpy import DomainProblem
+
+def get_plan(objects, init, goal):
+    domain = DomainProblem(domain_file="miconic-domain.pddl", problem_file="miconicprob.pddl")
+    domain.actions()
+    domain.initialstate(init)
+    domain.goals(goal)
+    plan = domain.solve()
+    return plan

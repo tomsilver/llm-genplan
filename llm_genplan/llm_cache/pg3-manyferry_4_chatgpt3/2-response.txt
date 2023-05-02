@@ -1,0 +1,10 @@
+The ferry domain problem can be solved without using search by using a simple strategy of always loading cars onto the ferry that need to be transported to the opposite location of the ferry's current location, and sailing the ferry to the opposite location. Once the ferry reaches the opposite location, the cars that need to be transported to that location can be unloaded. This strategy can be repeated until all the cars are in their final destination locations.
+
+More specifically, the strategy involves the following steps:
+
+1. Load onto the ferry all cars that need to be transported to the opposite location of the ferry's current location.
+2. Sail the ferry to the opposite location.
+3. Unload all the cars that were loaded onto the ferry and needed to be transported to the current location.
+4. If there are more cars to transport, go back to step 1.
+
+By following this strategy, the problem can be solved without the need for search algorithms, such as A* or DFS. However, it should be noted that this strategy may not always be optimal and may not find the shortest path to transport all the cars to their final destinations.

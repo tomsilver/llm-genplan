@@ -1,0 +1,70 @@
+Given this task:
+(define (problem manygripper (:domain gripper-strips)
+  (:objects
+    ball0
+    ball1
+    ball2
+    ball3
+    ball4
+    ball5
+    ball6
+    gripper0
+    gripper1
+    room0
+    ...
+  )
+  (:init
+    (at ball0 room1)
+    (at ball1 room8)
+    (at ball2 room8)
+    (at ball3 room18)
+    (at ball4 room9)
+    (at ball5 room7)
+    (at ball6 room13)
+    (at-robby room0)
+    (ball ball0)
+    (ball ball1)
+    (ball ball2)
+    (ball ball3)
+    (ball ball4)
+    (ball ball5)
+    (ball ball6)
+    (free gripper0)
+    (free gripper1)
+    (gripper gripper0)
+    (gripper gripper1)
+    (room room0)
+    (room room1)
+    (room room10)
+    (room room11)
+    (room room12)
+    (room room13)
+    (room room14)
+    (room room15)
+    (room room16)
+    (room room17)
+    ...
+  )
+  (:goal (and
+    (at ball2 room9)
+    (at ball3 room3)
+    (at ball5 room0)
+    (at ball6 room10)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 56, in get_plan
+    ball_locations = {arg: next((pred2, arg2) for (pred2, arg2) in init if pred2 == "at" and arg2 == arg) for arg in objects if "ball" in arg}
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 56, in <dictcomp>
+    ball_locations = {arg: next((pred2, arg2) for (pred2, arg2) in init if pred2 == "at" and arg2 == arg) for arg in objects if "ball" in arg}
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 56, in <genexpr>
+    ball_locations = {arg: next((pred2, arg2) for (pred2, arg2) in init if pred2 == "at" and arg2 == arg) for arg in objects if "ball" in arg}
+                                                  ^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 2)
+
+Fix the code.

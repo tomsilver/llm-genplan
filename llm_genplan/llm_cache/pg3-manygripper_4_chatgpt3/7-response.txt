@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    # Extract ball locations from init state
+    ball_locations = {}
+    for arg in objects:
+        if "ball" in arg:
+            try:
+                location = next(arg2 for (pred2, arg2) in init if pred2 == "at" and arg2 == arg)
+                ball_locations[arg] = location
+            except StopIteration:
+                print(f"Error: Ball {arg} not found in initial state.")
+                return None
+    
+    # Move balls to their goal locations
+    plan = []
+    for ball, goal_location in goal:
+        current_location = ball_locations[ball]
+        if current_location != goal_location:
+            # Move gripper to current location of ball
+            plan.append(f"(move {current_location} {gripper0})")
+            plan.append(f"(pick {ball} {gripper0})")
+            plan.append(f"(move {goal_location} {gripper0})")
+            plan.append(f"(place {ball} {gripper0})")
+            # Update ball location in dictionary
+            ball_locations[ball] = goal_location
+    
+    return plan

@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    # Check that all objects are either locations or newspapers
+    for obj in objects:
+        if obj[1] not in ['loc', 'paper']:
+            return None
+    for atom in init + goal:
+        if atom[0] == 'at' and atom[1][1:] not in [obj[0][1:] for obj in objects if obj[1] == 'loc']:
+            return None
+        elif atom[0] in ['unpacked', 'carrying'] and atom[1][1:] not in [obj[0][1:] for obj in objects if obj[1] == 'paper']:
+            return None
+    
+    # Assign each location to a newspaper
+    assignments = {}
+    picked_up = set()
+    for atom in sorted(goal, key=lambda x: distance(x[1])):
+        if atom[0] == 'satisfied':
+            loc = atom[1]
+            paper = None
+            for obj in sorted(objects, key=lambda x: distance(loc, x[0])):
+                if obj[1] == 'paper' and ('unpacked', obj[0]) in init and obj[0] not in picked_up:
+                    paper = obj[0]
+                    picked_up.add(paper)
+                    break
+            if paper is None:
+                return None
+            assignments[loc] = paper
+    
+    # Deliver newspapers to assigned locations
+    plan = []
+    for loc, paper in assignments.items():
+        plan.append('(pick-up {} {})'.format(paper, 'loc-0'))
+        plan.append('(move loc-0 {})'.format(loc))
+        plan.append('(deliver {} {})'.format(paper, loc))
+    
+    return plan
+
+def distance(loc1, loc2='loc-0'):
+    if loc1.startswith('loc-') and loc2.startswith('loc-'):
+        x1, y1 = loc1.split('-')[1:]
+        x2, y2 = loc2.split('-')[1:]
+        return abs(int(x1) - int(x2)) + abs(int(y1) - int(y2))
+    else:
+        return float('inf')

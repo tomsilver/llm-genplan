@@ -1,0 +1,5 @@
+The simple strategy for solving all problems in the heavy-pack domain without using search involves iteratively selecting an unpacked item and packing it into the box, taking into consideration the weight of the items already in the box. 
+
+To implement this strategy, we can start by initializing the box as empty. Then, we repeatedly select an unpacked item that is not heavier than any of the items already in the box, and pack it into the box. We continue this process until all items are packed. 
+
+This strategy is guaranteed to succeed in the heavy-pack domain because the domain constraints ensure that it is always possible to select an unpacked item that can be packed into the box. Since the weight of the items in the box is always increasing, and we are only selecting items that are not heavier than the ones already in the box, the chosen item can always be packed without violating any constraints.

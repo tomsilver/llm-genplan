@@ -1,0 +1,17 @@
+import re
+
+def get_effects(action):
+    # Helper function to get the effects of an action
+    if action.startswith('(sail'):
+        # Use regular expressions to parse the sail action
+        match = re.match(r'\(sail\s+(\S+)\s+(\S+)\)', action)
+        if match:
+            return [('(at-ferry', match.group(2)), ('not', ('at-ferry', match.group(1)))]
+        else:
+            return []
+    elif action.startswith('(board'):
+        return [(('on',) + tuple(action.split()[1:])), ('not', ('at',) + tuple(action.split()[1:]))]
+    elif action.startswith('(debark'):
+        return [(('at',) + tuple(action.split()[1:])), ('empty-ferry',), ('not', ('on',) + tuple(action.split()[1:]))]
+    else:
+        return []

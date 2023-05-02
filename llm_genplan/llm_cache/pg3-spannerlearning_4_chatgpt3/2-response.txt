@@ -1,0 +1,9 @@
+Yes, there is a simple strategy for solving all problems in this domain without using search. The strategy is to first analyze the problem and find a plan that involves picking up each spanner once, tightening all the nuts that can be tightened with that spanner, and then dropping the spanner. This process is repeated until all the nuts have been tightened.
+
+More formally, the strategy involves the following steps:
+
+1. Identify all the spanners and the nuts that can be tightened with them.
+2. For each spanner, pick it up from its current location, tighten all the nuts that can be tightened with it, and then drop the spanner.
+3. Repeat step 2 until all the nuts have been tightened.
+
+This strategy exploits the fact that each spanner can be used only once and that a nut can be tightened only once. The order in which the spanners are used does not matter as long as all the nuts are tightened eventually. Therefore, this strategy guarantees a solution to any problem in this domain without using search.

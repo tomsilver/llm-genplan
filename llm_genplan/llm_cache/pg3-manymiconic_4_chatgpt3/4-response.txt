@@ -1,0 +1,65 @@
+def get_plan(objects, init, goal):
+    # Extract the passengers and floors from the objects list
+    passengers = [obj[0] for obj in objects if obj[1] == "passenger"]
+    floors = [obj[0] for obj in objects if obj[1] == "floor"]
+    
+    # Initialize the elevator location to the first floor
+    elevator_loc = floors[0]
+    
+    # Create a list of passenger destinations
+    dests = [atom[2] for atom in init if atom[0] == "destin" and len(atom) >= 3]
+    
+    # Determine the sequence of floors to visit based on the passenger destinations
+    floors_to_visit = [elevator_loc] + sorted(set(dests))
+    
+    # Generate the sequence of actions to move the elevator and serve passengers
+    actions = []
+    for i in range(len(floors_to_visit) - 1):
+        curr_floor = floors_to_visit[i]
+        next_floor = floors_to_visit[i + 1]
+        
+        # Move the elevator up or down to the next floor
+        if floors.index(curr_floor) < floors.index(next_floor):
+            action = "(up {} {})".format(curr_floor, next_floor)
+        else:
+            action = "(down {} {})".format(curr_floor, next_floor)
+        actions.append(action)
+        
+        # Serve the passengers on the current floor
+        for passenger in passengers:
+            if (curr_floor, passenger) in init and (next_floor, passenger) in init:
+                action = "(depart {} {})".format(curr_floor, passenger)
+                actions.append(action)
+            elif (curr_floor, passenger) in init and (next_floor, passenger) not in init:
+                action = "(board {} {})".format(curr_floor, passenger)
+                actions.append(action)
+    
+    # Check if the goal state is satisfied
+    if all(atom in goal for atom in init):
+        return []
+    
+    # Generate a plan to achieve the goal state
+    plan = []
+    for atom in goal:
+        if atom not in init and len(atom) >= 3:
+            # Find the closest passenger with the same destination as the goal
+            dest = atom[2]
+            closest_passenger = None
+            min_dist = float("inf")
+            for passenger in passengers:
+                if (elevator_loc, passenger) in init and (destin, passenger, dest) in init:
+                    dist = abs(floors.index(elevator_loc) - floors.index(dest))
+                    if dist < min_dist:
+                        closest_passenger = passenger
+                        min_dist = dist
+            
+            # Add the actions to serve the closest passenger and reach the goal
+            if closest_passenger is not None:
+                if (elevator_loc, closest_passenger) in init:
+                    action = "(depart {} {})".format(elevator_loc, closest_passenger)
+                    plan.append(action)
+                floors_to_visit = [elevator_loc, dest]
+                for i in range(len(floors_to_visit) - 1):
+                    curr_floor = floors_to_visit[i]
+                    next_floor = floors_to_visit[i + 1]
+                    if floors.index(curr

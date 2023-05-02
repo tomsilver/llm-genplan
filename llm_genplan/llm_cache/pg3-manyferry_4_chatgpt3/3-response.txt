@@ -1,0 +1,52 @@
+def get_plan(objects, init, goal):
+    # Extract locations and cars from the initial state
+    locations = [atom[1] for atom in init if atom[0] == 'location']
+    cars = [atom[1] for atom in init if atom[0] == 'car']
+
+    # Initialize the plan
+    plan = []
+
+    # Set the initial location of the ferry to the first location in the initial state
+    ferry_location = locations[0]
+
+    while True:
+        # Check if all the goal states have been achieved
+        if all(atom in init for atom in goal):
+            return plan
+
+        # Find the opposite location of the ferry's current location
+        opposite_location = next(loc for loc in locations if loc != ferry_location)
+
+        # Find the cars that need to be transported to the opposite location
+        cars_to_transport = [car for car in cars if (car, opposite_location) in init]
+
+        # Load the cars onto the ferry
+        for car in cars_to_transport:
+            plan.append('(board {} {})'.format(car, ferry_location))
+
+        # Sail the ferry to the opposite location
+        plan.append('(sail {} {})'.format(ferry_location, opposite_location))
+        ferry_location = opposite_location
+
+        # Unload the cars from the ferry
+        for car in cars_to_transport:
+            plan.append('(debark {} {})'.format(car, ferry_location))
+
+        # Update the initial state with the effects of the plan
+        for action in plan:
+            for atom in get_effects(action):
+                if atom[0] == 'not':
+                    init.discard(atom[1:])
+                else:
+                    init.add(atom)
+
+def get_effects(action):
+    # Helper function to get the effects of an action
+    if action.startswith('(sail'):
+        return [('(at-ferry', action.split()[2]), ('not', ('at-ferry', action.split()[3]))]
+    elif action.startswith('(board'):
+        return [(('on',) + tuple(action.split()[1:])), ('not', ('at',) + tuple(action.split()[1:]))]
+    elif action.startswith('(debark'):
+        return [(('at',) + tuple(action.split()[1:])), ('empty-ferry',), ('not', ('on',) + tuple(action.split()[1:]))]
+    else:
+        return []

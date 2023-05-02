@@ -1,0 +1,75 @@
+def get_plan(objects, init, goal):
+    # Get the locations of the homebases
+    homebases = [obj[0] for obj in objects if obj[1] == 'loc' and 'homebase' in obj[0]]
+
+    # Define the helper functions
+    def distance(loc):
+        x1, y1 = loc.split('-')[1:]
+        x2, y2 = homebases[0].split('-')[1:]
+        return abs(int(x1) - int(x2)) + abs(int(y1) - int(y2))
+
+    def find_paper_loc(paper):
+        for atom in init:
+            if atom[0] == 'at' and atom[1] == paper:
+                return atom[2]
+        return None
+
+    def find_nearest_paper_loc(loc):
+        nearest_loc = None
+        nearest_dist = float('inf')
+        for atom in init:
+            if atom[0] == 'at' and atom[1] in objects and atom[2] != loc:
+                dist = distance(atom[2])
+                if dist < nearest_dist:
+                    nearest_dist = dist
+                    nearest_loc = atom[2]
+        return nearest_loc
+
+    def get_pickup_action(paper, loc):
+        return f'(pick-up {paper} {loc})'
+
+    def get_move_action(from_loc, to_loc):
+        return f'(move {from_loc} {to_loc})'
+
+    def get_deliver_action(paper, loc):
+        return f'(deliver {paper} {loc})'
+
+    # Plan to pick up and deliver each paper in turn
+    plan = []
+    for paper in ['paper-0', 'paper-1', 'paper-2', 'paper-3']:
+        paper_loc = find_paper_loc(paper)
+        if paper_loc is None:
+            nearest_loc = find_nearest_paper_loc(paper)
+            if nearest_loc is None:
+                continue
+            pickup_action = get_pickup_action(paper, nearest_loc)
+            move_action = get_move_action(nearest_loc, homebases[0])
+            deliver_action = get_deliver_action(paper, homebases[0])
+            plan += [pickup_action, move_action, deliver_action]
+        elif paper_loc != homebases[0]:
+            move_action = get_move_action(paper_loc, homebases[0])
+            deliver_action = get_deliver_action(paper, homebases[0])
+            plan += [move_action, deliver_action]
+
+    # Sort the plan to satisfy the orderings in the goal
+    for atom in sorted(goal, key=lambda x: distance(x[2])):
+        if atom[0] == 'satisfied':
+            loc = atom[1]
+            if loc == homebases[0]:
+                continue
+            paper = None
+            for atom2 in init:
+                if atom2[0] == 'wantspaper' and atom2[1] == loc:
+                    paper = atom2[2]
+                    break
+            if paper is None:
+                continue
+            paper_loc = find_paper_loc(paper)
+            if paper_loc is None:
+                continue
+            move_action = get_move_action(homebases[0], paper_loc)
+            pickup_action = get_pickup_action(paper, paper_loc)
+            deliver_action = get_deliver_action(paper, loc)
+            plan = [move_action, pickup_action, deliver_action] + plan
+
+    return plan

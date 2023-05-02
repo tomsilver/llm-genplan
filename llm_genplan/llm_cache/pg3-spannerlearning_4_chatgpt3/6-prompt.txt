@@ -1,0 +1,67 @@
+Given this task:
+(define (problem prob0 (:domain spanner)
+  (:objects
+    gate - location
+    location1 - location
+    location2 - location
+    location3 - location
+    location4 - location
+    shed - location
+    bob - man
+    nut1 - nut
+    nut2 - nut
+    nut3 - nut
+    nut4 - nut
+    nut5 - nut
+    spanner1 - spanner
+    spanner2 - spanner
+    spanner3 - spanner
+    spanner4 - spanner
+    spanner5 - spanner
+  )
+  (:init
+    (at bob shed)
+    (at nut1 gate)
+    (at nut2 gate)
+    (at nut3 gate)
+    (at nut4 gate)
+    (at nut5 gate)
+    (at spanner1 location2)
+    (at spanner2 location3)
+    (at spanner3 location1)
+    (at spanner4 location4)
+    ...
+    (link location1 location2)
+    (link location2 location3)
+    (link location3 location4)
+    (link location4 gate)
+    (link shed location1)
+    (loose nut1)
+    (loose nut2)
+    (loose nut3)
+    (loose nut4)
+    (loose nut5)
+    (useable spanner1)
+    (useable spanner2)
+    (useable spanner3)
+    (useable spanner4)
+    (useable spanner5)
+  )
+  (:goal (and
+    (tightened nut1)
+    (tightened nut2)
+    (tightened nut3)
+    (tightened nut4)
+    (tightened nut5)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 110, in get_plan
+    plan.append('(pickup_spanner {} {})'.format(locations[spanner], spanner))
+                                                ~~~~~~~~~^^^^^^^^^
+KeyError: 'spanner3'
+
+Fix the code.

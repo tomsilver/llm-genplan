@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    box_items = set()
+    unpacked_items = set(objects)
+    plan = []
+    
+    while unpacked_items:
+        # Select an unpacked item that is not heavier than the items in the box, and not lighter than any unpacked items
+        item = next((i for i in unpacked_items if all(('heavier', other, i) not in init for other in box_items) and all(('heavier', i, other) not in init for other in unpacked_items - {i})), None)
+        
+        if item is None:
+            # If there is no such item, break out of the loop
+            break
+        
+        # Pack the item into the box
+        plan.append(f'(pack-first {item})')
+        box_items.add(item)
+        unpacked_items.remove(item)
+        
+        # Create a copy of the unpacked_items set before iterating over it
+        for top in set(unpacked_items):
+            if all(('heavier', item, other) not in init for other in box_items) and all(('heavier', other, top) not in init for other in box_items):
+                plan.append(f'(stack {item} {top})')
+                box_items.add(top)
+                unpacked_items.remove(top)
+    
+    return plan

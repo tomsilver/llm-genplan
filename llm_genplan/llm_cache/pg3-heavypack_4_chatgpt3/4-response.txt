@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    box_items = set()
+    unpacked_items = set(objects)
+    plan = []
+    
+    while unpacked_items:
+        # Select an unpacked item that is not heavier than the items in the box
+        try:
+            item = next(item for item in unpacked_items if all(('heavier', other, item) not in init for other in box_items))
+        except StopIteration:
+            break
+        
+        # Pack the item into the box
+        plan.append(f'(pack-first {item})')
+        box_items.add(item)
+        unpacked_items.remove(item)
+        
+        # Stack any unpacked items that can be stacked on top of the newly packed item
+        for top in unpacked_items:
+            if all(('heavier', item, other) not in init for other in box_items) and all(('heavier', other, top) not in init for other in box_items):
+                plan.append(f'(stack {item} {top})')
+                box_items.add(top)
+                unpacked_items.remove(top)
+    
+    return plan

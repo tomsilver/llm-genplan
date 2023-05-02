@@ -1,0 +1,52 @@
+def get_next_action(objects, ball_locations, gripper_locations):
+    for gripper, room in gripper_locations.items():
+        if "free" in objects and objects["free"] == gripper:
+            for ball, loc in ball_locations.items():
+                if loc == room:
+                    return [("pick", ball, room, gripper)]
+        elif "carry" in objects and objects["carry"] == gripper:
+            for room in gripper_locations.values():
+                if room != gripper_locations[gripper]:
+                    return [("move", gripper_locations[gripper], room), ("drop", objects["carry"], room, gripper)]
+    return None
+
+def get_plan(objects, init, goal):
+    ball_locations = {arg: next(arg2 for (pred2, arg2) in init if pred2 == "at" and arg2 == arg) for arg in objects if "ball" in arg}
+    gripper_locations = {arg: next(arg2 for (pred2, arg2) in init if pred2 == "at-robby" if arg2 == arg) for arg in objects if "gripper" in arg}
+    objects = {obj: loc for (pred, obj, loc) in init if pred == "at"}
+
+    action_plan = []
+    while True:
+        if all(atom in init for atom in goal):
+            return action_plan
+
+        next_action = get_next_action(objects, ball_locations, gripper_locations)
+
+        if next_action is None:
+            break
+
+        for action in next_action:
+            action_name = action[0]
+            if action_name == "move":
+                obj, room = action[1:]
+                init.discard(("at-robby", obj))
+                init.add(("at-robby", room))
+                gripper_locations[obj] = room
+            elif action_name == "pick":
+                ball, room, gripper = action[1:]
+                init.discard(("at", ball, room))
+                init.add(("carry", ball, gripper))
+                objects["carry"] = gripper
+                objects[ball] = gripper
+                objects["free"] = None
+            elif action_name == "drop":
+                obj, room, gripper = action[1:]
+                init.discard(("carry", obj, gripper))
+                init.add(("at", obj, room))
+                objects[obj] = room
+                objects["free"] = gripper
+                objects["carry"] = None
+
+            action_plan.append(action)
+            
+    return None

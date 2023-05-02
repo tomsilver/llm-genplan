@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    # Assign each location to a newspaper
+    assignments = {}
+    for atom in goal:
+        if atom[0] == 'satisfied':
+            loc = atom[1]
+            for paper in objects:
+                if paper[1] == 'paper' and ('unpacked', paper[0]) in init:
+                    assignments[loc] = paper[0]
+                    break
+    
+    # Check if all locations have been assigned a newspaper
+    if len(assignments) != len([atom for atom in goal if atom[0] == 'satisfied']):
+        return None
+    
+    # Deliver newspapers to assigned locations
+    plan = []
+    for loc, paper in assignments.items():
+        plan.append('(pick-up {} {})'.format(paper, 'loc-0'))
+        plan.append('(move loc-0 {})'.format(loc))
+        plan.append('(deliver {} {})'.format(paper, loc))
+    
+    return plan

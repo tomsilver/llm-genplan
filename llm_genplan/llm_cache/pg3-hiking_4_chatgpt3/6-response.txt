@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    # Extract relevant information from the problem instance
+    locations = [obj[0] for obj in objects]
+    adjacencies = [atom[1:] for atom in init if atom[0] == 'adjacent']
+    on_trails = [atom[1:] for atom in init if atom[0] == 'ontrail']
+    water_locations = [atom[1] for atom in init if atom[0] == 'iswater']
+    hill_locations = [atom[1] for atom in init if atom[0] == 'ishill']
+    start_location = [atom[1] for atom in init if atom[0] == 'at'][0]
+    goal_location = [atom[1] for atom in goal if atom[0] == 'at'][0]
+
+    # Follow the trail and avoid hills and water
+    current_location = start_location
+    last_location = None
+    plan = []
+    while current_location != goal_location:
+        # Check adjacent locations on the trail
+        next_loc = None
+        for adj in adjacencies:
+            if current_location in adj and adj in on_trails:
+                next_loc = adj[0] if adj[1] == current_location else adj[1]
+                break
+
+        if next_loc is None:
+            # No valid next location found on the trail
+            return None
+
+        if next_loc in hill_locations or next_loc in water_locations:
+            # Skip next location if it is a hill or water
+            continue
+
+        if next_loc == last_location:
+            # Skip next location if it is the same as the last location
+            continue
+
+        plan.append(f'(walk {current_location} {next_loc})')
+        last_location = current_location
+        current_location = next_loc
+
+    return plan
