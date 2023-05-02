@@ -1,0 +1,10 @@
+Yes, there is a simple strategy for solving all problems in this domain without using search, and it involves sorting the objects according to their weights and then packing them in descending order.
+
+The strategy is as follows:
+1. Sort the objects by weight, with the heaviest object first and the lightest object last.
+2. Pack the heaviest object into the box using the pack-first action.
+3. For each remaining object in order from heaviest to lightest, attempt to stack it on top of a previously packed object that is heavier than it.
+4. If the object cannot be stacked on any previously packed object, then it must be the heaviest object that can be placed on top of the previously packed objects, so pack it using the pack-first action.
+5. Repeat step 3 and 4 until all objects are packed.
+
+This strategy works because it takes advantage of the constraint that heavier objects can only be placed at the bottom of the box. By sorting the objects by weight and packing them in descending order, we ensure that each object is packed in a position where it can support the weight of all objects above it. No search is required because the strategy guarantees that all objects can be packed without violating the domain constraints.

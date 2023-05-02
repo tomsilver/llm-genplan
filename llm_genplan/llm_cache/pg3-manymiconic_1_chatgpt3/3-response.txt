@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_floor = None
+    passengers_on_board = set()
+    
+    # Define helper functions to check for passengers waiting and on board
+    def passenger_waiting(floor):
+        return any(('origin', p, floor) in init and ('boarded', p) not in init for p, t in objects if t == 'passenger')
+    
+    def passenger_on_board_above(floor):
+        return any(('destin', p, f) in init and ('boarded', p) in init and f > floor for p, t in objects if t == 'passenger')
+    
+    def passenger_on_board_below(floor):
+        return any(('destin', p, f) in init and ('boarded', p) in init and f < floor for p, t in objects if t == 'passenger')
+    
+    # Define a helper function to move the elevator to the specified floor
+    def move_elevator(to_floor):
+        nonlocal current_floor
+        plan.append(f'(up {current_floor} {to_floor})' if to_floor > current_floor else f'(down {current_floor} {to_floor})')
+        current_floor = to_floor
+    
+    # Start at the ground floor and move up one floor at a time
+    current_floor = next(f for f, t in objects if t == 'floor' and f.endswith('_b0'))
+    for floor, _ in objects:
+        if floor.startswith('f') and floor.endswith('_b0'):
+            floor_int = int(floor[1])
+            
+            # Board passengers waiting at this floor
+            while passenger_waiting(floor) and len(passengers_on_board) < 4:
+                passenger = next(p for p, t in objects if t == 'passenger' and ('origin', p, floor) in init and ('boarded', p) not in init)
+                plan.append(f'(board {floor} {passenger})')
+                init.remove(('origin', passenger, floor))
+                init.add(('boarded', passenger))
+                passengers_on_board.add(passenger)
+            
+            # Move the elevator to serve passengers on board
+            if passenger_on_board_above(floor_int) and not passenger_waiting_above(floor_int):
+                move_elevator(next(f for f, t in objects if t == 'floor' and f.endswith(f'_b{floor_int+1}')))
+            
+            elif passenger_on_board_below(floor_int) and not passenger_waiting_below(floor_int):
+                move_elevator(next(f for f, t in objects if t == 'floor' and f.endswith(f'_b{floor_int-1}')))
+    
+    return plan

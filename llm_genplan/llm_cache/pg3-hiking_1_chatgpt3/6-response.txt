@@ -1,0 +1,16 @@
+def get_plan(objects, init, goal):
+    import random
+    
+    current_location = [obj[1] for obj in init if obj[0] == 'at'][0]
+    plan = []
+    while True:
+        if {g for g in goal if g in init}:
+            return plan
+        adjacent_locations = {obj[1] for obj in init if obj[0] == 'adjacent' and obj[2] == current_location} - {arg[1] for arg in init if arg[0] == 'ishill' or arg[0] == 'iswater'}
+        if not adjacent_locations:
+            return None
+        next_location = random.choice(list(adjacent_locations))
+        plan.append(f'(move {current_location} {next_location})')
+        plan.append(f'(visit {next_location})')
+        init = {g for g in init if g[0] != 'at'} | {('at', next_location)}
+        current_location = next_location

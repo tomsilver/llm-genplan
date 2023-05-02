@@ -1,0 +1,73 @@
+def get_plan(objects, init, goal):
+    # Define the heuristic function for hill-climbing
+    def heuristic(state):
+        return sum(1 for atom in state if atom[0] == 'tightened')
+
+    # Initialize the current state with the initial state
+    current_state = set(init)
+    # Initialize the plan as an empty list
+    plan = []
+
+    while True:
+        # Compute the heuristic value for the current state
+        current_value = heuristic(current_state)
+
+        # Find the next action that leads to the state with the highest heuristic value
+        best_action = None
+        best_value = current_value
+        for obj, obj_type in objects:
+            if obj_type == 'man':
+                continue  # Skip the man object
+            for loc, loc_type in objects:
+                if loc_type != 'location':
+                    continue  # Skip non-location objects
+                if ('at', obj, loc) not in current_state:
+                    continue  # Object is not at this location
+                for s, s_type in objects:
+                    if s_type != 'spanner':
+                        continue  # Skip non-spanner objects
+                    if ('at', s, loc) not in current_state:
+                        continue  # Spanner is not at this location
+                    if ('carrying', obj, s) in current_state:
+                        continue  # Object is already carrying this spanner
+                    if ('useable', s) not in current_state:
+                        continue  # Spanner is not usable
+                    for n, n_type in objects:
+                        if n_type != 'nut':
+                            continue  # Skip non-nut objects
+                        if ('at', n, loc) not in current_state:
+                            continue  # Nut is not at this location
+                        if ('tightened', n) in current_state:
+                            continue  # Nut is already tightened
+                        # Found a candidate action, apply it to get the next state
+                        next_state = current_state.copy()
+                        next_state.remove(('at', obj, loc))
+                        next_state.add(('at', obj, loc))
+                        next_state.remove(('at', s, loc))
+                        next_state.add(('carrying', obj, s))
+                        next_state.remove(('useable', s))
+                        next_state.add(('tightened', n))
+                        # Compute the heuristic value for the next state
+                        next_value = heuristic(next_state)
+                        # Update the best action found so far
+                        if next_value > best_value:
+                            best_action = f'(tighten_nut {loc} {s} {obj} {n})'
+                            best_value = next_value
+
+        # If no better action is found, return the current plan
+        if best_action is None:
+            break
+        # Otherwise, apply the best action to get the next state
+        next_state = current_state.copy()
+        next_state.remove(('at', obj, loc))
+        next_state.add(('at', obj, loc))
+        next_state.remove(('at', s, loc))
+        next_state.add(('carrying', obj, s))
+        next_state.remove(('useable', s))
+        next_state.add(('tightened', n))
+        # Append the best action to the plan
+        plan.append(best_action)
+        # Update the current state
+        current_state = next_state
+
+    return plan

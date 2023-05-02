@@ -1,0 +1,17 @@
+The error is occurring because the variable `f` is not defined in the `passenger_on_board_above` function. This is because `f` is being used in the comprehension without defining it as a variable. 
+
+To fix this, we can modify the function to include the `floor` variable as a parameter, instead of trying to access it from the outer scope. Here's the corrected code:
+
+```python
+def passenger_on_board_above(floor):
+    return any(('destin', p, f) in init and ('boarded', p) in init and f > floor for p, t in objects if t == 'passenger')
+```
+
+We just need to make the same modification for the `passenger_on_board_below` function as well:
+
+```python
+def passenger_on_board_below(floor):
+    return any(('destin', p, f) in init and ('boarded', p) in init and f < floor for p, t in objects if t == 'passenger')
+```
+
+With these corrections, the `get_plan` function should run without errors.

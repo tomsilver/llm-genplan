@@ -1,0 +1,8 @@
+Here's the corrected code for the `passenger_on_board_above` function:
+
+```
+def passenger_on_board_above(floor):
+    return any(('boarded', p) in init and ('destin', p, f) in init for p, t in objects if t == 'passenger' for f in range(floor + 1, 6))
+``` 
+
+The error was due to the variable `f` not being defined in the loop.

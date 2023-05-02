@@ -1,0 +1,7 @@
+It seems that there is a missing closing parenthesis in the code. 
+
+Please add a closing parenthesis after the `atom` variable in the line that raises the error:
+
+```
+current_state.add(atom)
+```

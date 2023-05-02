@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    # Get the initial location of the agent
+    current_location = [obj[1] for obj in init if obj[0] == 'at'][0]
+
+    # Initialize an empty plan
+    plan = []
+
+    # Keep walking along the trail until the goal location is reached
+    while current_location not in [arg[1] for arg in goal if arg[0] == 'at']:
+        # Find the adjacent locations that are not hills or water bodies
+        adjacent_locations = [obj[1] for obj in init if obj[0] == 'adjacent' and obj[2] == current_location and 'ishill' not in [arg[0] for arg in init if arg[1] == obj[1]] and 'iswater' not in [arg[0] for arg in init if arg[1] == obj[1]]]
+
+        # If there are adjacent locations to move to, walk to the first one
+        if adjacent_locations:
+            next_location = adjacent_locations[0]
+            plan.append('(walk {} {})'.format(current_location, next_location))
+            init = [arg for arg in init if arg != ('at', current_location)] + [('at', next_location)]
+            current_location = next_location
+
+        # If there are no adjacent locations to move to, the problem is unsolvable
+        else:
+            return None
+
+    # Return the plan to reach the goal location
+    return plan

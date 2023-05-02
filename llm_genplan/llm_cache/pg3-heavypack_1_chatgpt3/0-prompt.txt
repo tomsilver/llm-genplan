@@ -1,0 +1,101 @@
+Domain:
+(define (domain heavy-pack)
+   (:predicates
+		(heavier ?item1 ?item2)
+        (packed ?item)
+        (unpacked ?item)
+        (nothing-above ?item)
+        (box-empty)
+	)
+
+   (:action pack-first
+       :parameters (?item)
+       :precondition (and (box-empty))
+       :effect (and (not (box-empty)) (packed ?item) (nothing-above ?item) (not (unpacked ?item))))
+
+   (:action stack
+       :parameters (?bottom ?top)
+       :precondition (and (packed ?bottom) (nothing-above ?bottom) (heavier ?bottom ?top) (unpacked ?top))
+       :effect (and (packed ?top) (nothing-above ?top) (not (nothing-above ?bottom)) (not (unpacked ?top))))
+)
+
+Example problems:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o215
+    o470
+    o639
+    o693
+    o845
+  )
+  (:init
+    (box-empty)
+    (heavier o215 o470)
+    (heavier o215 o639)
+    (heavier o215 o693)
+    (heavier o215 o845)
+    (heavier o470 o639)
+    (heavier o470 o693)
+    (heavier o470 o845)
+    (heavier o639 o693)
+    (heavier o639 o845)
+    (heavier o845 o693)
+    (unpacked o215)
+    (unpacked o470)
+    (unpacked o639)
+    (unpacked o693)
+    (unpacked o845)
+  )
+  (:goal (and
+    (packed o215)
+    (packed o470)
+    (packed o639)
+    (packed o693)
+    (packed o845)
+    )
+  )    
+)
+        
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o368
+    o457
+    o459
+    o62
+    o641
+    o770
+    o872
+  )
+  (:init
+    (box-empty)
+    (heavier o368 o457)
+    (heavier o368 o459)
+    (heavier o368 o62)
+    (heavier o368 o641)
+    (heavier o368 o872)
+    (heavier o457 o459)
+    (heavier o457 o641)
+    (heavier o459 o641)
+    (heavier o62 o457)
+    (heavier o62 o459)
+    ...
+    (unpacked o368)
+    (unpacked o457)
+    (unpacked o459)
+    (unpacked o62)
+    (unpacked o641)
+    (unpacked o770)
+    (unpacked o872)
+  )
+  (:goal (and
+    (packed o368)
+    (packed o457)
+    (packed o459)
+    (packed o62)
+    (packed o641)
+    (packed o770)
+    (packed o872)
+    )
+  )    
+)
+Write a short summary of this domain in words.

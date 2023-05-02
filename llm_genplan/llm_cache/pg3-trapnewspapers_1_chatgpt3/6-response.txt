@@ -1,0 +1,56 @@
+def get_plan(objects, init, goal):
+    plan = []
+    papers = {}
+    locations = set()
+    
+    # Parse the initial state
+    for fact in init:
+        if fact[0] == 'at':
+            locations.add(fact[1])
+        elif fact[0] == 'unpacked' and fact[1].startswith('paper'):
+            papers[fact[1]] = {'loc': None, 'wanted': False}
+        elif len(fact) > 2 and fact[0] == 'wantspaper' and fact[2].startswith('paper'):
+            papers[fact[2]]['wanted'] = True
+    
+    # Pick up and deliver newspapers until all desired locations are satisfied
+    while any(not p['wanted'] for p in papers.values()):
+        # Pick up all available newspapers from the homebase
+        for paper, pinfo in papers.items():
+            if pinfo['loc'] is None and pinfo['wanted'] and ('ishomebase',) in init:
+                pinfo['loc'] = ('at', 'ishomebase')
+                plan.append('(pick-up {} {})'.format(paper, 'ishomebase'))
+        
+        # Deliver each newspaper to its corresponding location that wants it
+        for loc in locations:
+            papers_here = [p for p, pinfo in papers.items() if pinfo['loc'] == ('at', loc)]
+            if all(not papers[p]['wanted'] for p in papers_here):
+                # This location is already satisfied, no need to deliver anything here
+                continue
+            elif len(papers_here) == 1:
+                # Only one newspaper here, deliver it directly
+                paper = papers_here[0]
+                plan.append('(deliver {} {})'.format(paper, loc))
+                papers[paper]['loc'] = (loc,)
+                papers[paper]['wanted'] = False
+            else:
+                # Multiple newspapers here, need to pick one based on priority
+                priority = {paper: i for i, paper in enumerate(papers_here)}
+                paper = min(papers_here, key=lambda p: priority[p])
+                plan.append('(deliver {} {})'.format(paper, loc))
+                papers[paper]['loc'] = (loc,)
+                papers[paper]['wanted'] = False
+        
+        # Move to the next location
+        if any(pinfo['loc'] is not None and pinfo['loc'][0] == 'at' for pinfo in papers.values()):
+            # There are still newspapers to deliver, move to the next location
+            curr_loc = next(fact[1] for fact in init if fact[0] == 'at')
+            next_loc = next((loc for loc in locations if loc != curr_loc), None)
+            if next_loc is None:
+                # All locations have been visited, but some newspapers are still undelivered
+                return None
+            else:
+                plan.append('(move {} {})'.format(curr_loc, next_loc))
+                init.remove(('at', curr_loc))
+                init.add(('at', next_loc))
+    
+    return plan

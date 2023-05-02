@@ -1,0 +1,6 @@
+The simple strategy for solving all problems in this domain without using search is to use a fixed set of heuristics to determine the optimal sequence of actions required to achieve the goal state. The strategy involves repeatedly applying the following two rules until the goal is achieved:
+
+1. If there is a passenger waiting at a floor where the elevator is currently located, board the passenger.
+2. If there is a passenger on board the elevator whose destination floor is above the current floor and there are no other passengers waiting to be picked up on the floors above the current floor, move the elevator up to the passenger's destination floor. Similarly, if there is a passenger on board the elevator whose destination floor is below the current floor and there are no other passengers waiting to be picked up on the floors below the current floor, move the elevator down to the passenger's destination floor.
+
+By following these rules, the elevator will eventually pick up and drop off all passengers at their desired destination floors, without the need for a search algorithm.

@@ -1,0 +1,3 @@
+
+
+The Miconic domain is a simple elevator system where passengers can be picked up and dropped off at different floors. The domain includes four actions: "board," "depart," "up," and "down," which allow the elevator to move between floors and passengers to enter and exit the elevator. The goal is to serve all passengers by transporting them to their desired destination floors. The domain also includes various predicates such as "origin," "destin," "above," "boarded," "served," and "lift-at" to describe the state of the elevator system. The problem instances define the initial state, the goal state, and the objects used in the domain.

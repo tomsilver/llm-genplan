@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+1. Pick up all newspapers from the homebase that have been unpacked and are wanted by a location.
+2. Deliver each newspaper to its corresponding location that wants it.
+3. Repeat steps 1 and 2 until all desired locations have been satisfied.
+
+This strategy can be applied to any problem in the domain because it only involves simple repetitive actions that can be executed without any need for planning or search. The strategy does not require any explicit reasoning or decision making beyond the basic rules of the domain. It essentially relies on the fact that the delivery agent knows which newspapers are wanted by which locations and can simply pick them up and deliver them without any other considerations.

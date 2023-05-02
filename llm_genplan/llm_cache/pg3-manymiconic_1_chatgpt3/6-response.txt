@@ -1,0 +1,11 @@
+Here is the fixed code:
+
+```python
+def passenger_on_board_above(floor):
+    return any(('destin', p, f) in init and ('boarded', p) in init and f > floor for p, t in objects if t == 'passenger' for _, _, f in init if p in _)
+
+def passenger_waiting_above(floor):
+    return any(('origin', p, f) in init and f > floor for p, t in objects if t == 'passenger' for _, _, f in init)
+```
+
+In the original code, `f` was not defined in the comprehension, causing a `NameError`. I added an additional loop over the `init` state to retrieve the floor variable for each passenger-related predicate.

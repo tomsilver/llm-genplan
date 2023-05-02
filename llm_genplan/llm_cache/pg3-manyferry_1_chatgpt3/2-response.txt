@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to move the ferry directly to the destination location of a car if it is already loaded on the ferry. If the car is not on the ferry, then the ferry moves to the location of the car and boards it. This strategy continues until all cars are transported to their desired locations. 
+
+More specifically, the algorithm can follow these steps:
+1. Start with an empty ferry at the same location as one of the cars.
+2. Board the car onto the ferry and move to the destination location of that car.
+3. Debark the car from the ferry and repeat from step 2 with the next car until all cars have been transported to their desired locations.
+
+This strategy is guaranteed to find a solution since it systematically moves each car to its destination location without backtracking or exploring alternative paths.

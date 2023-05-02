@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    plan = []
+    balls = [obj for obj in objects if obj.startswith("ball")]
+    grippers = [obj for obj in objects if obj.startswith("gripper")]
+
+    while len(goal) > 0:
+        closest_ball = None
+        closest_distance = float('inf')
+
+        # Find closest ball to Robby
+        for ball in balls:
+            ball_loc = [arg for (pred, arg) in init if pred == "at" and arg == ball][0]
+            robby_loc = [arg for (pred, arg) in init if pred == "at-robby"][0]
+            distance = abs(int(ball_loc[4:]) - int(robby_loc[4:])) + abs(int(ball_loc[4:]) - int(robby_loc[4:]))
+            if distance < closest_distance:
+                closest_ball = ball
+                closest_distance = distance
+
+        # Move Robby to closest ball
+        ball_loc = [arg for (pred, arg) in init if pred == "at" and arg == closest_ball][0]
+        plan.append("(move room%s room%s)" % (robby_loc[4:], ball_loc[4:]))
+        init = [(pred, arg) for (pred, arg) in init if pred != "at-robby"] + [("at-robby", ball_loc)]
+
+        # Pick up closest ball
+        gripper = [obj for obj in grippers if (pred, obj) in init and pred == "free"][0]
+        plan.append("(pick %s %s %s)" % (closest_ball, ball_loc, gripper))
+        init = [(pred, arg) for (pred, arg) in init if pred not in ["free", "at"] or arg not in [closest_ball, gripper]] + [("carry", closest_ball, gripper)]
+
+        # Move closest ball to its goal position
+        ball_goal = [arg for (pred, arg) in goal if pred == "at" and arg.startswith(closest_ball)][0]
+        plan.append("(move %s %s)" % (ball_loc, ball_goal))
+        init = [(pred, arg) for (pred, arg) in init if pred != "at" or arg != closest_ball] + [("at", closest_ball, ball_goal)]
+        goal = [(pred, arg) for (pred, arg) in goal if pred != "at" or arg != ball_goal]
+
+        # Drop closest ball
+        plan.append("(drop %s %s %s)" % (closest_ball, ball_goal, gripper))
+        init = [(pred, arg) for (pred, arg) in init if pred not in ["carry", "free"] or arg not in [closest_ball, gripper]] + [("at", closest_ball, ball_goal), ("free", gripper)]
+
+    return plan

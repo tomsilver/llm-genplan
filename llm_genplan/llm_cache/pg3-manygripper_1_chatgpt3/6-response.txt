@@ -1,0 +1,19 @@
+def get_plan(objects, init, goal):
+    # get initial ball locations
+    ball_locs = {}
+    for ball in objects:
+        ball_loc = [arg for (pred, arg1) in init if pred == "at" and arg1 == ball][0]
+        ball_locs[ball] = ball_loc
+
+    # create a plan to move each ball to its goal location
+    plan = []
+    for ball, goal_loc in goal:
+        curr_loc = ball_locs[ball]
+        if curr_loc != goal_loc:
+            plan.append("(move {} {})".format(curr_loc, goal_loc))
+            plan.append("(pick {} {} {})".format(ball, goal_loc, "gripper0"))
+            plan.append("(move {} {})".format(goal_loc, curr_loc))
+            plan.append("(drop {} {} {})".format(ball, curr_loc, "gripper0"))
+        ball_locs[ball] = goal_loc
+
+    return plan

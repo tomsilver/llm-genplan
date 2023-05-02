@@ -1,0 +1,24 @@
+def get_plan(objects, init, goal):
+    current_location = next(obj[1] for obj in init if obj[0] == 'at')
+    plan = []
+    while set(goal) - set(init):
+        # Check if current location satisfies a goal predicate
+        for pred in goal:
+            if pred in init:
+                break
+        else:
+            # Find safe adjacent locations
+            adjacent_locations = {obj[1] for obj in init if obj[0] == 'adjacent' and obj[2] == current_location} - {arg[1] for arg in init if arg[0] == 'ishill' or arg[0] == 'iswater'}
+            # If there are no safe adjacent locations, backtrack to the previous location
+            if not adjacent_locations:
+                plan.pop()
+                init.remove(('at', current_location))
+                current_location = next(obj[1] for obj in init if obj[0] == 'at')
+            else:
+                # Move to a random safe adjacent location
+                next_location = random.choice(list(adjacent_locations))
+                init.remove(('at', current_location))
+                init.append(('at', next_location))
+                plan.append(f'(walk {current_location} {next_location})')
+                current_location = next_location
+    return plan

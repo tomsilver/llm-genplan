@@ -1,0 +1,20 @@
+def get_plan(objects, init, goal):
+    # Get the location of a ball in the initial state
+    def get_ball_location(ball):
+        for (pred, arg) in init:
+            if pred == "at" and arg[0] == ball:
+                return arg[1]
+        return None
+
+    # Create a plan to move a ball from one location to another
+    def move_ball(ball, from_loc, to_loc):
+        return f"(move-gripper gripper0 {from_loc} {to_loc}) (pick-up {ball} gripper0) (move-gripper gripper0 {to_loc} {from_loc}) (put-down {ball} gripper0)"
+
+    # Create a plan to move all balls to their goal locations
+    plan = []
+    for ball in objects:
+        from_loc = get_ball_location(ball)
+        to_loc = [arg for (pred, arg) in goal if pred == "at" and arg[0] == ball][0][1]
+        if from_loc != to_loc:
+            plan.append(move_ball(ball, from_loc, to_loc))
+    return plan

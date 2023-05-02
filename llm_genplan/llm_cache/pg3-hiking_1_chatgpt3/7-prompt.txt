@@ -1,0 +1,63 @@
+Given this task:
+(define (problem hiking (:domain hiking)
+  (:objects
+    r0_c0 - loc
+    r0_c1 - loc
+    r0_c2 - loc
+    r0_c3 - loc
+    r0_c4 - loc
+    r0_c5 - loc
+    r0_c6 - loc
+    r0_c7 - loc
+    r0_c8 - loc
+    r0_c9 - loc
+    ...
+  )
+  (:init
+    (adjacent r0_c0 r0_c1)
+    (adjacent r0_c0 r1_c0)
+    (adjacent r0_c1 r0_c0)
+    (adjacent r0_c1 r0_c2)
+    (adjacent r0_c1 r1_c1)
+    (adjacent r0_c2 r0_c1)
+    (adjacent r0_c2 r0_c3)
+    (adjacent r0_c2 r1_c2)
+    (adjacent r0_c3 r0_c2)
+    (adjacent r0_c3 r0_c4)
+    ...
+    (at r0_c0)
+    (ishill r7_c4)
+    (ishill r7_c7)
+    (iswater r0_c7)
+    (iswater r0_c8)
+    (iswater r1_c0)
+    (iswater r1_c1)
+    (iswater r1_c5)
+    (iswater r1_c6)
+    (iswater r2_c0)
+    (iswater r2_c1)
+    (iswater r2_c6)
+    (iswater r3_c0)
+    ...
+    (ontrail r0_c0 r0_c1)
+    (ontrail r0_c1 r0_c2)
+    (ontrail r0_c2 r0_c3)
+    (ontrail r0_c3 r1_c3)
+    (ontrail r1_c3 r2_c3)
+    (ontrail r1_c9 r0_c9)
+    (ontrail r2_c3 r3_c3)
+    (ontrail r2_c9 r1_c9)
+    (ontrail r3_c3 r4_c3)
+    (ontrail r3_c9 r2_c9)
+    ...
+  )
+  (:goal (and
+    (at r0_c9)
+    )
+  )    
+)
+        
+The code returned this plan: ['(move r0_c0 r0_c1)', '(visit r0_c1)', '(move r0_c1 r0_c0)', '(visit r0_c0)', '(move r0_c0 r0_c1)', '(visit r0_c1)', '(move r0_c1 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c3)', '(visit r0_c3)', '(move r0_c3 r0_c4)', '(visit r0_c4)', '(move r0_c4 r0_c3)', '(visit r0_c3)', '(move r0_c3 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c3)', '(visit r0_c3)', '(move r0_c3 r1_c3)', '(visit r1_c3)', '(move r1_c3 r1_c4)', '(visit r1_c4)', '(move r1_c4 r0_c4)', '(visit r0_c4)', '(move r0_c4 r0_c3)', '(visit r0_c3)', '(move r0_c3 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c3)', '(visit r0_c3)', '(move r0_c3 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c3)', '(visit r0_c3)', '(move r0_c3 r1_c3)', '(visit r1_c3)', '(move r1_c3 r1_c2)', '(visit r1_c2)', '(move r1_c2 r0_c2)', '(visit r0_c2)', '(move r0_c2 r1_c2)', '(visit r1_c2)', '(move r1_c2 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c3)', '(visit r0_c3)', '(move r0_c3 r0_c2)', '(visit r0_c2)', '(move r0_c2 r0_c1)', '(visit r0_c1)', '(move r0_c1 r0_c0)', '(visit r0_c0)', '(move r0_c0 r0_c1)', '(visit r0_c1)', '(move r0_c1 r0_c2)', '(visit r0_c2)', '(move r0_c2 r1_c2)', '(visit r1_c2)', '(move r1_c2 r1_c3)', '(visit r1_c3)', '(move r1_c3 r1_c2)', '(visit r1_c2)', '(move r1_c2 r1_c3)', '(visit r1_c3)', '(move r1_c3 r1_c2)', '(visit r1_c2)', '(move r1_c2 r1_c3)', '(visit r1_c3)', '(move r1_c3 r2_c3)', '(visit r2_c3)', '(move r2_c3 r2_c2)', '(visit r2_c2)', '(move r2_c2 r2_c3)', '(visit r2_c3)', '(move r2_c3 r3_c3)', '(visit r3_c3)', '(move r3_c3 r3_c2)', '(visit r3_c2)', '(move r3_c2 r4_c2)', '(visit r4_c2)', '(move r4_c2 r5_c2)', '(visit r5_c2)', '(move r5_c2 r4_c2)', '(visit r4_c2)', '(move r4_c2 r3_c2)', '(visit r3_c2)', '(move r3_c2 r4_c2)', '(visit r4_c2)', '(move r4_c2 r4_c3)', '(visit r4_c3)', '(move r4_c3 r4_c2)', '(visit r4_c2)', '(move r4_c2 r3_c2)', '(visit r3_c2)', '(move r3_c2 r2_c2)', '(visit r2_c2)', '(move r2_c2 r2_c3)', '(visit r2_c3)', '(move r2_c3 r1_c3)', '(visit r1_c3)', '(move r1_c3 r1_c4)', '(visit r1_c4)', '(move r1_c4 r2_c4)', '(visit r2_c4)', '(move r2_c4 r1_c4)', '(visit r1_c4)', '(move r1_c4 r2_c4)', '(visit r2_c4)', '(move r2_c4 r3_c4)', '(visit r3_c4)', '(move r3_c4 r3_c5)', '(visit r3_c5)', '(move r3_c5 r3_c4)', '(visit r3_c4)', '(move r3_c4 r4_c4)', '(visit r4_c4)', '(move r4_c4 r4_c3)', '(visit r4_c3)', '(move r4_c3 r4_c4)', '(visit r4_c4)', '(move r4_c4 r4_c3)', '(visit r4_c3)', '(move r4_c3 r3_c3)', '(visit r3_c3)', '(move r3_c3 r3_c4)', '(visit r3_c4)', '(move r3_c4 r3_c5)', '(visit r3_c5)', '(move r3_c5 r3_c6)', '(visit r3_c6)', '(move r3_c6 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c8)', '(visit r3_c8)', '(move r3_c8 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c8)', '(visit r3_c8)', '(move r3_c8 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c8)', '(visit r3_c8)', '(move r3_c8 r3_c7)', '(visit r3_c7)', '(move r3_c7 r4_c7)', '(visit r4_c7)', '(move r4_c7 r4_c8)', '(visit r4_c8)', '(move r4_c8 r3_c8)', '(visit r3_c8)', '(move r3_c8 r4_c8)', '(visit r4_c8)', '(move r4_c8 r5_c8)', '(visit r5_c8)', '(move r5_c8 r5_c9)', '(visit r5_c9)', '(move r5_c9 r6_c9)', '(visit r6_c9)', '(move r6_c9 r6_c8)', '(visit r6_c8)', '(move r6_c8 r6_c9)', '(visit r6_c9)', '(move r6_c9 r5_c9)', '(visit r5_c9)', '(move r5_c9 r6_c9)', '(visit r6_c9)', '(move r6_c9 r5_c9)', '(visit r5_c9)', '(move r5_c9 r4_c9)', '(visit r4_c9)', '(move r4_c9 r5_c9)', '(visit r5_c9)', '(move r5_c9 r6_c9)', '(visit r6_c9)', '(move r6_c9 r6_c8)', '(visit r6_c8)', '(move r6_c8 r5_c8)', '(visit r5_c8)', '(move r5_c8 r4_c8)', '(visit r4_c8)', '(move r4_c8 r3_c8)', '(visit r3_c8)', '(move r3_c8 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r1_c8)', '(visit r1_c8)', '(move r1_c8 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c7)', '(visit r2_c7)', '(move r2_c7 r1_c7)', '(visit r1_c7)', '(move r1_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r1_c7)', '(visit r1_c7)', '(move r1_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r3_c8)', '(visit r3_c8)', '(move r3_c8 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c6)', '(visit r3_c6)', '(move r3_c6 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c6)', '(visit r3_c6)', '(move r3_c6 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r1_c8)', '(visit r1_c8)', '(move r1_c8 r1_c7)', '(visit r1_c7)', '(move r1_c7 r1_c8)', '(visit r1_c8)', '(move r1_c8 r2_c8)', '(visit r2_c8)', '(move r2_c8 r1_c8)', '(visit r1_c8)', '(move r1_c8 r1_c7)', '(visit r1_c7)', '(move r1_c7 r1_c8)', '(visit r1_c8)', '(move r1_c8 r1_c9)', '(visit r1_c9)', '(move r1_c9 r1_c8)', '(visit r1_c8)', '(move r1_c8 r1_c7)', '(visit r1_c7)', '(move r1_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c9)', '(visit r2_c9)', '(move r2_c9 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c9)', '(visit r2_c9)', '(move r2_c9 r1_c9)', '(visit r1_c9)', '(move r1_c9 r2_c9)', '(visit r2_c9)', '(move r2_c9 r2_c8)', '(visit r2_c8)', '(move r2_c8 r2_c7)', '(visit r2_c7)', '(move r2_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c6)', '(visit r3_c6)', '(move r3_c6 r3_c7)', '(visit r3_c7)', '(move r3_c7 r3_c8)', '(visit r3_c8)', '(move r3_c8 r4_c8)', '(visit r4_c8)', '(move r4_c8 r5_c8)', '(visit r5_c8)', '(move r5_c8 r6_c8)', '(visit r6_c8)', '(move r6_c8 r7_c8)', '(visit r7_c8)', '(move r7_c8 r6_c8)', '(visit r6_c8)', '(move r6_c8 r5_c8)', '(visit r5_c8)', '(move r5_c8 r5_c9)', '(visit r5_c9)', '(move r5_c9 r6_c9)', '(visit r6_c9)', '(move r6_c9 r7_c9)', '(visit r7_c9)', '(move r7_c9 r7_c8)', '(visit r7_c8)', '(move r7_c8 r6_c8)', '(visit r6_c8)', '(move r6_c8 r6_c9)', '(visit r6_c9)', '(move r6_c9 r6_c8)', '(visit r6_c8)', '(move r6_c8 r6_c7)', '(visit r6_c7)', '(move r6_c7 r6_c8)', '(visit r6_c8)', '(move r6_c8 r5_c8)', '(visit r5_c8)', '(move r5_c8 r5_c7)', '(visit r5_c7)', '(move r5_c7 r4_c7)', '(visit r4_c7)', '(move r4_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r4_c7)', '(visit r4_c7)', '(move r4_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r3_c7)', '(visit r3_c7)', '(move r3_c7 r2_c7)', '(visit r2_c7)', '(move r2_c7 r2_c8)', '(visit r2_c8)', '(move r2_c8 r1_c8)', '(visit r1_c8)', '(move r1_c8 r1_c9)', '(visit r1_c9)', '(move r1_c9 r0_c9)', '(visit r0_c9)']
+However, the action (move r0_c0 r0_c1) is invalid at step 0.
+NOTE: the valid operators are: (climb ?from ?to) (walk ?from ?to).
+Fix the code.

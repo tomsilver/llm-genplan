@@ -1,0 +1,48 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o215
+    o470
+    o639
+    o693
+    o845
+  )
+  (:init
+    (box-empty)
+    (heavier o215 o470)
+    (heavier o215 o639)
+    (heavier o215 o693)
+    (heavier o215 o845)
+    (heavier o470 o639)
+    (heavier o470 o693)
+    (heavier o470 o845)
+    (heavier o639 o693)
+    (heavier o639 o845)
+    (heavier o845 o693)
+    (unpacked o215)
+    (unpacked o470)
+    (unpacked o639)
+    (unpacked o693)
+    (unpacked o845)
+  )
+  (:goal (and
+    (packed o215)
+    (packed o470)
+    (packed o639)
+    (packed o693)
+    (packed o845)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 104, in get_plan
+    sorted_objects = sorted(objects, key=lambda obj: (indirect_weight(obj, state), sum([1 for other in objects if other != obj and ('heavier', obj, other) in init])))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 104, in <lambda>
+    sorted_objects = sorted(objects, key=lambda obj: (indirect_weight(obj, state), sum([1 for other in objects if other != obj and ('heavier', obj, other) in init])))
+                                                                           ^^^^^
+NameError: cannot access free variable 'state' where it is not associated with a value in enclosing scope
+
+Fix the code.

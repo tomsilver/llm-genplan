@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    # Define helper function for indirect weight comparison
+    def indirect_weight(obj, state):
+        return sum([1 for other in objects if other != obj and ('heavier', obj, other) in state])
+
+    # Sort objects by weight and indirect weight
+    sorted_objects = sorted(objects, key=lambda obj: (indirect_weight(obj, state), sum([1 for other in objects if other != obj and ('heavier', obj, other) in init])))
+
+    # Initialize plan and state
+    plan = []
+    state = set(init)
+
+    # Pack objects in descending order of weight
+    for obj in sorted_objects:
+        if ('packed', obj) in state:
+            continue  # Object is already packed, skip it
+        elif not state:  # Box is empty, pack first object
+            state.add(('packed', obj))
+            state.add(('nothing-above', obj))
+            state.discard(('unpacked', obj))
+            plan.append(f'(pack-first {obj})')
+        else:
+            # Find heaviest packed object that can support current object
+            supported = None
+            for packed in [o for o in objects if ('packed', o) in state]:
+                if ('heavier', packed, obj) in state and ('nothing-above', packed) in state:
+                    if supported is None or ('heavier', packed, supported) in state:
+                        supported = packed
+            if supported is not None:
+                state.add(('packed', obj))
+                state.add(('nothing-above', obj))
+                state.discard(('unpacked', obj))
+                state.discard(('nothing-above', supported))
+                plan.append(f'(stack {supported} {obj})')
+            else:
+                # No packed object can support current object, pack it first
+                state.add(('packed', obj))
+                state.add(('nothing-above', obj))
+                state.discard(('unpacked', obj))
+                plan.append(f'(pack-first {obj})')
+
+    # Check if goal is satisfied
+    if set(goal).issubset(state):
+        return plan
+    else:
+        return None  # Goal is not achievable
