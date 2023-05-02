@@ -1,0 +1,15 @@
+from pygraphplan import GraphPlan
+
+# Define the domain and problem files
+domain_file = 'gripper-strips-domain.pddl'
+problem_file = 'gripper-strips-problem.pddl'
+
+# Create a GraphPlan object with the files
+planner = GraphPlan(domain_file, problem_file)
+
+# Solve the problem and get the plan
+plan = planner.plan()
+
+# Print the plan
+for action in plan:
+    print(action)

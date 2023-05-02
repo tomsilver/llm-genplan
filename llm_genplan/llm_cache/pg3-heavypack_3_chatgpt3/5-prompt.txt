@@ -1,0 +1,56 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o205
+    o251
+    o476
+    o589
+    o851
+    o922
+    o941
+  )
+  (:init
+    (box-empty)
+    (heavier o205 o851)
+    (heavier o251 o205)
+    (heavier o251 o589)
+    (heavier o251 o851)
+    (heavier o476 o205)
+    (heavier o476 o251)
+    (heavier o476 o589)
+    (heavier o476 o851)
+    (heavier o476 o922)
+    (heavier o589 o205)
+    ...
+    (unpacked o205)
+    (unpacked o251)
+    (unpacked o476)
+    (unpacked o589)
+    (unpacked o851)
+    (unpacked o922)
+    (unpacked o941)
+  )
+  (:goal (and
+    (packed o205)
+    (packed o251)
+    (packed o476)
+    (packed o589)
+    (packed o851)
+    (packed o922)
+    (packed o941)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "<file-name-omitted>", line 96
+    return None
+    ^^^^^^^^^^^
+SyntaxError: 'return' outside function
+
+Fix the code.

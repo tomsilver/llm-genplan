@@ -1,0 +1,3 @@
+
+
+The Miconic domain is a planning problem that involves a building with multiple floors, a lift, and passengers who need to be transported to their desired floors. The domain includes actions such as boarding the lift, departing from the lift, and moving the lift up or down. The problem involves specifying the initial state of the building, the passengers, and their destinations, as well as defining a goal state where all passengers have been served. The problem can have multiple variants with different numbers of floors, passengers, and lifts.

@@ -1,0 +1,9 @@
+The strategy for solving all problems in this domain without using search is to follow the trail network from the initial location to the goal location, while avoiding hills and water bodies. Specifically, the strategy can be implemented as follows:
+
+1. Start at the initial location.
+2. If the goal location is adjacent and not a hill or water body, move to it and stop.
+3. If the goal location is not adjacent, but there exists a location on the trail network that is adjacent to both the current location and the goal location, move to that location.
+4. Repeat step 3 until the goal location is adjacent and not a hill or water body.
+5. Move to the goal location and stop.
+
+This strategy does not require any search because it only follows a predefined path on the trail network, and ensures that the agent only moves to adjacent locations that are not hills or water bodies. Therefore, it is guaranteed to find a solution if one exists, and to do so optimally.

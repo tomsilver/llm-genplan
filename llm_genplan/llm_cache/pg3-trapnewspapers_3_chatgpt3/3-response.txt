@@ -1,0 +1,26 @@
+def get_plan(objects, init, goal):
+    # Pick up all unpacked papers at home base
+    home_base = [obj for obj in objects if obj[0].startswith("loc") and "homebase" in init(obj)]
+    papers = [obj for obj in objects if obj[0].startswith("paper") and "unpacked" in init(obj)]
+    actions = []
+    for paper in papers:
+        actions.append(f"(pick-up {paper[0]} {home_base[0][0]})")
+        actions.append(f"(deliver {paper[0]} {paper[0]})")
+
+    # Deliver remaining papers to the corresponding locations directly
+    for obj in objects:
+        if obj[0].startswith("loc") and "wantspaper" in init(obj):
+            paper = next((p for p in papers if f"carrying {p[0]}" in init and f"at {obj[0]}" in init), None)
+            if paper:
+                actions.append(f"(deliver {paper[0]} {obj[0]})")
+
+    # Move any remaining papers to a safe location and deliver them from there
+    for paper in papers:
+        if f"carrying {paper[0]}" in init:
+            safe_locs = [obj for obj in objects if obj[0].startswith("loc") and "safe" in init(obj)]
+            safe_loc = next((loc for loc in safe_locs if f"at {loc[0]}" in init), None)
+            if safe_loc:
+                actions.append(f"(move {paper[0]} {safe_loc[0]})")
+                actions.append(f"(deliver {paper[0]} {paper[0]})")
+
+    return actions

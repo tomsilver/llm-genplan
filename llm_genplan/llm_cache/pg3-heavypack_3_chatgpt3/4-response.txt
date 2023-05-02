@@ -1,0 +1,20 @@
+if box_empty() in init:
+    # Pack the first item into the empty box
+    plan.append(pack_first(item))
+    init.remove(box_empty())
+    init.add(packed(item))
+    init.add(nothing_above(item))
+    init.remove(unpacked(item))
+else:
+    # Find a packed item to stack on
+    packed_item = find_packed_item_to_stack_on(item)
+    if packed_item is not None:
+        # Stack the item on the packed item
+        plan.append(stack(packed_item, item))
+        init.remove(nothing_above(packed_item))
+        init.add(nothing_above(item))
+        init.add(packed(item))
+        init.remove(unpacked(item))
+    else:
+        # Unable to pack the item
+        return None

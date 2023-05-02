@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    # extract the initial location from the initial state
+    current_loc = next(obj[1] for obj in init if obj[0] == 'at')
+
+    # extract the goal location from the goal state
+    goal_loc = next(obj[1] for obj in goal if obj[0] == 'at')
+
+    # define a recursive search function to explore the space of plans
+    def search(path):
+        # check if the current location satisfies the goal
+        if current_loc == goal_loc:
+            return path
+
+        # check if there exists a location on the trail network that is adjacent
+        # to both the current location and the goal location
+        for loc in (obj[2] for obj in init if
+                    obj[0] == 'ontrail' and
+                    obj[1] == current_loc):
+            if loc == goal_loc or \
+                    ('adjacent', loc, goal_loc) in init:
+                # move to the adjacent location
+                move = '(walk {} {})'.format(current_loc, loc) \
+                    if ('ishill', loc) not in init and \
+                       ('iswater', loc) not in init else \
+                       '(climb {} {})'.format(current_loc, loc)
+
+                # recursively search from the adjacent location
+                result = search(path + [move])
+                if result is not None:
+                    return result
+
+        # no plan was found, backtrack
+        return None
+
+    # start the search from the initial location
+    plan = search([])
+
+    # return an empty plan if no plan was found
+    return plan if plan is not None else []

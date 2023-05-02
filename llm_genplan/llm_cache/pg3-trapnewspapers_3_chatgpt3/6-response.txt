@@ -1,0 +1,12 @@
+def get_plan(objects, init, goal):
+    # Pick up all unpacked papers at home base
+    home_base = [obj for obj in objects if obj[0].startswith("loc") and "ishomebase" in init(obj)]
+    papers = [obj for obj in objects if obj[0].startswith("paper") and "unpacked" in init(obj)]
+    actions = []
+    for paper in papers:
+        actions.append(f"(pick-up {paper[0]} {home_base[0][0]})")
+        dest_loc = next((loc for loc in objects if loc[0].startswith("loc") and "wantspaper" in init(loc) and f"at {loc[0]}" in [p[0] for p in init]), None)
+        if dest_loc:
+            actions.append(f"(deliver {paper[0]} {dest_loc[0]})")
+
+    return actions

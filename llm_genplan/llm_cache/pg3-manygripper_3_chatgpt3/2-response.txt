@@ -1,0 +1,5 @@
+The simple strategy for solving all problems in this domain without using search is the "graphplan" algorithm. The algorithm works by building a layered graph representation of the planning problem, where each layer represents the state of the world after a certain number of actions have been executed. The graph is built by iteratively expanding the layers until either a goal layer is found or no new layers can be added.
+
+To apply this strategy to the Gripper-Strips domain, the algorithm would start with an initial layer representing the initial state of the world, and then iteratively expand new layers by applying the available actions to the previous layer's state. The algorithm would continue to expand layers until a layer is found that satisfies the goal condition.
+
+This approach can solve all problems in the Gripper-Strips domain without using search because the graphplan algorithm can be shown to be sound and complete for STRIPS planning problems, which includes the Gripper-Strips domain.

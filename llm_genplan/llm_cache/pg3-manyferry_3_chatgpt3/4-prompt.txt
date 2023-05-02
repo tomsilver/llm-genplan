@@ -1,0 +1,69 @@
+Given this task:
+(define (problem ferryprob (:domain ferry)
+  (:objects
+    c0
+    c1
+    c2
+    c3
+    c4
+    l0
+    l1
+    l10
+    l2
+    l3
+    ...
+  )
+  (:init
+    (at c0 l8)
+    (at c1 l2)
+    (at c2 l5)
+    (at c3 l9)
+    (at c4 l7)
+    (at-ferry l10)
+    (car c0)
+    (car c1)
+    (car c2)
+    (car c3)
+    (car c4)
+    (empty-ferry)
+    (location l0)
+    (location l1)
+    (location l10)
+    (location l2)
+    (location l3)
+    (location l4)
+    (location l5)
+    (location l6)
+    (location l7)
+    (location l8)
+    ...
+    (not-eq l0 l1)
+    (not-eq l0 l10)
+    (not-eq l0 l2)
+    (not-eq l0 l3)
+    (not-eq l0 l4)
+    (not-eq l0 l5)
+    (not-eq l0 l6)
+    (not-eq l0 l7)
+    (not-eq l0 l8)
+    (not-eq l0 l9)
+    ...
+  )
+  (:goal (and
+    (at c0 l9)
+    (at c1 l1)
+    (at c2 l9)
+    (at c3 l0)
+    (at c4 l7)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(board c2 at-ferry)', '(board c3 at-ferry)', '(board c4 at-ferry)', '(board c0 at-ferry)', '(board c1 at-ferry)', '(sail l0 l10)', '(debark c3 l0)', '(debark c2 l9)', '(debark c1 l1)', '(debark c0 l9)', '(debark c4 l7)'].
+NOTE: (board c2 at-ferry) has an unsatisfied precondition at time 0
+(Follow each of:
+    (Set (location at-ferry) to true)
+    and (Set (at c2 at-ferry) to true)
+    and (Set (at-ferry at-ferry) to true)
+)
+Fix the code.

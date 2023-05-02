@@ -1,0 +1,48 @@
+def get_plan(objects, init, goal):
+    # Get the set of floors and passengers from the objects
+    floors = {o for o, t in objects if t == 'floor'}
+    passengers = {o for o, t in objects if t == 'passenger'}
+    
+    # Initialize the current floor and direction of the lift
+    current_floor = next(f for f in floors if ('lift-at', f) in init)
+    lift_direction = 'up'
+    
+    # Define a helper function to check if there are waiting passengers on a floor
+    def has_waiting_passengers(floor):
+        return any(('origin', p, floor) in init and ('not', ('served', p)) not in init for p in passengers)
+    
+    # Define a list to store the sequence of actions
+    plan = []
+    
+    # Loop until all passengers have been served
+    while not all(('served', p) in init for p in passengers):
+        # Check if there are any waiting passengers on the current floor. If so, board them.
+        waiting_passengers = [p for p in passengers if ('origin', p, current_floor) in init and ('not', ('boarded', p)) not in init]
+        if waiting_passengers:
+            for p in waiting_passengers:
+                plan.append(f'(board {current_floor} {p})')
+                init.discard(('origin', p, current_floor))
+                init.add(('boarded', p))
+        
+        # Determine the direction in which the lift needs to move (up or down) based on the destination floors of the remaining waiting passengers.
+        remaining_destinations = {f for (pred, p, f) in init if pred == 'destin' and p in passengers and ('not', ('served', p)) not in init}
+        if remaining_destinations:
+            next_floor = min(remaining_destinations) if lift_direction == 'up' else max(remaining_destinations)
+            if next_floor == current_floor:
+                lift_direction = 'up' if lift_direction == 'down' else 'down'
+                next_floor = min(remaining_destinations) if lift_direction == 'up' else max(remaining_destinations)
+        else:
+            next_floor = min(floors) if lift_direction == 'up' else max(floors)
+        
+        # Move the lift in the determined direction to the next floor with waiting passengers.
+        while current_floor != next_floor:
+            if lift_direction == 'up':
+                current_floor = next(f for f in floors if ('above', current_floor, f) in init)
+                plan.append(f'(up {current_floor} {next(f for f in floors if ("above", current_floor, f) in init)})')
+            else:
+                current_floor = next(f for f in floors if ('above', f, current_floor) in init)
+                plan.append(f'(down {current_floor} {next(f for f in floors if ("above", f, current_floor) in init)})')
+        
+        # Check if there are any passengers on the lift who have reached their destination. If so, depart them.
+        on_board_passengers = [p for p in passengers if ('boarded', p) in init and ('destin', p, current_floor) in init]
+        if

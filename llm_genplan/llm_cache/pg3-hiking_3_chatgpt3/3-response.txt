@@ -1,0 +1,32 @@
+def get_plan(objects, init, goal):
+    # extract the initial location from the initial state
+    current_loc = next(obj[1] for obj in init if obj[0] == 'at')
+
+    # extract the goal location from the goal state
+    goal_loc = next(obj[1] for obj in goal if obj[0] == 'at')
+
+    # iterate until the current location is adjacent to the goal location
+    while not ((current_loc == goal_loc) or
+               ('adjacent', current_loc, goal_loc) in init):
+        # find the next location on the trail network that is adjacent to both
+        # the current location and the goal location
+        next_loc = next(obj[1] for obj in init if
+                        obj[0] == 'ontrail' and
+                        obj[1] == current_loc and
+                        ('adjacent', obj[2], goal_loc) in init)
+
+        # move to the next location
+        move = '(walk {} {})'.format(current_loc, next_loc) \
+            if ('ishill', next_loc) not in init and \
+               ('iswater', next_loc) not in init else \
+               '(climb {} {})'.format(current_loc, next_loc)
+
+        current_loc = next_loc
+
+    # move to the goal location
+    move = '(walk {} {})'.format(current_loc, goal_loc) \
+        if ('ishill', goal_loc) not in init and \
+           ('iswater', goal_loc) not in init else \
+           '(climb {} {})'.format(current_loc, goal_loc)
+
+    return [move]

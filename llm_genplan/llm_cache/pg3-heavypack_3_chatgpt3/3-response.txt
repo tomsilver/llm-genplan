@@ -1,0 +1,70 @@
+def get_plan(objects, init, goal):
+    # Define the predicates and actions of the heavy-pack domain
+    def heavier(item1, item2):
+        return ('heavier', item1, item2)
+
+    def packed(item):
+        return ('packed', item)
+
+    def unpacked(item):
+        return ('unpacked', item)
+
+    def nothing_above(item):
+        return ('nothing-above', item)
+
+    def box_empty():
+        return ('box-empty',)
+
+    def pack_first(item):
+        return ('pack-first', item)
+
+    def stack(bottom, top):
+        return ('stack', bottom, top)
+
+    # Define a function to check if a given item is packed
+    def is_packed(item):
+        return packed(item) in init
+
+    # Define a function to check if a given item is unpacked
+    def is_unpacked(item):
+        return unpacked(item) in init
+
+    # Define a function to find a packed item to stack on
+    def find_packed_item_to_stack_on(item):
+        for packed_item in sorted(objects, key=lambda x: heavier(x, item), reverse=True):
+            if is_packed(packed_item) and nothing_above(packed_item) in init:
+                return packed_item
+        return None
+
+    # Sort the objects in descending order of weight
+    sorted_objects = sorted(objects, key=lambda x: sum(heavier(x, y) in init for y in objects), reverse=True)
+
+    # Pack the items into the box
+    plan = []
+    for item in sorted_objects:
+        if box_empty() in init:
+            # Pack the first item into the empty box
+            plan.append(pack_first(item))
+            init.remove(box_empty())
+            init.add(packed(item))
+            init.add(nothing_above(item))
+            init.remove(unpacked(item))
+        else:
+            # Find a packed item to stack on
+            packed_item = find_packed_item_to_stack_on(item)
+            if packed_item is not None:
+                # Stack the item on the packed item
+                plan.append(stack(packed_item, item))
+                init.remove(nothing_above(packed_item))
+                init.add(nothing_above(item))
+                init.add(packed(item))
+                init.remove(unpacked(item))
+            else:
+                # Unable to pack the item
+                return None
+
+    # Check if the goal state is achieved
+    if all(atom in init for atom in goal):
+        return plan
+    else:
+        return None

@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    # Initialize the plan as an empty list
+    plan = []
+
+    # Load all the cars onto the ferry
+    cars_on_ferry = []
+    for car in objects:
+        if ('car', car) in init:
+            cars_on_ferry.append(car)
+            plan.append(f'(board {car} at-ferry)')
+    plan.append('(sail l0 l10)')
+
+    # Unload the cars at their final destinations
+    for atom in goal:
+        if atom[0] == 'at':
+            car, location = atom[1:]
+            if car in cars_on_ferry:
+                plan.append(f'(debark {car} {location})')
+                cars_on_ferry.remove(car)
+
+    # Repeat the loading, sailing, and unloading process until all cars have been transported
+    while cars_on_ferry:
+        plan.append('(sail l10 l0)')
+        for car in objects:
+            if ('car', car) in init and car not in cars_on_ferry:
+                plan.append(f'(board {car} at-ferry)')
+                cars_on_ferry.append(car)
+        for atom in goal:
+            if atom[0] == 'at':
+                car, location = atom[1:]
+                if car in cars_on_ferry:
+                    plan.append(f'(debark {car} {location})')
+                    cars_on_ferry.remove(car)
+
+    return plan

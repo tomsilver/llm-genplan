@@ -1,0 +1,25 @@
+The error message indicates that the Python interpreter could not find the "pygraphplan" module. This may be because the module is not installed or because the interpreter is not looking in the correct directory.
+
+To fix this issue, you can try installing the "pygraphplan" module using pip. Open a terminal or command prompt and type:
+
+```
+pip install pygraphplan
+```
+
+This command will download and install the "pygraphplan" module along with any necessary dependencies.
+
+If you have already installed the module but are still encountering the error, you may need to make sure that the Python interpreter is looking in the correct directory for the module. One way to do this is to check the Python path using the following code:
+
+```python
+import sys
+print(sys.path)
+```
+
+This will print a list of directories that the Python interpreter is searching for modules. Make sure that the directory containing the "pygraphplan" module is included in this list. If it is not, you can add it using the following code:
+
+```python
+import sys
+sys.path.append('/path/to/pygraphplan')
+```
+
+Replace "/path/to/pygraphplan" with the actual path to the directory containing the "pygraphplan" module.

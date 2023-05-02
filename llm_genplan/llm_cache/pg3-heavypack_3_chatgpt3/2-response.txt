@@ -1,0 +1,7 @@
+The simple strategy for solving all problems in this domain without using search is to sort the items in descending order of weight, and then pack them into the box one by one from heaviest to lightest using the `pack-first` and `stack` actions defined in the domain.
+
+To apply this strategy, we first sort the items in descending order of weight, and then iterate through the sorted list of items. For each item, we try to apply the `pack-first` action to pack it into the box. If the `pack-first` action is applicable, we apply it and move on to the next item. If the `pack-first` action is not applicable, it means the box is not empty, so we need to find a packed item to stack the current item on top of.
+
+To do this, we iterate through the list of previously packed items, in the order they were packed, and check whether the `stack` action is applicable to stack the current item on top of the packed item. If the `stack` action is applicable, we apply it and move on to the next item. If none of the previously packed items can be stacked on, we know that the current item cannot be packed, and the problem is unsolvable.
+
+Using this strategy, we can solve any problem in this domain without resorting to search, as long as the preconditions of the actions are satisfied and the problem is solvable.

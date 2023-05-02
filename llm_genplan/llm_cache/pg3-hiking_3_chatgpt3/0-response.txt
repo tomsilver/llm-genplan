@@ -1,0 +1,3 @@
+
+
+The hiking domain is a simple planning domain that models hiking on a trail network. The domain includes locations that are either hills or water bodies, and predicates to check if a location is on the trail, adjacent to another location, or the current location. The actions available in this domain are walking and climbing, where walking can only be done between adjacent non-hill locations, and climbing can only be done between adjacent hill locations. The goal of the domain is to reach a specific location on the trail network.

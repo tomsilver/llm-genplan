@@ -1,0 +1,54 @@
+def heavy_pack_planner(objects, init, goal):
+    # Helper function to find a packed item to stack on
+    def find_packed_item_to_stack_on(item):
+        for obj in objects:
+            if obj != item and ('packed', obj) in init and ('nothing-above', obj) in init and ('heavier', obj, item) in init:
+                return obj
+        return None
+
+    # Helper function to generate a pack-first action
+    def pack_first(item):
+        return ('pack-first', item)
+
+    # Helper function to generate a stack action
+    def stack(bottom, top):
+        return ('stack', bottom, top)
+
+    # Helper function to check if the box is empty
+    def box_empty():
+        return ('box-empty',)
+
+    # Initialize the plan and state
+    plan = []
+    state = set(init)
+
+    # Iterate through all items to pack
+    for item in objects:
+        if ('unpacked', item) in state:
+            # Check if the box is empty
+            if box_empty() in state:
+                # Pack the first item into the empty box
+                plan.append(pack_first(item))
+                state.remove(box_empty())
+                state.add(('packed', item))
+                state.add(('nothing-above', item))
+                state.remove(('unpacked', item))
+            else:
+                # Find a packed item to stack on
+                packed_item = find_packed_item_to_stack_on(item)
+                if packed_item is not None:
+                    # Stack the item on the packed item
+                    plan.append(stack(packed_item, item))
+                    state.remove(('nothing-above', packed_item))
+                    state.add(('nothing-above', item))
+                    state.add(('packed', item))
+                    state.remove(('unpacked', item))
+                else:
+                    # Unable to pack the item
+                    return None
+
+    # Return the plan if a goal state was found
+    return plan
+
+    # Return None if no plan was found
+    return None

@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to use a greedy approach that always chooses the closest spanner to the current location and moves towards the closest nut that needs tightening. The strategy works as follows:
+
+1. Start at the initial location with no spanners and no nuts tightened.
+2. While there are still nuts that need to be tightened:
+   a. Pick up the closest available spanner.
+   b. Walk towards the closest nut that needs tightening.
+   c. Use the spanner to tighten the nut.
+   d. Drop the spanner.
+3. End when all nuts have been tightened.
+
+This strategy is guaranteed to find a solution because there is always at least one spanner that can be used to tighten the nearest nut. Furthermore, since the domain is small and there are no obstacles, it is possible to calculate the closest spanner and nut in constant time, without the need for a search algorithm. However, this strategy may not always find the optimal solution with the minimum number of actions required, and there may be cases where a search-based approach is needed to find the optimal solution.

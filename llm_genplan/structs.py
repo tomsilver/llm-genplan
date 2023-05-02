@@ -168,8 +168,10 @@ class Task:
 )
         """
 
-    def action_has_valid_syntax(self, action: str) -> bool:
+    def action_has_valid_syntax(self, action: Any) -> bool:
         """Check if the action name and arity is correct and objects exist."""
+        if not isinstance(action, str):
+            return False
         if not (action.startswith("(") and action.endswith(")")):
             return False
         action = action[1:-1].strip()

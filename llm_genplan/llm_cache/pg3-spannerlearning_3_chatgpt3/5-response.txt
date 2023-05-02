@@ -1,0 +1,59 @@
+def get_plan(objects, init, goal):
+    # Extract the locations, spanners, and nuts from the objects
+    locations = [obj[0] for obj in objects if obj[1] == 'location']
+    spanners = [obj[0] for obj in objects if obj[1] == 'spanner']
+    nuts = [obj[0] for obj in objects if obj[1] == 'nut']
+    
+    # Initialize the state with the initial conditions
+    state = {atom: True for atom in init}
+    
+    # Initialize the plan as an empty list
+    plan = []
+    
+    # Keep track of which nuts have been tightened
+    tightened_nuts = set()
+    
+    # Find the initial location if it exists
+    init_location = None
+    for atom in init:
+        if atom[0] == 'at' and atom[1] in locations:
+            init_location = atom[1]
+            break
+    
+    if init_location is None:
+        raise Exception('No initial location found')
+    
+    # Start at the initial location with no spanners and no nuts tightened
+    current_location = init_location
+    current_spanner = None
+    
+    # While there are still nuts that need to be tightened
+    while len(tightened_nuts) < len(nuts):
+        # Find the closest available spanner
+        available_spanners = [spanner for spanner in spanners if state.get(('at', spanner), '') == current_location and state.get(('useable', spanner), True)]
+        if not available_spanners:
+            raise Exception('No available spanners at current location')
+        current_spanner = min(available_spanners, key=lambda spanner: state.get(('at', spanner)).index(current_location))
+        
+        # Find the closest nut that needs tightening
+        untightened_nuts = [nut for nut in nuts if nut not in tightened_nuts and state.get(('at', nut), '') == current_location and state.get(('loose', nut), False)]
+        if not untightened_nuts:
+            raise Exception('No untightened nuts at current location')
+        current_nut = min(untightened_nuts, key=lambda nut: state.get(('at', nut)).index(current_location))
+        
+        # Pick up the spanner and walk towards the nut
+        plan.append('(pickup_spanner {} {} {})'.format(current_location, current_spanner, 'bob'))
+        plan.append('(walk {} {} {})'.format(current_location, state[('at', current_nut)], 'bob'))
+        
+        # Use the spanner to tighten the nut and drop the spanner
+        plan.append('(tighten_nut {} {} {} {} {})'.format(state[('at', current_nut)], current_spanner, 'bob', current_nut, current_location))
+        plan.append('(walk {} {} {})'.format(state[('at', current_nut)], current_location, 'bob'))
+        plan.append('(drop_spanner {} {} {})'.format(state[('at', current_nut)], current_spanner, 'bob'))
+        
+        # Update the state and the set of tightened nuts
+        state[('at', current_spanner)] = state[('at', current_nut)]
+        state[('at', 'bob')] = state[('at', current_nut)]
+        tightened_nuts.add(current_nut)
+        
+        # Move to the next location
+        current_location = state[

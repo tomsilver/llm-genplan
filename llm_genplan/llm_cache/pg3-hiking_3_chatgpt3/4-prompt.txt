@@ -1,0 +1,67 @@
+Given this task:
+(define (problem hiking (:domain hiking)
+  (:objects
+    r0_c0 - loc
+    r0_c1 - loc
+    r0_c2 - loc
+    r0_c3 - loc
+    r0_c4 - loc
+    r0_c5 - loc
+    r0_c6 - loc
+    r0_c7 - loc
+    r0_c8 - loc
+    r0_c9 - loc
+    ...
+  )
+  (:init
+    (adjacent r0_c0 r0_c1)
+    (adjacent r0_c0 r1_c0)
+    (adjacent r0_c1 r0_c0)
+    (adjacent r0_c1 r0_c2)
+    (adjacent r0_c1 r1_c1)
+    (adjacent r0_c2 r0_c1)
+    (adjacent r0_c2 r0_c3)
+    (adjacent r0_c2 r1_c2)
+    (adjacent r0_c3 r0_c2)
+    (adjacent r0_c3 r0_c4)
+    ...
+    (at r0_c0)
+    (ishill r7_c4)
+    (ishill r7_c7)
+    (iswater r0_c7)
+    (iswater r0_c8)
+    (iswater r1_c0)
+    (iswater r1_c1)
+    (iswater r1_c5)
+    (iswater r1_c6)
+    (iswater r2_c0)
+    (iswater r2_c1)
+    (iswater r2_c6)
+    (iswater r3_c0)
+    ...
+    (ontrail r0_c0 r0_c1)
+    (ontrail r0_c1 r0_c2)
+    (ontrail r0_c2 r0_c3)
+    (ontrail r0_c3 r1_c3)
+    (ontrail r1_c3 r2_c3)
+    (ontrail r1_c9 r0_c9)
+    (ontrail r2_c3 r3_c3)
+    (ontrail r2_c9 r1_c9)
+    (ontrail r3_c3 r4_c3)
+    (ontrail r3_c9 r2_c9)
+    ...
+  )
+  (:goal (and
+    (at r0_c9)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 16, in get_plan
+    next_loc = next(obj[1] for obj in init if
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
+
+Fix the code.
