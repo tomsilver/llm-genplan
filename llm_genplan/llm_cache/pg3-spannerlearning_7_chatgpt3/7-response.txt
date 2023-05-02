@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    state = init.copy()
+    plan = []
+
+    # Walk to each location, pick up spanner, and tighten nut
+    for nut in ['nut1', 'nut2', 'nut3']:
+        # Walk to nut
+        location = [loc for loc in state if loc[0] == 'at' and loc[1] == nut][0][2]
+        plan.append(f"(walk {location} {nut}-location bob)")
+        state.remove(('at', 'bob', location))
+        state.append(('at', 'bob', nut + '-location'))
+
+        # Pick up spanner
+        spanner = [obj for obj in objects if obj[0].startswith('spanner') and ('at', obj[0], location) in state][0][0]
+        plan.append(f"(pickup_spanner {location} {spanner} bob)")
+        state.remove(('at', spanner, location))
+        state.append(('carrying', 'bob', spanner))
+
+        # Tighten nut
+        plan.append(f"(tighten_nut {location} {spanner} bob {nut})")
+        state.remove(('useable', spanner))
+        state.remove(('loose', nut))
+        state.append(('tightened', nut))
+
+    return plan

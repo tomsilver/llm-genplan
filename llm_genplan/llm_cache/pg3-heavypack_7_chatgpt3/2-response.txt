@@ -1,0 +1,7 @@
+Yes, there is a simple strategy for solving all problems in this domain without using search. 
+
+The strategy is to always pack the heaviest item that is currently unpacked into the box first, and then stack all remaining packed items on top of it in order of decreasing weight, until all items are packed. 
+
+This strategy guarantees that the heaviest item is always at the bottom of the box, and no packed item has anything heavier on top of it. Therefore, the preconditions for the "stack" action are always satisfied, and the effects of the actions always move the state towards the goal of having all items packed.
+
+This approach does not require search because it involves a deterministic set of rules that always lead to a valid solution, and does not require making any decisions or exploring alternative paths.

@@ -1,0 +1,14 @@
+def get_plan(objects, init, goal):
+    passengers = {o[0] for o in objects if o[1] == 'passenger'}
+    served = set()
+    plan = []
+    while served != passengers:
+        highest_unserved = max([p for p in passengers if p not in served],
+                               key=lambda p: get_init(('origin', p))[0] if get_init(('origin', p)) is not None else -1)
+        actions = generate_actions(objects, init, goal, served, highest_unserved)
+        new_plan = search_plan(actions, init, goal)
+        if new_plan is None:
+            return None
+        plan += new_plan
+        served.add(highest_unserved)
+    return plan

@@ -1,0 +1,17 @@
+from collections import deque
+
+def get_plan(objects, init, goal):
+    visited = set()
+    queue = deque([(frozenset(init), [])])
+    while queue:
+        state, plan = queue.popleft()
+        if state == goal:
+            return plan
+        if state in visited:
+            continue
+        visited.add(state)
+        for action in get_actions(objects, state):
+            new_state = apply_action(state, action)
+            new_plan = plan + [action]
+            queue.append((frozenset(new_state), new_plan))
+    return None

@@ -1,0 +1,81 @@
+def get_plan(objects, init, goal):
+    # Initialize the state
+    state = set(init)
+    
+    # Define the available actions
+    actions = {
+        'walk': (['?start', '?end', '?m'], 
+                 ['(at ?m ?start)', '(link ?start ?end)'],
+                 ['(not (at ?m ?start))', '(at ?m ?end)']),
+        
+        'pickup_spanner': (['?l', '?s', '?m'],
+                           ['(at ?m ?l)', '(at ?s ?l)'],
+                           ['(not (at ?s ?l))', '(carrying ?m ?s)']),
+        
+        'tighten_nut': (['?l', '?s', '?m', '?n'],
+                        ['(at ?m ?l)', '(at ?n ?l)', '(carrying ?m ?s)',
+                         '(useable ?s)', '(loose ?n)'],
+                        ['(not (loose ?n))', '(not (useable ?s))', '(tightened ?n)'])
+    }
+    
+    # Define the available objects and their types
+    types = {}
+    for obj, obj_type in objects:
+        types[obj] = obj_type
+        
+    # Iterate until the goal is reached
+    while not all(atom in state for atom in goal):
+        # Iterate over the available actions
+        for action_name, (parameters, preconditions, effects) in actions.items():
+            # Find all the possible bindings for the parameters
+            bindings = find_bindings(state, preconditions, parameters, types)
+            
+            # If there are possible bindings, apply the effects of the action
+            if bindings:
+                binding = bindings[0]  # Choose the first binding for simplicity
+                state = apply_effects(state, effects, binding)
+                break  # Move to the next iteration
+                
+        # If no action can be applied, return failure
+        else:
+            return None
+        
+    # Build the plan by keeping track of the actions applied
+    plan = []
+    for action_name, (parameters, preconditions, effects) in actions.items():
+        if any(atom in goal for atom in effects):
+            binding = find_bindings(state, preconditions, parameters, types)[0]
+            plan.append(build_action_string(action_name, binding))
+            
+    return plan
+    
+def find_bindings(state, preconditions, parameters, types):
+    """
+    Find all the possible bindings for the parameters given the current state and types.
+    """
+    bindings = []
+    for args in product(*[state for atom in preconditions]):
+        substitution = {param: arg for param, arg in zip(parameters, args)}
+        if is_valid_substitution(substitution, types):
+            bindings.append(substitution)
+    return bindings
+    
+def is_valid_substitution(substitution, types):
+    """
+    Check if a substitution is valid given the types of the objects.
+    """
+    for obj, obj_type in substitution.items():
+        if obj_type != types[obj]:
+            return False
+    return True
+    
+def apply_effects(state, effects, binding):
+    """
+    Apply the effects of an action to the current state given a binding.
+    """
+    for effect in effects:
+        effect = effect.replace('?', '')  # Remove the variable symbols
+        effect = effect.format(**binding)  # Substitute the variables with their values
+        if effect.startswith('not'):
+            state.discard(effect[4:-1])  # Remove negated atoms from the state
+        else:

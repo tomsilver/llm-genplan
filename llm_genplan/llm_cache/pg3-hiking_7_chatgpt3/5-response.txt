@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    # Extract initial location
+    loc = [o[0] for o in objects if o[1] == 'loc'][0]
+
+    # Check if initial location is the goal
+    if (loc, ) in goal:
+        return []
+
+    # Initialize variables
+    visited = set()
+    plan = []
+
+    next_loc = None
+
+    # Search for a plan
+    while True:
+        visited.add((loc,))
+        adjacent_locs = [a[1] for a in init if a[0] == 'adjacent' and a[1] != loc]
+        hill_locs = [a[1] for a in init if a[0] == 'ishill']
+
+        # Check if there is a hill in an adjacent location
+        for adjacent_loc in adjacent_locs:
+            if any(a for a in init if a[0] == 'ishill' and a[1] == adjacent_loc):
+                next_loc = adjacent_loc
+                break
+
+        # Check if there is a hill in a non-adjacent location
+        if next_loc is None:
+            for hill_loc in hill_locs:
+                if hill_loc not in visited:
+                    next_loc = hill_loc
+                    break
+
+        # If no unvisited hill was found, backtrack
+        if next_loc is None:
+            if not plan:
+                return None
+            else:
+                plan.pop()
+                loc = plan[-1][1]
+        # Otherwise, move to the next location and add the action to the plan
+        else:
+            plan.append(('walk', next_loc))
+            loc = next_loc
+            next_loc = None
+
+            # Check if the goal has been reached
+            if (loc, ) in goal:
+                return [a[0] + ' ' + str(a[1]) for a in plan]

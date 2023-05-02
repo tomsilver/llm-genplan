@@ -1,0 +1,13 @@
+Unfortunately, without seeing the actual code it's not possible to determine the root cause of the `KeyboardInterrupt` exception. However, here are a few general tips to avoid infinite loops and timeouts in planning problems:
+
+1. Make sure your algorithm is correct and terminates for all possible inputs. This may involve proving correctness or analyzing the worst-case time complexity.
+
+2. Consider using more efficient algorithms or data structures. For example, A* search can be much faster than breadth-first search in many cases.
+
+3. Try to reduce the size of the search space. This can involve preprocessing the problem to remove irrelevant or redundant information, or applying domain-specific knowledge to guide the search.
+
+4. Set a time or iteration limit on the search, and return the best plan found so far if the limit is reached. This can be useful if you are unable to guarantee termination for all inputs, or if you are dealing with very large search spaces.
+
+5. Check for bugs in your code, especially in the implementation of the transition function and heuristic function.
+
+Without knowing the specific implementation of the code, it's difficult to provide more specific guidance.

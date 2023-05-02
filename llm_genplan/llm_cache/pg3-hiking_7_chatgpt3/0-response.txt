@@ -1,0 +1,3 @@
+
+
+This is a domain for a hiking scenario, where the goal is to move from one location to another by walking or climbing, while avoiding water and reaching specific hills. The domain includes predicates such as "at", "iswater", "ishill", and "adjacent", as well as actions for walking and climbing. The problems within the domain define the initial and goal states, as well as the layout of the environment.

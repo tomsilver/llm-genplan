@@ -1,0 +1,33 @@
+def get_plan(objects, init, goal):
+    current_loc = next_loc = None
+    plan = []
+
+    # Find the initial location
+    for a in init:
+        if a[0] == 'at':
+            current_loc = a[1]
+            break
+
+    # Move towards the goal
+    while current_loc != goal:
+        # Check adjacent locations
+        for a in init:
+            if a[0] == 'adjacent' and a[1] == current_loc:
+                adjacent_loc = a[2]
+                # Check if there is a hill in the adjacent location
+                if any(a for a in init if a[0] == 'ishill' and a[1] == adjacent_loc):
+                    # Avoid the hill
+                    continue
+                # Check if the adjacent location is water
+                if any(a for a in init if a[0] == 'iswater' and a[1] == adjacent_loc):
+                    # Can't go through water
+                    continue
+                # Update the plan and current location
+                plan.append(f'(move {current_loc} {adjacent_loc})')
+                current_loc = adjacent_loc
+                break
+        else:
+            # No adjacent location found, abort
+            return None
+
+    return plan

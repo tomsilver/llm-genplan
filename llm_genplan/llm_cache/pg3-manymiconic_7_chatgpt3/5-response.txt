@@ -1,0 +1,43 @@
+def get_plan(objects, init_state, goal_state):
+    # Extract floors and passengers from objects
+    floors = [obj[0] for obj in objects if obj[1] == 'floor']
+    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
+
+    # Define a function to get the value of a predicate in the initial state
+    def get_init(pred):
+        for atom in init_state:
+            if atom[0] == pred:
+                return atom[1:]
+        return ()
+
+    # Initialize elevator position
+    lift_at = floors[0]
+
+    # Initialize served passengers
+    served = set()
+
+    # Initialize plan
+    plan = []
+
+    # Main loop
+    while served != set(passengers):
+        # Move elevator to highest unserved passenger
+        highest_unserved = max([p for p in passengers if p not in served], key=lambda p: get_init(('origin', p))[0])
+        if get_init(('lift-at', highest_unserved))[0] != lift_at:
+            if lift_at < get_init(('origin', highest_unserved))[0]:
+                plan.append(f'(up {lift_at} {get_init(("above", lift_at, floors[floors.index(lift_at)+1]))[0]})')
+                lift_at = get_init(("above", lift_at, floors[floors.index(lift_at)+1]))[0]
+            else:
+                plan.append(f'(down {lift_at} {get_init(("above", floors[floors.index(lift_at)-1], lift_at))[0]})')
+                lift_at = get_init(("above", floors[floors.index(lift_at)-1], lift_at))[0]
+
+        # Serve passengers at current floor
+        for p in [p for p in passengers if p not in served]:
+            if get_init(('lift-at', p))[0] == lift_at:
+                if get_init(('destin', p))[0] == lift_at:
+                    plan.append(f'(depart {lift_at} {p})')
+                    served.add(p)
+                else:
+                    plan.append(f'(board {lift_at} {p})')
+
+    return plan

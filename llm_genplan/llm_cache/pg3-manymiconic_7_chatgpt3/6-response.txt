@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    passengers = {obj[0] for obj in objects if obj[1] == 'passenger'}
+    served = set()
+    actions = []
+
+    def get_init(pred):
+        matching_atoms = [atom for atom in init if atom[0] == pred]
+        if matching_atoms:
+            return matching_atoms[0]
+        else:
+            return None
+
+    while served != passengers:
+        highest_unserved = max([p for p in passengers if p not in served],
+                               key=lambda p: get_init(('origin', p)) and get_init(('origin', p))[0])
+        curr_floor = get_init(('origin', highest_unserved))[1]
+
+        # move the lift to the current floor
+        lift_above = get_init(('lift-at', curr_floor))
+        if not lift_above:
+            for above_floor in [f for f in objects if f[1] == 'floor' and f[0] != curr_floor]:
+                if get_init(('above', above_floor[0], curr_floor)):
+                    actions.append('(up %s %s)' % (curr_floor, above_floor[0]))
+                    curr_floor = above_floor[0]
+                    break
+        # board the passenger
+        actions.append('(board %s %s)' % (curr_floor, highest_unserved))
+        served.add(highest_unserved)
+
+        # move the lift to the passenger's destination
+        dest_floor = get_init(('destin', highest_unserved))[1]
+        if curr_floor != dest_floor:
+            if curr_floor < dest_floor:
+                actions.append('(down %s %s)' % (curr_floor, dest_floor))
+            else:
+                actions.append('(up %s %s)' % (curr_floor, dest_floor))
+            curr_floor = dest_floor
+
+        # depart the passenger
+        actions.append('(depart %s %s)' % (curr_floor, highest_unserved))
+
+    return actions

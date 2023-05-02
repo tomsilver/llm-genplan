@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    # Create a dictionary to store the weight of each object
+    weights = {}
+    for obj in objects:
+        weights[obj] = 0
+    
+    # Update the weight of each object based on the "heavier" predicate
+    for atom in init:
+        if atom[0] == 'heavier':
+            weights[atom[1]] = max(weights[atom[1]], weights[atom[2]] + 1)
+        elif atom[0] == 'unpacked':
+            weights[atom[1]] = float('inf')
+    
+    # Create a list of packed objects, sorted by weight
+    packed = [obj for obj in objects if ('packed', obj) in init]
+    packed.sort(key=lambda obj: weights[obj], reverse=True)
+    
+    # Pack the heaviest object first, and stack the remaining objects on top
+    plan = []
+    box_empty = True
+    for obj in packed:
+        if box_empty:
+            plan.append('(pack-first {})'.format(obj))
+            box_empty = False
+        else:
+            top = plan[-1][plan[-1].index(' ')+1:-1]
+            if weights[obj] < weights[top]:
+                plan.append('(stack {} {})'.format(top, obj))
+    
+    return plan

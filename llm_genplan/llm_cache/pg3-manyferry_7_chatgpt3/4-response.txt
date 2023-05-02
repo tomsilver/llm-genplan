@@ -1,0 +1,76 @@
+from queue import Queue
+
+def get_plan(objects, init, goal):
+    graph = {}
+    visited = set()
+    q = Queue()
+
+    # Initialize graph with initial state
+    graph[str(init)] = None
+    visited.add(str(init))
+    q.put(init)
+
+    # Breadth-first search
+    while not q.empty():
+        state = q.get()
+
+        # Check if goal state has been reached
+        if all(g in state for g in goal):
+            plan = []
+            # Trace back the path from goal state to initial state
+            while state != init:
+                plan.append(graph[str(state)])
+                state = graph[str(state)]
+            plan.reverse()
+            return plan
+
+        # Generate successors
+        for action in get_actions(state, objects):
+            successor = apply_action(state, action)
+            if str(successor) not in visited:
+                graph[str(successor)] = action
+                visited.add(str(successor))
+                q.put(successor)
+
+    # If goal state cannot be reached, return an empty plan
+    return []
+
+def get_actions(state, objects):
+    actions = []
+    for loc in state:
+        # Generate sail actions
+        if loc[0] == 'at-ferry':
+            for dest in objects:
+                if dest != loc[1] and ('location', dest) in objects:
+                    actions.append(('sail', loc[1], dest))
+        # Generate board actions
+        elif loc[0] == 'at' and ('empty-ferry',) in state:
+            for car in objects:
+                if car != loc[1] and ('car', car) in objects and ('location', loc[2]) in objects:
+                    actions.append(('board', car, loc[2]))
+        # Generate debark actions
+        elif loc[0] == 'on' and ('at-ferry', loc[2]) in state:
+            actions.append(('debark', loc[1], loc[2]))
+    return actions
+
+def apply_action(state, action):
+    new_state = set(state)
+    for loc in state:
+        if loc[0] == 'at-ferry':
+            # Apply sail action
+            if action[0] == 'sail' and loc[1] == action[1]:
+                new_state.remove(loc)
+                new_state.add(('at-ferry', action[2]))
+        elif loc[0] == 'at' and loc[1] == action[2]:
+            # Apply board action
+            if action[0] == 'board' and ('car', action[1]) in state and ('empty-ferry',) in state:
+                new_state.remove(loc)
+                new_state.remove(('car', action[1]))
+                new_state.remove(('empty-ferry',))
+                new_state.add(('on', action[1], action[2]))
+            # Apply debark action
+            elif action[0] == 'debark' and ('on', action[1], action[2]) in state:
+                new_state.remove(loc)
+                new_state.remove(('on', action[1], action[2]))
+                new_state.add(('at', action[1], action[2]))
+    return frozenset(new_state)

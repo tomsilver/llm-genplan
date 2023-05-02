@@ -1,0 +1,21 @@
+def apply_action(state, action):
+    new_state = set(state)
+    for loc in state:
+        if loc[0] == 'at-ferry':
+            # Apply sail action
+            if action[0] == 'sail' and loc[1] == action[1]:
+                new_state.remove(loc)
+                new_state.add(('at-ferry', action[2]))
+        elif loc[0] == 'at' and loc[1] == action[2]:
+            # Apply board action
+            if action[0] == 'board' and ('car', action[1]) in state and ('empty-ferry',) in state:
+                new_state.remove(loc)
+                new_state.remove(('car', action[1]))
+                new_state.remove(('empty-ferry',))
+                new_state.add(('on', action[1], action[2]))
+            # Apply debark action
+            elif action[0] == 'debark' and ('on', action[1], action[2]) in state:
+                new_state.remove(loc)
+                new_state.remove(('on', action[1], action[2]))
+                new_state.add(('at', action[1], action[2]))
+    return frozenset(new_state)

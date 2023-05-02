@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to use a simple set of rules to move the balls to their desired locations one by one. The rules are as follows:
+
+1. If the ball is already in the desired room, do nothing.
+2. If the gripper is holding the ball, drop it in the desired room.
+3. If the gripper is free and the ball is in the same room as Robby, pick up the ball.
+4. Move Robby to the room where the ball needs to be.
+5. Repeat steps 2-4 until all balls are in their desired rooms.
+
+This strategy is guaranteed to work for all problems in the domain, as long as it is possible to move the balls to their desired rooms without conflicts (i.e., there are no unreachable or blocked rooms, and the gripper can always hold the balls without interfering with the movement of other balls). However, this strategy may not be the most efficient way to solve the problem, especially for larger problems, and may not work for more complex domains.

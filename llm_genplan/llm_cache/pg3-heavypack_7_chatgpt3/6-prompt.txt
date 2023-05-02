@@ -1,0 +1,36 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o14
+    o300
+    o672
+  )
+  (:init
+    (box-empty)
+    (heavier o14 o300)
+    (heavier o14 o672)
+    (heavier o300 o672)
+    (unpacked o14)
+    (unpacked o300)
+    (unpacked o672)
+  )
+  (:goal (and
+    (packed o14)
+    (packed o300)
+    (packed o672)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "<file-name-omitted>", line 74
+    The code failed to find a plan because the initial state does not satisfy the preconditions of the "pack-first" action, which requires the box to be empty. However, the initial state includes the "unpacked" predicate for all objects, which implies that the box is not empty.
+        ^^^^
+SyntaxError: invalid syntax
+
+Fix the code.

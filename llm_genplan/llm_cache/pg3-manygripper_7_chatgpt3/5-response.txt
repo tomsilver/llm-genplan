@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Extract initial state information
+    ball_locations = {}
+    gripper_locations = set()
+    robby_location = None
+    for atom in init:
+        if atom[0] == 'at':
+            ball_locations[atom[1]] = atom[2]
+        elif atom[0] == 'free':
+            gripper_locations.add(atom[1])
+        elif atom[0] == 'at-robby':
+            robby_location = atom[1]
+
+    # Extract goal information
+    goal_balls = set()
+    for atom in goal:
+        if atom[0] == 'at':
+            goal_balls.add(atom[1])
+    goal = {ball: ball_locations[ball] for ball in goal_balls}
+
+    # Move balls to their desired locations one by one
+    for ball in goal_balls:
+        ball_location = ball_locations[ball]
+        if ball_location == robby_location:
+            # Ball is in the same room as Robby, try to pick it up
+            for gripper in gripper_locations:
+                plan.append('(pick {} {} {})'.format(ball, robby_location, gripper))
+                plan.append('(drop {} {} {})'.format(ball, goal[ball], gripper))
+                ball_locations[ball] = goal[ball]
+                gripper_locations.add(gripper)
+                break
+        else:
+            # Ball is in a different room, move to that room
+            plan.append('(move {} {})'.format(robby_location, ball_location))
+            robby_location = ball_location
+        # Check and update goal after each ball is moved
+        if ball_locations[ball] == goal[ball]:
+            del goal[ball]
+
+    # Check if goal is satisfied
+    if goal:
+        print('NOTE: The goal is not satisfied')
+        print('(Follow each of:')
+        for ball, location in goal.items():
+            print('    (Set (at {} {}) to true)'.format(ball, location))
+        print(')')
+
+    return plan

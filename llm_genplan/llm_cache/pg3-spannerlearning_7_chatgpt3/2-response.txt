@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to use a planning algorithm called "strips" or "simple strips". 
+
+The algorithm involves starting with the initial state of the problem and repeatedly applying the preconditions and effects of the available actions until the desired goal state is reached. 
+
+In this domain, the initial state includes the location of Bob, the locations of the spanners, and the locations of the nuts, as well as their respective states of being loose. The goal state is for all the nuts to be tightened.
+
+Bob can move between locations using the "walk" action, pick up a spanner using the "pickup_spanner" action, and tighten a nut using the "tighten_nut" action. The preconditions for each action ensure that Bob is at the correct location and has the necessary objects (e.g., carrying the spanner) to perform the action.
+
+By repeatedly applying the preconditions and effects of the actions, the desired goal state can be achieved without using search.

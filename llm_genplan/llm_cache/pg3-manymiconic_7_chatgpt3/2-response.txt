@@ -1,0 +1,6 @@
+The simple strategy for solving all problems in the Miconic domain without using search is to use a simple rule-based approach that is based on the following two principles:
+
+1. Always move the elevator to the highest floor of any passenger that has not yet been served and can be served by the elevator at the current floor.
+2. Once the elevator has arrived at the floor of a passenger that needs to be served, board and depart the passenger at that floor.
+
+This strategy can be applied iteratively until all passengers have been served. It does not require any explicit search or planning and can be implemented using simple conditionals and loops.

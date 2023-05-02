@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    # Identify the home base location and unpacked newspapers
+    home_base = None
+    unpacked_newspapers = set()
+    for obj, obj_type in objects:
+        if obj_type == 'loc' and ('ishomebase', obj) in init:
+            home_base = obj
+        elif obj_type == 'paper' and ('unpacked', obj) in init:
+            unpacked_newspapers.add(obj)
+            
+    # Initialize the plan and current location
+    plan = []
+    curr_loc = home_base
+    
+    # Keep delivering newspapers until all locations are satisfied
+    while any(goal_atom not in init for goal_atom in goal):
+        # Pick up all unpacked newspapers at the home base
+        if curr_loc == home_base:
+            for newspaper in unpacked_newspapers:
+                plan.append('(pick-up {} {})'.format(newspaper, home_base))
+                init.remove(('unpacked', newspaper))
+                init.add(('carrying', newspaper))
+                
+        # Deliver newspapers to the desired locations
+        for location, newspaper in goal:
+            if curr_loc == location and ('carrying', newspaper) in init:
+                plan.append('(deliver {} {})'.format(newspaper, location))
+                init.remove(('carrying', newspaper))
+                init.add(('satisfied', location))
+                
+        # Move to the next safe location
+        for obj, obj_type in objects:
+            if obj_type == 'loc' and ('at', obj) in init and ('safe', obj) in init and obj != curr_loc:
+                plan.append('(move {} {})'.format(curr_loc, obj))
+                init.remove(('at', curr_loc))
+                init.add(('at', obj))
+                curr_loc = obj
+                
+    return plan

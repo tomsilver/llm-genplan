@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Get the initial locations of all the balls
+    ball_locs = {}
+    for b in objects:
+        if ('at', b, '?loc') in init:
+            ball_locs[b] = [arg for pred, arg in init if pred == 'at' and arg == b][0]
+            
+    # Pick up and move the balls to their goal location
+    for ball in goal:
+        b = ball[1]
+        if b not in ball_locs:
+            # Find the current location of the ball
+            for pred, arg in init:
+                if pred == 'at' and arg == b:
+                    ball_locs[b] = arg
+                    break
+                    
+        # Move the gripper to the ball's location
+        gripper = [obj for obj in objects if 'gripper' in obj and ('free', obj) in init][0]
+        plan.append('(move {} {})'.format(ball_locs[b], gripper))
+        
+        # Pick up the ball
+        plan.append('(pick {} {} {})'.format(b, ball[2], gripper))
+        
+        # Move the ball to its goal location
+        plan.append('(move {} {})'.format(ball[2], gripper))
+        
+        # Drop the ball
+        plan.append('(drop {} {} {})'.format(b, ball[2], gripper))
+        
+        # Update the ball location
+        ball_locs[b] = ball[2]
+        
+    return plan

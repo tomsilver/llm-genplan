@@ -1,0 +1,15 @@
+def get_plan(objects, init, goal):
+    current = next((a[1] for a in init if a[0] == 'at'), None)
+    plan = []
+    while current not in [a[1] for a in goal if a[0] == 'at']:
+        for adjacent_loc in [a[2] for a in init if a[0] == 'adjacent' and a[1] == current]:
+            if not any(a for a in init if a[0] == 'iswater' and a[1] == adjacent_loc):
+                if any(a for a in init if a[0] == 'ishill' and a[1] == adjacent_loc):
+                    plan.append('(climb {} {})'.format(current, adjacent_loc))
+                else:
+                    plan.append('(walk {} {})'.format(current, adjacent_loc))
+                init.discard(('at', current))
+                init.add(('at', adjacent_loc))
+                current = adjacent_loc
+                break
+    return plan

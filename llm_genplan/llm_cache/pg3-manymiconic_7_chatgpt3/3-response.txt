@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    # Extract floors and passengers from objects
+    floors = [obj[0] for obj in objects if obj[1] == 'floor']
+    passengers = [obj[0] for obj in objects if obj[1] == 'passenger']
+
+    # Initialize elevator position
+    lift_at = floors[0]
+
+    # Initialize served passengers
+    served = set()
+
+    # Initialize plan
+    plan = []
+
+    # Main loop
+    while served != set(passengers):
+        # Move elevator to highest unserved passenger
+        highest_unserved = max([p for p in passengers if p not in served], key=lambda p: init(('origin', p,)))
+        if init(('lift-at', highest_unserved)) != lift_at:
+            if lift_at < init(('origin', highest_unserved,)):
+                plan.append(f'(up {lift_at} {init(("above", lift_at, floors[floors.index(lift_at)+1]))})')
+                lift_at = init(("above", lift_at, floors[floors.index(lift_at)+1]))
+            else:
+                plan.append(f'(down {lift_at} {init(("above", floors[floors.index(lift_at)-1], lift_at))})')
+                lift_at = init(("above", floors[floors.index(lift_at)-1], lift_at))
+
+        # Serve passengers at current floor
+        for p in [p for p in passengers if p not in served]:
+            if init(('lift-at', p)) == lift_at:
+                if init(('destin', p)) == lift_at:
+                    plan.append(f'(depart {lift_at} {p})')
+                    served.add(p)
+                else:
+                    plan.append(f'(board {lift_at} {p})')
+
+    return plan
