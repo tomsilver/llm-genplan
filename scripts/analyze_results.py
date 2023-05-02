@@ -145,15 +145,15 @@ def _create_genplan_error_table(
 ) -> None:
     group_dfs: List[pd.DataFrame] = []
     for group_name in ["All", "Success", "Fail"]:
+        mask = raw_results["experiment_id"] == "chatgpt4"
         if group_name == "All":
             filtered_results = raw_results
         elif group_name == "Success":
-            mask = raw_results["success_rate"] >= (1.0 - 1e-6)
-            filtered_results = raw_results.loc[mask]
+            mask &= raw_results["success_rate"] >= (1.0 - 1e-6)
         else:
             assert group_name == "Fail"
-            mask = raw_results["success_rate"] < (1.0 - 1e-6)
-            filtered_results = raw_results.loc[mask]
+            mask &= raw_results["success_rate"] < (1.0 - 1e-6)
+        filtered_results = raw_results.loc[mask]
         df = filtered_results[GENPLAN_ERROR_TYPES]
         tot_errs_by_type = df.sum()
         tot_errs = tot_errs_by_type.sum()
