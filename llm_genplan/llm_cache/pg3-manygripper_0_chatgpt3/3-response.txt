@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    # Find all balls and grippers
+    balls = [obj for obj in objects if obj.startswith('ball')]
+    grippers = [obj for obj in objects if obj.startswith('gripper')]
+
+    # Assign each gripper to a ball
+    gripper_ball_assignments = {}
+    for i, ball in enumerate(balls):
+        gripper_ball_assignments[grippers[i % len(grippers)]] = ball
+
+    # Execute the gripper-ball assignments
+    plan = []
+    for gripper, ball in gripper_ball_assignments.items():
+        # Move to the room with the ball
+        ball_room = next(a[1] for a in init if a[0] == 'at' and a[2] == ball)
+        plan.append(f'(move {next(a[1] for a in init if a[0] == "at-robby")} {ball_room})')
+
+        # Pick up the ball
+        plan.append(f'(pick {ball} {ball_room} {gripper})')
+
+        # Move to the goal location of the ball
+        ball_goal = next(a[1] for a in goal if a[0] == 'at' and a[2] == ball)
+        plan.append(f'(move {ball_room} {ball_goal})')
+
+        # Drop the ball
+        plan.append(f'(drop {ball} {ball_goal} {gripper})')
+
+    return plan

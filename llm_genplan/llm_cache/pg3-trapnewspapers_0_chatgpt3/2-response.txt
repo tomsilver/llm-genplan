@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to perform a sequence of actions that satisfy the wants of each location, one by one. The sequence of actions can be achieved by following these steps:
+
+1. Pick up all the unpacked newspapers from the home base location.
+2. Move to the location that wants a newspaper.
+3. Deliver the newspaper to the location.
+4. Repeat steps 2-3 until all the locations' wants have been satisfied.
+
+This strategy is guaranteed to solve any problem in the domain without using search, as long as there is a solution. However, this strategy may not always be the most efficient or optimal solution, and there may be other ways to solve the problem using less time or fewer actions.

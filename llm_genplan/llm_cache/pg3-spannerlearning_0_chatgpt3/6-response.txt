@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    state = set(init)
+    plan = []
+    
+    while set(goal).difference(state):
+        applicable_actions = []
+        for action in objects:
+            parameters, effects = objects[action]
+            substitutions = find_satisfying_assignments(parameters, state)
+            for substitution in substitutions:
+                if all(precondition in state for precondition in effects):
+                    applicable_actions.append((action, substitution))
+        
+        if not applicable_actions:
+            return None
+        
+        # Select an action and add its effects to the state
+        action, substitution = applicable_actions[0]
+        plan.append(ground_action(action, substitution))
+        state.update([apply_substitution(effect, substitution) for effect in objects[action][1]])
+        
+    return plan

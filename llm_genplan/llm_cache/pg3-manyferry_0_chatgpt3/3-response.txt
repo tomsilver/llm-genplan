@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    # Initialize the plan as an empty list
+    plan = []
+
+    # Create a dictionary to store the current locations of the cars
+    locations = {}
+
+    # Initialize the locations of the cars to their starting locations
+    for obj in objects:
+        if obj.startswith('c'):
+            for pred in init:
+                if pred[0] == 'at' and pred[1] == obj:
+                    locations[obj] = pred[2]
+
+    # Move each car to its required location one at a time
+    for pred in goal:
+        if pred[0] == 'at' and pred[1] in locations and locations[pred[1]] != pred[2]:
+            # Move the car to the required location
+            from_loc = locations[pred[1]]
+            to_loc = pred[2]
+            plan.append('(board {} {})'.format(pred[1], from_loc))
+            plan.append('(sail {} {})'.format(from_loc, to_loc))
+            plan.append('(debark {} {})'.format(pred[1], to_loc))
+            # Update the current location of the car
+            locations[pred[1]] = to_loc
+
+    return plan

@@ -253,7 +253,10 @@ def _parse_python_code_from_response(response: str) -> str:
     if python_code_prefix in response:
         python_start = response.index(python_code_prefix)
         python_remainder = response[python_start + len(python_code_prefix) :]
-        python_end = python_remainder.index("```")
+        if "```" in python_remainder:
+            python_end = python_remainder.index("```")
+        else:
+            python_end = len(python_remainder)
         python_response = python_remainder[:python_end]
         return python_response
     return response

@@ -1,0 +1,47 @@
+def get_plan(objects, init, goal):
+    homebase = None
+    papers = {}
+    locations = set()
+
+    # Parse objects and initial state
+    for (obj, obj_type) in objects:
+        if obj_type == 'loc':
+            if 'ishomebase' in [p[0] for p in init if p[1] == obj]:
+                homebase = obj
+            locations.add(obj)
+        elif obj_type == 'paper':
+            if 'unpacked' in [p[0] for p in init if p[1] == obj]:
+                papers[obj] = homebase
+
+    # Perform actions to satisfy each location's wants
+    plan = []
+    while any(['wantspaper' in [p[0] for p in init if p[1] == loc] for loc in locations]):
+        for loc in locations:
+            if 'wantspaper' in [p[0] for p in init if p[1] == loc]:
+                # Pick up all unpacked papers from homebase
+                for paper in list(papers.keys()):
+                    if papers[paper] == homebase and 'unpacked' in [p[0] for p in init if p[1] == paper]:
+                        plan.append(f'(pick-up {paper} {homebase})')
+                        init.remove(('unpacked', paper))
+                        init.add(('carrying', paper))
+                        papers[paper] = None
+
+                # Move to the location
+                paper = next((p for p in papers if papers[p] is not None and papers[p] != loc), None)
+                if paper is not None:
+                    plan.append(f'(move {papers[paper]} {loc})')
+                    init.remove(('at', papers[paper], paper))
+                    init.add(('at', loc, paper))
+                    papers[paper] = loc
+
+                # Deliver the paper to the location
+                paper = next((p for p in papers if papers[p] == loc and 'carrying' in [p[0] for p in init if p[1] == p]), None)
+                if paper is not None:
+                    plan.append(f'(deliver {paper} {loc})')
+                    init.remove(('carrying', paper))
+                    init.remove(('wantspaper', loc))
+                    init.add(('satisfied', loc))
+                    papers.pop(paper)
+        if all(['satisfied' in [p[0] for p in init if p[1] == loc] for loc in locations]):
+            break
+    return plan

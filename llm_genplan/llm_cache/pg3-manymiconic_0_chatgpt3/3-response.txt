@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    # Initialize the elevator to the starting floor
+    elevator_location = 'f3_b0'
+    
+    # Create a dictionary to keep track of which passengers have boarded
+    boarded_passengers = {p: False for p, t in objects if t == 'passenger'}
+    
+    # Create a list to store the sequence of actions to reach the goal state
+    plan = []
+    
+    # Iterate until all passengers have been served
+    while not all(boarded_passengers.values()):
+        # Check if any passengers are waiting at the current floor
+        waiting_passengers = [p for p, f in init if p.startswith('origin') and f == elevator_location]
+        if waiting_passengers:
+            # Open the elevator doors and allow the waiting passengers to board
+            for p in waiting_passengers:
+                plan.append('(board {0} {1})'.format(p.split()[1], elevator_location))
+                boarded_passengers[p.split()[1]] = True
+        
+        # Check if any passengers have reached their destination
+        departing_passengers = [p for p, f in init if p.startswith('destin') and f == elevator_location and boarded_passengers[p.split()[1]]]
+        if departing_passengers:
+            # Open the elevator doors and allow the departing passengers to exit
+            for p in departing_passengers:
+                plan.append('(depart {0} {1})'.format(p.split()[1], elevator_location))
+        
+        # Determine the direction to move the elevator
+        floor_above = 'f' + str(int(elevator_location[1]) + 1) + elevator_location[2:]
+        floor_below = 'f' + str(int(elevator_location[1]) - 1) + elevator_location[2:]
+        passengers_above = [p for p, f in init if p.startswith('origin') and f == floor_above]
+        passengers_below = [p for p, f in init if p.startswith('origin') and f == floor_below]
+        if passengers_above and elevator_location != 'f7_b0':
+            # Move the elevator up to the next floor
+            plan.append('(up {0} {1})'.format(elevator_location, floor_above))
+            elevator_location = floor_above
+        elif passengers_below and elevator_location != 'f0_b0':
+            # Move the elevator down to the next floor
+            plan.append('(down {0} {1})'.format(elevator_location, floor_below))
+            elevator_location = floor_below
+    
+    return plan

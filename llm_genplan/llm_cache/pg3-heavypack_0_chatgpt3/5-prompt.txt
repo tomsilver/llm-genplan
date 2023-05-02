@@ -1,0 +1,26 @@
+Given this task:
+(define (problem heavy-pack-prob (:domain heavy-pack)
+  (:objects
+    o404
+    o570
+    o997
+  )
+  (:init
+    (box-empty)
+    (heavier o404 o570)
+    (heavier o997 o404)
+    (heavier o997 o570)
+    (unpacked o404)
+    (unpacked o570)
+    (unpacked o997)
+  )
+  (:goal (and
+    (packed o404)
+    (packed o570)
+    (packed o997)
+    )
+  )    
+)
+        
+The code returned None, which is not a list of actions.
+Fix the code.

@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    # Define the set of predicates and actions for the heavy-pack domain
+    predicates = {
+        'heavier': lambda x, y: f'(heavier {x} {y})',
+        'packed': lambda x: f'(packed {x})',
+        'unpacked': lambda x: f'(unpacked {x})',
+        'nothing-above': lambda x: f'(nothing-above {x})',
+        'box-empty': '(box-empty)',
+    }
+    
+    pack_first = lambda x: f'(pack-first {x})'
+    stack = lambda x, y: f'(stack {x} {y})'
+    
+    # Sort the objects in descending order of their weights
+    sorted_objects = sorted(objects, key=lambda x: int(x[1:]), reverse=True)
+    
+    # Create a plan to pack the objects using the stacking strategy
+    plan = []
+    for obj in sorted_objects:
+        # Pack the first object into the empty box
+        if predicates['box-empty'] in init and predicates['unpacked'](obj) in init:
+            plan.append(pack_first(obj))
+            init.remove(predicates['box-empty'])
+            init.add(predicates['packed'](obj))
+            init.add(predicates['nothing-above'](obj))
+            init.remove(predicates['unpacked'](obj))
+        # Stack a packed object on top of an unpacked and lighter object
+        elif predicates['packed'](obj) not in init and predicates['unpacked'](obj) in init:
+            for other_obj in sorted_objects:
+                if other_obj == obj:
+                    break
+                if (predicates['packed'](other_obj) in init and
+                        predicates['nothing-above'](other_obj) in init and
+                        predicates['unpacked'](other_obj) not in init and
+                        predicates['heavier'](other_obj, obj) in init):
+                    plan.append(stack(other_obj, obj))
+                    init.remove(predicates['nothing-above'](other_obj))
+                    init.add(predicates['nothing-above'](obj))
+                    init.add(predicates['packed'](obj))
+                    init.remove(predicates['unpacked'](obj))
+                    break
+    
+    # Check if the plan satisfies the goal conditions
+    for goal_atom in goal:
+        if goal_atom not in init:
+            return None
+    
+    # Return the plan as a list of actions
+    return plan

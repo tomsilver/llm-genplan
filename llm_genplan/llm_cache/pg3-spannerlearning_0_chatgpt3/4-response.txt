@@ -1,0 +1,90 @@
+In the given problem, the objects are defined but the actions are not defined in the domain. Therefore, we need to add the definitions of the actions to the domain. Here's an updated version of the domain with the actions defined:
+
+```lisp
+(define (domain spanner)                    
+  (:requirements :typing :strips)                
+  (:types 
+    location locatable - object
+    man nut spanner - locatable	
+  )                                           
+                                                                               
+  (:predicates 
+    (at ?m - locatable ?l - location)
+    (carrying ?m - man ?s - spanner)
+    (useable ?s - spanner)
+    (link ?l1 - location ?l2 - location)
+    (tightened ?n - nut)
+    (loose ?n - nut)
+  )                                                                                           
+
+  (:action walk 
+    :parameters (?start - location ?end - location ?m - man)
+    :precondition (and (at ?m ?start) 
+                       (link ?start ?end))                                                          
+    :effect (and (not (at ?m ?start)) (at ?m ?end))
+  )
+
+  (:action pickup_spanner 
+    :parameters (?l - location ?s - spanner ?m - man)
+    :precondition (and (at ?m ?l) 
+                       (at ?s ?l))
+    :effect (and (not (at ?s ?l))
+                 (carrying ?m ?s))
+  )
+
+  (:action tighten_nut 
+    :parameters (?l - location ?s - spanner ?m - man ?n - nut)
+    :precondition (and (at ?m ?l) 
+                       (at ?n ?l)
+                       (carrying ?m ?s)
+                       (useable ?s)
+                       (loose ?n))
+    :effect (and (not (loose ?n))
+                 (not (useable ?s))
+                 (tightened ?n))
+  )
+)
+```
+
+With this updated domain definition, we can now use the `get_plan()` function to find a plan for the given problem:
+
+```python
+objects = {
+    'walk': (['location', 'location', 'man'], 
+             [
+                 '(not (at ?m ?start))', 
+                 '(at ?m ?end)'
+             ]
+            ),
+    'pickup_spanner': (['location', 'spanner', 'man'], 
+                       [
+                           '(not (at ?s ?l))', 
+                           '(carrying ?m ?s)'
+                       ]
+                      ),
+    'tighten_nut': (['location', 'spanner', 'man', 'nut'], 
+                    [
+                        '(not (loose ?n))', 
+                        '(not (useable ?s))', 
+                        '(tightened ?n)'
+                    ]
+                   )
+}
+
+init = [
+    ('at', 'bob', 'shed'),
+    ('at', 'nut1', 'gate'),
+    ('at', 'nut2', 'gate'),
+    ('at', 'nut3', 'gate'),
+    ('at', 'spanner1', 'location4'),
+    ('at', 'spanner2', 'location4'),
+    ('at', 'spanner3', 'location1'),
+    ('link', 'location1', 'location2'),
+    ('link', 'location2', 'location3'),
+    ('link', 'location3', 'location4'),
+    ('link', 'location4', 'gate'),
+    ('link', 'shed', 'location1'),
+    ('loose', 'nut1'),
+    ('loose', 'nut2'),
+    ('loose', 'nut3'),
+    ('useable

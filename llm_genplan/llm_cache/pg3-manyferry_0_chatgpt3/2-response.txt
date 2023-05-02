@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in the ferry domain without using search is to use the following steps:
+
+1. Identify which cars need to be moved and to which locations they need to be moved to achieve the goal.
+2. Move one car at a time to the required location, using the board and debark actions as needed.
+3. Use the sail action to move the ferry to the next location as needed.
+4. Repeat steps 2-3 until all cars are in their required locations.
+
+This strategy is based on a greedy approach, where the cars are moved one at a time in the order required to reach the goal, without considering the overall plan or any possible conflicts that may arise. While this strategy may work for small problems in the ferry domain, larger problems may require a more sophisticated planning approach that takes into account the interactions between different actions and their effects.

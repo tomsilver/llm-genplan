@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    # check that there is exactly one initial and one goal position for each ball
+    for ball in objects:
+        init_count = len([a for a in init if a[0] == 'at' and a[2] == ball])
+        goal_count = len([a for a in goal if a[0] == 'at' and a[2] == ball])
+        if init_count != 1:
+            raise ValueError(f'Ball {ball} is not initially located in any room')
+        if goal_count != 1:
+            raise ValueError(f'Ball {ball} does not have a unique goal location')
+
+    # compute a plan to move the balls to their goal locations
+    plan = []
+    for ball in objects:
+        ball_room = next((a[1] for a in init if a[0] == 'at' and a[2] == ball), None)
+        if ball_room is None:
+            raise ValueError(f'Ball {ball} is not initially located in any room')
+        ball_goal = next((a[1] for a in goal if a[0] == 'at' and a[2] == ball), None)
+        if ball_goal is None:
+            raise ValueError(f'Ball {ball} does not have a goal location')
+        if ball_room != ball_goal:
+            gripper = next((o for o in objects if o.startswith('gripper') and is_free(o, init)), None)
+            if gripper is None:
+                raise ValueError('No free gripper available')
+            plan.append(pick(ball, ball_room, gripper))
+            plan.extend(move(gripper, ball_room, ball_goal))
+            plan.append(drop(ball, ball_goal, gripper))
+    return plan
+

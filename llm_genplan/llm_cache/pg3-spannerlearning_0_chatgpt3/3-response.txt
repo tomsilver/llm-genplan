@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    # initialize state
+    state = set(init)
+    plan = []
+
+    while goal.difference(state):
+        # choose an unsatisfied sub-goal from the goal state
+        subgoal = next(iter(goal.difference(state)))
+        # identify a relevant action that achieves that sub-goal
+        for name, params in objects:
+            if name.startswith('tighten_') and params[0] == subgoal[1]:
+                action = name
+                break
+        else:
+            # no relevant action found
+            return None
+
+        # apply the relevant action to the current state
+        for effect in objects[action][1]:
+            if effect[0] == '-':
+                state.remove(effect[1:])
+            else:
+                state.add(effect)
+
+        # add the action to the plan
+        plan.append(action)
+
+    return plan

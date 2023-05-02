@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    homebase = None
+    papers = set()
+    locations = set()
+
+    # Parse objects and initial state
+    for (obj, obj_type) in objects:
+        if obj_type == 'loc':
+            if 'ishomebase' in [p[0] for p in init if p[1] == obj]:
+                homebase = obj
+            locations.add(obj)
+        elif obj_type == 'paper':
+            if 'unpacked' in [p[0] for p in init if p[1] == obj]:
+                papers.add(obj)
+
+    # Perform actions to satisfy each location's wants
+    plan = []
+    for loc in locations:
+        while 'wantspaper' in [p[0] for p in init if p[1] == loc]:
+            # Pick up all unpacked papers from homebase
+            for paper in papers.copy():
+                if 'unpacked' in [p[0] for p in init if p[1] == paper]:
+                    plan.append(f'(pick-up {paper} {homebase})')
+                    init.remove(('unpacked', paper))
+                    init.add(('carrying', paper))
+                    papers.remove(paper)
+
+            # Deliver the paper to the location
+            for paper in [p[1] for p in init if p[0] == 'carrying']:
+                if 'wantspaper' in [p[0] for p in init if p[1] == loc] and 'at' in [p[0] for p in init if p[1] == paper]:
+                    plan.append(f'(deliver {paper} {loc})')
+                    init.remove(('carrying', paper))
+                    init.remove(('wantspaper', loc))
+                    init.add(('satisfied', loc))
+    return plan

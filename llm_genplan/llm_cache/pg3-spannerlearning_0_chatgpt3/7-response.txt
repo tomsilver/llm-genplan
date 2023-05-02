@@ -1,0 +1,14 @@
+def get_plan(objects, init, goal):
+    # Define the domain and problem instances
+    domain_pddl = generate_domain_pddl(objects)
+    problem_pddl = generate_problem_pddl(init, goal)
+
+    # Call the planner
+    plan = run_planner(domain_pddl, problem_pddl)
+
+    # Parse the plan into a list of actions
+    actions = []
+    for step in plan:
+        actions.append(step['name'])
+
+    return actions
