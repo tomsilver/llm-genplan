@@ -46,39 +46,37 @@ APPROACH_TO_LABEL = {
 
 def _main() -> None:
     matplotlib.rcParams.update({"font.size": 16})
-    pickle_filepath = Path("problem_size_analysis_results.p")
     plot_filepath = Path("problem_size_analysis.png")
-    if not pickle_filepath.exists():
-        # Load raw results.
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--results_dir", default="results", type=str)
-        args = parser.parse_args()
-        gen_plan_results, _ = load_results(args.results_dir)
-        # Determine which domains were at least 50% successful for chatgpt4 and
-        # which of the seeds for those domains were successes.
-        main_results = gen_plan_results.loc[
-            gen_plan_results.experiment_id == "chatgpt4"
-        ]
-        env_to_success_seeds: DefaultDict[str, Set[int]] = defaultdict(set)
-        for _, row in main_results.iterrows():
-            if row.success_rate > 1.0 - 1e-6:
-                env_to_success_seeds[row.env].add(int(row.seed))
-        num_seeds = len(set(main_results.seed))
-        for env in set(env_to_success_seeds):
-            if len(env_to_success_seeds[env]) < num_seeds / 2:
-                del env_to_success_seeds[env]
-        # Generate results for each remaining env.
-        results: Dict[str, Tuple[List[int], Dict[str, List[List[List[float]]]]]] = {}
-        for env in sorted(env_to_success_seeds):
+    # Load raw results.
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--results_dir", default="results", type=str)
+    args = parser.parse_args()
+    gen_plan_results, _ = load_results(args.results_dir)
+    # Determine which domains were at least 50% successful for chatgpt4 and
+    # which of the seeds for those domains were successes.
+    main_results = gen_plan_results.loc[gen_plan_results.experiment_id == "chatgpt4"]
+    env_to_success_seeds: DefaultDict[str, Set[int]] = defaultdict(set)
+    for _, row in main_results.iterrows():
+        if row.success_rate > 1.0 - 1e-6:
+            env_to_success_seeds[row.env].add(int(row.seed))
+    num_seeds = len(set(main_results.seed))
+    for env in set(env_to_success_seeds):
+        if len(env_to_success_seeds[env]) < num_seeds / 2:
+            del env_to_success_seeds[env]
+    # Generate results for each remaining env.
+    results: Dict[str, Tuple[List[int], Dict[str, List[List[List[float]]]]]] = {}
+    for env in sorted(env_to_success_seeds):
+        pickle_filepath = Path(f"{env}_problem_size_analysis_results.p")
+        if pickle_filepath.exists():
+            with open(pickle_filepath, "rb") as f:
+                env_results = pickle.load(f)
+        else:
             seeds = env_to_success_seeds[env]
-            env_xs, approach_to_env_ys = _run_single_env(env, seeds)
-            results[env] = (env_xs, approach_to_env_ys)
-        # Save the results.
-        with open(pickle_filepath, "wb") as f:
-            pickle.dump(results, f)
-    else:
-        with open(pickle_filepath, "rb") as f:
-            results = pickle.load(f)
+            env_results = _run_single_env(env, seeds)
+            # Save the results.
+            with open(pickle_filepath, "wb") as f:
+                pickle.dump(env_results, f)
+        results[env] = env_results
     # Make plots.
     _generate_plots(results, plot_filepath)
 
