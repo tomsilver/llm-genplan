@@ -64,8 +64,8 @@ def generate_random_grid(grid_height, grid_width):
         for c in range(grid_width):
             assert grid[r][c] != None
     
-    for r in grid:
-        print(r)
+    # for r in grid:
+    #     print(r)
     return grid
 
 

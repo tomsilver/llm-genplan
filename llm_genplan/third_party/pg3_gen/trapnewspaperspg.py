@@ -27,7 +27,7 @@ def sample_problem(domain, problem_dir, problem_outfile, num_locs,
 
     all_loc_nums = [i for i in range(1, num_locs)]
     target_loc_nums = np.random.choice(all_loc_nums, num_want_locs, replace = False)
-    print("Target loc nums", target_loc_nums)
+    # print("Target loc nums", target_loc_nums)
 
     target_locs = []
     # Add locations
@@ -52,11 +52,11 @@ def sample_problem(domain, problem_dir, problem_outfile, num_locs,
         objects.add(paper)
         state.add(unpacked(paper))
 
-    print("Target locs", target_locs)
+    # print("Target locs", target_locs)
     # Create goal
     goal_lits = [satisfied(loc) for loc in target_locs]
     goal = LiteralConjunction(goal_lits)
-    print("Goal", goal, "\n")
+    # print("Goal", goal, "\n")
 
     filepath = os.path.join(problem_dir, problem_outfile)
 

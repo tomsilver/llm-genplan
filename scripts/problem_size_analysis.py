@@ -3,6 +3,7 @@
 import argparse
 import os
 import pickle
+import random
 import re
 import subprocess
 import tempfile
@@ -21,7 +22,11 @@ from llm_genplan import utils
 from llm_genplan.envs.assets.pddl.pg3.heavypack_problem_gen import _run as heavypack_gen
 from llm_genplan.genplan import GeneralizedPlan
 from llm_genplan.structs import Metrics, Task
+from llm_genplan.third_party.pg3_gen.hikingpg import create_problem as hiking_gen
+from llm_genplan.third_party.pg3_gen.hikingpg import generate_random_grid
+from llm_genplan.third_party.pg3_gen.manyferrypg import _get_str as ferry_gen
 from llm_genplan.third_party.pg3_gen.manygripperpg import sample_problem as gripper_gen
+from llm_genplan.third_party.pg3_gen.trapnewspaperspg import sample_problem as news_gen
 
 ENV_TO_LABEL = {
     "pg3-heavypack": "Heavy",
@@ -56,9 +61,6 @@ def _main() -> None:
         ]
         env_to_success_seeds: DefaultDict[str, Set[int]] = defaultdict(set)
         for _, row in main_results.iterrows():
-            # TODO
-            if row.env not in ["pg3-heavypack", "pg3-manygripper"]:
-                continue
             if row.success_rate > 1.0 - 1e-6:
                 env_to_success_seeds[row.env].add(int(row.seed))
         num_seeds = len(set(main_results.seed))
@@ -109,7 +111,6 @@ def _run_single_env(
                         start_time = time.perf_counter()
                         plan = genplan.run(task)
                         duration = time.perf_counter() - start_time
-                        assert duration < timeout
                     else:
                         assert approach == "fd-lama-first"
                         plan, metrics = run_fastdownward_planning(task, timeout=timeout)
@@ -143,7 +144,7 @@ def _generate_varying_size_tasks(
 ) -> Iterator[Tuple[int, List[Task]]]:
     # Heavypack
     if env == "pg3-heavypack":
-        all_num_items = [1, 4, 16]  # [1, 4, 16, 64, 256, 1024]
+        all_num_items = [1, 4, 16, 64, 256]
         domain_filepath = utils.PDDL_DIR / "pg3" / "heavypack.pddl"
         with open(domain_filepath, "r", encoding="utf-8") as f:
             domain_str = f.read()
@@ -171,7 +172,8 @@ def _generate_varying_size_tasks(
                 yield (num_items, tasks)
     # Gripper
     elif env == "pg3-manygripper":
-        all_multipliers = [1, 4, 16]
+        np.random.seed(seed)
+        all_multipliers = [1, 2, 8, 32, 128]
         domain_filepath = utils.PDDL_DIR / "pg3" / "manygripper.pddl"
         with open(domain_filepath, "r", encoding="utf-8") as f:
             domain_str = f.read()
@@ -209,11 +211,99 @@ def _generate_varying_size_tasks(
                 assert num_objs is not None
                 assert len(tasks) == num_tasks_per_size
                 yield (num_objs, tasks)
-    # TODO
+    # Ferry
+    elif env == "pg3-manyferry":
+        random.seed(seed)
+        all_multipliers = [1, 2, 8, 32, 128]
+        domain_filepath = utils.PDDL_DIR / "pg3" / "manyferry.pddl"
+        with open(domain_filepath, "r", encoding="utf-8") as f:
+            domain_str = f.read()
+        for multiplier in all_multipliers:
+            num_locs = 2 * multiplier
+            num_cars = multiplier
+            num_objs = None
+            tasks = []
+            for i in range(num_tasks_per_size):
+                problem_str = ferry_gen(num_locs, num_cars)
+                task = Task(domain_str, problem_str)
+                if num_objs is None:
+                    num_objs = len(task.objects)
+                assert num_objs == len(task.objects)
+                tasks.append(task)
+            assert num_objs is not None
+            assert len(tasks) == num_tasks_per_size
+            yield (num_objs, tasks)
+    # Hiking
+    elif env == "pg3-hiking":
+        np.random.seed(seed)
+        all_grid_sizes = [4, 6, 8, 10, 12]
+        domain_filepath = utils.PDDL_DIR / "pg3" / "hiking.pddl"
+        with open(domain_filepath, "r", encoding="utf-8") as f:
+            domain_str = f.read()
+        domain = PDDLDomainParser(
+            domain_filepath, expect_action_preds=False, operators_as_actions=True
+        )
+        with tempfile.TemporaryDirectory() as td:
+            problem_dir = Path(td)
+            for grid_size in all_grid_sizes:
+                num_objs = None
+                tasks = []
+                for i in range(num_tasks_per_size):
+                    problem_outfile = f"problem{i}.pddl"
+                    grid = np.array(generate_random_grid(grid_size, grid_size))
+                    hiking_gen(grid, domain, problem_dir, problem_outfile)
+                    pddl_outfile = problem_dir / problem_outfile
+                    with open(pddl_outfile, "r", encoding="utf-8") as f:
+                        problem_str = f.read()
+                    task = Task(domain_str, problem_str)
+                    if num_objs is None:
+                        num_objs = len(task.objects)
+                    assert num_objs == len(task.objects)
+                    tasks.append(task)
+                assert num_objs is not None
+                assert len(tasks) == num_tasks_per_size
+                yield (num_objs, tasks)
+    # Newspapers
+    elif env == "pg3-trapnewspapers":
+        np.random.seed(seed)
+        all_multipliers = [1, 2, 8, 32, 128]
+        domain_filepath = utils.PDDL_DIR / "pg3" / "trapnewspapers.pddl"
+        with open(domain_filepath, "r", encoding="utf-8") as f:
+            domain_str = f.read()
+        domain = PDDLDomainParser(
+            domain_filepath, expect_action_preds=False, operators_as_actions=True
+        )
+        with tempfile.TemporaryDirectory() as td:
+            problem_dir = Path(td)
+            for multiplier in all_multipliers:
+                num_locs = 2 * multiplier
+                num_newspapers = 3 * multiplier
+                num_want_locs = multiplier
+                num_objs = None
+                tasks = []
+                for i in range(num_tasks_per_size):
+                    problem_outfile = f"problem{i}.pddl"
+                    news_gen(
+                        domain,
+                        problem_dir,
+                        problem_outfile,
+                        num_locs,
+                        num_want_locs,
+                        num_newspapers,
+                    )
+                    pddl_outfile = problem_dir / problem_outfile
+                    with open(pddl_outfile, "r", encoding="utf-8") as f:
+                        problem_str = f.read()
+                    task = Task(domain_str, problem_str)
+                    if num_objs is None:
+                        num_objs = len(task.objects)
+                    assert num_objs == len(task.objects)
+                    tasks.append(task)
+                assert num_objs is not None
+                assert len(tasks) == num_tasks_per_size
+                yield (num_objs, tasks)
     else:
-        import ipdb
-
-        ipdb.set_trace()
+        raise NotImplementedError(f"Unrecognized environment: {env}")
 
 
 def run_fastdownward_planning(
