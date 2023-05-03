@@ -15,11 +15,13 @@ import matplotlib
 import numpy as np
 from analyze_results import load_results
 from matplotlib import pyplot as plt
+from pddlgym.parser import PDDLDomainParser
 
 from llm_genplan import utils
 from llm_genplan.envs.assets.pddl.pg3.heavypack_problem_gen import _run as heavypack_gen
 from llm_genplan.genplan import GeneralizedPlan
 from llm_genplan.structs import Metrics, Task
+from llm_genplan.third_party.pg3_gen.manygripperpg import sample_problem as gripper_gen
 
 ENV_TO_LABEL = {
     "pg3-heavypack": "Heavy",
@@ -32,7 +34,7 @@ ENV_TO_LABEL = {
 }
 
 APPROACH_TO_LABEL = {
-    "chatgpt4": "GPT-4",
+    "chatgpt4": "GPT-4 GenPlan",
     "fd-lama-first": "Fast Downward",
 }
 
@@ -55,7 +57,7 @@ def _main() -> None:
         env_to_success_seeds: DefaultDict[str, Set[int]] = defaultdict(set)
         for _, row in main_results.iterrows():
             # TODO
-            if row.env != "pg3-heavypack":
+            if row.env not in ["pg3-heavypack", "pg3-manygripper"]:
                 continue
             if row.success_rate > 1.0 - 1e-6:
                 env_to_success_seeds[row.env].add(int(row.seed))
@@ -80,19 +82,22 @@ def _main() -> None:
 
 
 def _run_single_env(
-    env: str, seeds: Set[int]
+    env: str,
+    seeds: Set[int],
+    timeout: int = 30,
 ) -> Tuple[List[int], Dict[str, List[List[List[float]]]]]:
     env_xs: Optional[List[int]] = None
     approach_to_env_ys: Dict[str, List[List[List[float]]]] = {
         "chatgpt4": [],
         "fd-lama-first": [],
     }
-    for seed in sorted(seeds):
+    for i, seed in enumerate(sorted(seeds)):
+        print(f"STARTING SEED {seed} ({i} out of {len(seeds)})")
         # Load the genplan for this seed.
         genplan = _load_genplan(env, seed)
         # Generate and evaluate on problems.
-        for approach in approach_to_env_ys:
-            approach_to_env_ys[approach].append([])
+        for env_ys in approach_to_env_ys.values():
+            env_ys.append([])
         seed_env_xs: List[int] = []
         for x, tasks_x in _generate_varying_size_tasks(env, seed):
             seed_env_xs.append(x)
@@ -104,15 +109,16 @@ def _run_single_env(
                         start_time = time.perf_counter()
                         plan = genplan.run(task)
                         duration = time.perf_counter() - start_time
+                        assert duration < timeout
                     else:
                         assert approach == "fd-lama-first"
-                        plan, metrics = run_fastdownward_planning(task)
+                        plan, metrics = run_fastdownward_planning(task, timeout=timeout)
                         duration = metrics["duration"]
                     # Validate the plan.
                     success, _ = utils.validate_plan(task, plan)
-                    # Handle infs later.
                     if not success:
-                        duration = float("inf")
+                        print("WARNING: plan invalid.")
+                        duration = float(timeout)
                     approach_to_env_ys[approach][-1][-1].append(duration)
         if env_xs is None:
             env_xs = seed_env_xs
@@ -137,7 +143,7 @@ def _generate_varying_size_tasks(
 ) -> Iterator[Tuple[int, List[Task]]]:
     # Heavypack
     if env == "pg3-heavypack":
-        all_num_items = [1, 4, 16, 64, 256, 1024]
+        all_num_items = [1, 4, 16]  # [1, 4, 16, 64, 256, 1024]
         domain_filepath = utils.PDDL_DIR / "pg3" / "heavypack.pddl"
         with open(domain_filepath, "r", encoding="utf-8") as f:
             domain_str = f.read()
@@ -163,7 +169,47 @@ def _generate_varying_size_tasks(
                     tasks.append(task)
                 assert len(tasks) == num_tasks_per_size
                 yield (num_items, tasks)
-
+    # Gripper
+    elif env == "pg3-manygripper":
+        all_multipliers = [1, 4, 16]
+        domain_filepath = utils.PDDL_DIR / "pg3" / "manygripper.pddl"
+        with open(domain_filepath, "r", encoding="utf-8") as f:
+            domain_str = f.read()
+        domain = PDDLDomainParser(
+            domain_filepath, expect_action_preds=False, operators_as_actions=True
+        )
+        with tempfile.TemporaryDirectory() as td:
+            problem_dir = Path(td)
+            for multiplier in all_multipliers:
+                num_balls = multiplier
+                num_rooms = 2 * multiplier
+                num_objs: Optional[int] = None
+                tasks = []
+                for i in range(num_tasks_per_size):
+                    problem_outfile = f"problem{i}.pddl"
+                    gripper_gen(
+                        domain,
+                        problem_dir,
+                        problem_outfile,
+                        min_num_balls=num_balls,
+                        max_num_balls=num_balls,
+                        min_num_rooms=num_rooms,
+                        max_num_rooms=num_rooms,
+                        min_num_balls_goal=num_balls,
+                        max_num_balls_goal=num_balls,
+                    )
+                    pddl_outfile = problem_dir / problem_outfile
+                    with open(pddl_outfile, "r", encoding="utf-8") as f:
+                        problem_str = f.read()
+                    task = Task(domain_str, problem_str)
+                    if num_objs is None:
+                        num_objs = len(task.objects)
+                    assert num_objs == len(task.objects)
+                    tasks.append(task)
+                assert num_objs is not None
+                assert len(tasks) == num_tasks_per_size
+                yield (num_objs, tasks)
+    # TODO
     else:
         import ipdb
 
@@ -218,17 +264,11 @@ def run_fastdownward_planning(
     subprocess.getoutput(cleanup_cmd_str)
     # Parse and log metrics.
     if "Time limit has been reached" in output:
-        num_nodes_expanded = re.findall(r"(\d+) expanded", output)[-1]
-        num_nodes_created = re.findall(r"(\d+) evaluated", output)[-1]
         duration = float(timeout)
     else:
-        num_nodes_expanded = re.findall(r"Expanded (\d+) state", output)[0]
-        num_nodes_created = re.findall(r"Evaluated (\d+) state", output)[0]
         total_time = re.findall(r"Total time: (\d+\.\d+)", output)[0]
         duration = float(total_time)
     metrics = {
-        "nodes_expanded": float(num_nodes_expanded),
-        "nodes_created": float(num_nodes_created),
         "duration": duration,
     }
     # Extract the plan from the output, if one exists.
@@ -249,8 +289,8 @@ def _generate_plots(
 ) -> None:
     num_subplots = len(results)
     with plt.style.context("bmh"):
-        fig, _ = plt.subplots(1, num_subplots)
-        for ax, env in zip(fig.axes, sorted(results)):
+        fig, _ = plt.subplots(1, num_subplots, figsize=(8 * num_subplots, 5))
+        for i, (ax, env) in enumerate(zip(fig.axes, sorted(results))):
             env_xs, approach_to_env_ys = results[env]
             for approach in sorted(approach_to_env_ys):
                 env_ys = approach_to_env_ys[approach]  # (seeds, objects, tasks)
@@ -261,11 +301,12 @@ def _generate_plots(
                 )
             ax.set_title(ENV_TO_LABEL[env])
             ax.set_xticks(env_xs)
-            ax.set_xlabel("# Objects")
-            ax.set_ylabel("Planning Time (s)")
-        plt.legend()
+            if i == 0:
+                ax.legend(loc="upper left")
+        fig.supxlabel("# Objects")
+        fig.supylabel("Planning Time (s)")
         plt.tight_layout()
-        plt.savefig(outfile_path)
+        plt.savefig(outfile_path, bbox_inches="tight")
     print(f"Wrote out to {outfile_path}")
 
 
