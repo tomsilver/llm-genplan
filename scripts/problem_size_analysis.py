@@ -32,20 +32,28 @@ ENV_TO_LABEL = {
     "pg3-heavypack": "Heavy",
     "pg3-hiking": "Forest",
     "pg3-trapnewspapers": "Delivery",
-    "pg3-manymiconic": "Miconic",
     "pg3-manygripper": "Gripper",
     "pg3-manyferry": "Ferry",
-    "pg3-spannerlearning": "Spanner",
 }
+
+ENV_ORDER = [
+    "pg3-trapnewspapers",
+    "pg3-hiking",
+    "pg3-manygripper",
+    "pg3-manyferry",
+    "pg3-heavypack",
+]
 
 APPROACH_TO_LABEL = {
     "chatgpt4": "GPT-4 GenPlan",
     "fd-lama-first": "Fast Downward",
 }
 
+TIMEOUT = 30
+
 
 def _main() -> None:
-    matplotlib.rcParams.update({"font.size": 16})
+    matplotlib.rcParams.update({"font.size": 20})
     plot_filepath = Path("problem_size_analysis.png")
     # Load raw results.
     parser = argparse.ArgumentParser()
@@ -84,7 +92,7 @@ def _main() -> None:
 def _run_single_env(
     env: str,
     seeds: Set[int],
-    timeout: int = 30,
+    timeout: int = TIMEOUT,
 ) -> Tuple[List[int], Dict[str, List[List[List[float]]]]]:
     env_xs: Optional[List[int]] = None
     approach_to_env_ys: Dict[str, List[List[List[float]]]] = {
@@ -234,7 +242,7 @@ def _generate_varying_size_tasks(
     # Hiking
     elif env == "pg3-hiking":
         np.random.seed(seed)
-        all_grid_sizes = [4, 6, 8, 10, 12]
+        all_grid_sizes = [4, 8, 16, 24, 32]
         domain_filepath = utils.PDDL_DIR / "pg3" / "hiking.pddl"
         with open(domain_filepath, "r", encoding="utf-8") as f:
             domain_str = f.read()
@@ -308,7 +316,7 @@ def run_fastdownward_planning(
     task: Task,
     alias: Optional[str] = "lama-first",
     search: Optional[str] = None,
-    timeout: int = 30,
+    timeout: int = TIMEOUT,
 ) -> Tuple[List[str], Metrics]:
     """Find a plan with fast downward.
 
@@ -377,24 +385,34 @@ def _generate_plots(
 ) -> None:
     num_subplots = len(results)
     with plt.style.context("bmh"):
-        fig, _ = plt.subplots(1, num_subplots, figsize=(8 * num_subplots, 5))
-        for i, (ax, env) in enumerate(zip(fig.axes, sorted(results))):
+        fig, _ = plt.subplots(
+            1, num_subplots, figsize=(6 * num_subplots, 7), sharey=True
+        )
+        for i, (ax, env) in enumerate(zip(fig.axes, ENV_ORDER)):
             env_xs, approach_to_env_ys = results[env]
             for approach in sorted(approach_to_env_ys):
                 env_ys = approach_to_env_ys[approach]  # (seeds, objects, tasks)
-                mean_env_ys = np.mean(env_ys, axis=(0, 2))
-                assert len(env_xs) == len(mean_env_ys)
-                ax.plot(
-                    env_xs, mean_env_ys, marker="o", label=APPROACH_TO_LABEL[approach]
+                median_env_ys = np.median(env_ys, axis=(0, 2))
+                assert len(env_xs) == len(median_env_ys)
+                ax.loglog(
+                    env_xs, median_env_ys, marker="o", label=APPROACH_TO_LABEL[approach]
                 )
-            ax.set_title(ENV_TO_LABEL[env])
-            ax.set_xticks(env_xs)
+            ax.loglog(
+                [-100, 10 * max(env_xs)],
+                [TIMEOUT, TIMEOUT],
+                linestyle="--",
+                label="Timeout",
+            )
+            ax.set_xlim(right=1.25 * max(env_xs))
             if i == 0:
-                ax.legend(loc="upper left")
-        fig.supxlabel("# Objects")
-        fig.supylabel("Planning Time (s)")
+                ax.legend(loc=(0.05, 0.6))
+                ax.set_yticks([1e-3, 1e-2, 1e-1, 1e0, 10, 100])
+            ax.set_title(ENV_TO_LABEL[env], fontsize=36)
+            ax.set_xticks([10, 100])
+        fig.supxlabel("Log # Objects", fontsize=36)
+        fig.supylabel("Log Planning Time (s)", x=0.01, fontsize=36)
         plt.tight_layout()
-        plt.savefig(outfile_path, bbox_inches="tight")
+        plt.savefig(outfile_path, dpi=250)
     print(f"Wrote out to {outfile_path}")
 
 
