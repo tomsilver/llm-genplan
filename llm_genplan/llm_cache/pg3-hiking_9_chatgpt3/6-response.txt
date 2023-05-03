@@ -1,0 +1,14 @@
+def get_plan(objects, init, goal):
+    current = [atom[1] for atom in init if atom[0] == 'at'][0] # get current location
+    plan = [] # initialize plan
+    while set(goal).difference(set(init)): # while goal is not achieved
+        adjacent_locs = [atom[2] for atom in init if atom[0] == 'adjacent' and atom[1] == current] # get adjacent locations
+        unvisited_adjacent_locs = [loc for loc in adjacent_locs if ('at', loc) not in init] # get unvisited adjacent locations
+        if unvisited_adjacent_locs: # if there are unvisited adjacent locations
+            next_loc = unvisited_adjacent_locs[0] # choose unvisited adjacent location
+            plan.append(f'(go {current} {next_loc})') # add action to plan
+            init = [atom for atom in init if atom != ('at', current)] + [('at', next_loc)] # update current location in initial state
+            current = next_loc # update current location
+        else: # if there are no unvisited adjacent locations
+            break # exit loop
+    return plan

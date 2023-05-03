@@ -1,0 +1,11 @@
+def get_plan(objects, init, goal):
+    current = [atom[1] for atom in init if atom[0] == 'at'][0] # get current location
+    plan = []
+    while set(frozenset(atom) for atom in goal).difference(set(frozenset(atom) for atom in init)): # while goal is not achieved
+        adjacent_locs = [atom[2] for atom in init if atom[0] == 'adjacent' and atom[1] == current] # get adjacent locations
+        next_loc = [loc for loc in adjacent_locs if frozenset(('at', loc)) not in set(frozenset(atom) for atom in init)][0] # choose unvisited adjacent location
+        operator = '(move {} {})'.format(current, next_loc) # create operator
+        plan.append(operator)
+        init = [atom for atom in init if atom != ('at', current)] + [('at', next_loc)] # update current location in initial state
+        current = next_loc # update current location
+    return plan

@@ -1,0 +1,15 @@
+def get_plan(objects, init, goal):
+    current = [atom[1] for atom in init if atom[0] == 'at'][0] # get current location
+    plan = []
+
+    while not all(atom in init for atom in goal):
+        adjacent_locs = [atom[2] for atom in init if atom[0] == 'adjacent' and atom[1] == current] # get adjacent locations
+        next_loc = [loc for loc in adjacent_locs if ('at', loc) not in init][0] # choose unvisited adjacent location
+        if ('ishill', next_loc) in init: # apply climb action if next location is a hill
+            plan.append('(climb {} {})'.format(current, next_loc))
+        else: # apply walk action otherwise
+            plan.append('(walk {} {})'.format(current, next_loc))
+        init = [atom for atom in init if atom != ('at', current)] + [('at', next_loc)] # update current location in initial state
+        current = next_loc
+
+    return plan

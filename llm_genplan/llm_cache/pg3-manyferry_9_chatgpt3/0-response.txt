@@ -1,0 +1,3 @@
+
+
+This domain is called "ferry", and it describes a scenario where cars need to be transported across a river by a ferry. The domain includes predicates such as car, location, at-ferry, at, empty-ferry, and on, which are used to describe the state of the cars and the ferry. The domain also includes three actions: sail, board, and debark, which represent the movement of the ferry and the boarding and disembarking of cars. The two example problems provided specify initial states and goals for the ferry scenario, with different arrangements of cars and locations.

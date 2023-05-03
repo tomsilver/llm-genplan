@@ -1,0 +1,10 @@
+The "spanner" domain can be solved without search by following a simple strategy known as "satisficing planning". The strategy involves considering the actions available in the domain and their preconditions and effects, and then applying them in a way that will satisfy the goal.
+
+In this domain, the available actions include "walk", "pickup_spanner", and "tighten_nut". To satisfy the goal of tightening all the nuts, the following steps can be taken:
+
+1. Pick up a spanner at a location where it is available and Bob is located.
+2. Walk to the location where a loose nut is located.
+3. Tighten the nut using the spanner.
+4. Repeat steps 1-3 until all the nuts are tightened.
+
+This strategy guarantees a solution to any problem in the "spanner" domain, but it may not be optimal or efficient. However, it avoids the need for search by using a simple heuristic of selecting a loose nut and a useable spanner at each step, which is a form of "greedy" search.

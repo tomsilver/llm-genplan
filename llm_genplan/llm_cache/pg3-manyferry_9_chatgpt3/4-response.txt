@@ -1,0 +1,11 @@
+def get_plan(objects, init, goal):
+    # Define the location of the ferry
+    ferry = next(arg for pred, arg in init if pred == 'at-ferry')
+    
+    # Load all cars onto the ferry
+    plan = ['(board {} {})'.format(car, ferry) for car in objects if car.startswith('c')]
+    plan.append('(sail {} {})'.format('l0', 'l1'))
+    # Unload all cars from the ferry
+    plan += ['(debark {} {})'.format(car, 'l1') for car in objects if car.startswith('c')]
+
+    return plan

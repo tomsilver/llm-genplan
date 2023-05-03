@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    # Initialize the plan
+    plan = []
+
+    # Unpack all the newspapers at the home base
+    home_base = [obj for obj in objects if obj[1] == 'loc' and 'ishomebase' in [p[0] for p in init if p[1:] == obj]][0]
+    newspapers = [obj for obj in objects if obj[1] == 'paper' and 'unpacked' in [p[0] for p in init if p[1:] == obj]]
+    for newspaper in newspapers:
+        plan.append(f'(pick-up {newspaper[0]} {home_base[0]})')
+        plan.append(f'(move {home_base[0]} {newspaper[0]})')
+        plan.append(f'(deliver {newspaper[0]} {newspaper[0]})')
+        init.remove(('unpacked',) + newspaper)
+
+    # Deliver newspapers to each location that wants them in a predetermined order
+    locations = [obj for obj in objects if obj[1] == 'loc' and 'wantspaper' in [p[0] for p in init if p[1:] == obj]]
+    for location in sorted(locations, key=lambda loc: loc[0]):
+        newspaper = [obj for obj in objects if obj[1] == 'paper' and 'carrying' in [p[0] for p in init if p[1:] == obj]][0]
+        plan.append(f'(move {newspaper[0]} {location[0]})')
+        plan.append(f'(deliver {newspaper[0]} {location[0]})')
+        init.remove(('wantspaper',) + location)
+
+    return plan

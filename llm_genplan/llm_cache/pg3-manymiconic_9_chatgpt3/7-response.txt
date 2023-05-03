@@ -1,0 +1,8 @@
+def get_successors(state, objects):
+    actions = get_actions(objects)
+    successors = {}
+    for action in actions:
+        if all(p in state for p in get_preconditions(action)):
+            new_state = apply_effects(state, get_effects(action))
+            successors[action] = new_state
+    return successors

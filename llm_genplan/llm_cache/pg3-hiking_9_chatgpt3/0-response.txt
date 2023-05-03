@@ -1,0 +1,3 @@
+
+
+The hiking domain models a hiking scenario where the agent can walk or climb to reach a goal location while avoiding water and choosing the correct paths on hills. The domain includes types for locations, predicates to track the agent's position, and actions to move from one location to another. The problem instances consist of a set of locations and their properties, including whether they are hills or water and whether they are adjacent to each other or on the trail. The goal is to reach a specific location by either walking or climbing.

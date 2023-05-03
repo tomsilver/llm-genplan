@@ -1,0 +1,29 @@
+def get_plan(objects, init, goal):
+    # Extract object locations from initial state
+    object_locations = {}
+    for (pred, obj, *args) in init:
+        if pred == 'at':
+            object_locations[obj] = args[0]
+
+    # Initialize list of actions and goals
+    actions = []
+    goals = []
+
+    # Process each subgoal in turn
+    for (pred, *args) in goal:
+        if pred == 'tightened':
+            goals.append(('tightened', *args))
+        elif pred == 'at':
+            (obj, loc) = args
+            if obj in object_locations and object_locations[obj] != loc:
+                actions.append(('walk', object_locations[obj], loc, 'bob'))
+            object_locations[obj] = loc
+
+            if obj.startswith('spanner'):
+                actions.append(('pickup_spanner', loc, obj, 'bob'))
+            else:
+                actions.append(('tighten_nut', loc, None, 'bob', obj))
+
+            goals.append(('at', obj, loc))
+
+    return actions

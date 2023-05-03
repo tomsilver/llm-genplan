@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    # Create a dictionary of object locations from the initial state
+    object_locations = {obj: loc for (pred, obj, loc) in init if pred == 'at'}
+
+    # Create a set of available spanners from the initial state
+    available_spanners = {obj for (pred, obj) in objects if pred == 'spanner' and ('useable', obj) in init}
+
+    # Create a set of loose nuts from the initial state
+    loose_nuts = {obj for (pred, obj) in objects if pred == 'nut' and ('loose', obj) in init}
+
+    plan = []
+    while loose_nuts:
+        # Select a loose nut and a useable spanner
+        nut = loose_nuts.pop()
+        spanner = next(iter(available_spanners), None)
+
+        # If there are no useable spanners left, fail
+        if spanner is None:
+            return None
+
+        # Remove the spanner from the set of available spanners
+        available_spanners.remove(spanner)
+
+        # Get the location of the nut and the spanner
+        nut_location = object_locations[nut]
+        spanner_location = object_locations[spanner]
+
+        # If the nut and the spanner are in the same location, tighten the nut
+        if nut_location == spanner_location:
+            plan.append(f'(tighten_nut {nut_location} {spanner} bob {nut})')
+            # Update the state: the nut is now tightened and the spanner is no longer useable
+            init.discard(('loose', nut))
+            init.discard(('useable', spanner))
+            init.add(('tightened', nut))
+        # Otherwise, move the spanner to the nut's location and then tighten the nut
+        else:
+            plan.append(f'(walk {spanner_location} {nut_location} bob)')
+            plan.append(f'(pickup_spanner {nut_location} {spanner} bob)')
+            plan.append(f'(tighten_nut {nut_location} {spanner} bob {nut})')
+            # Update the state: the nut is now tightened, the spanner is no longer useable, and the spanner is now at the nut's location
+            init.discard(('loose', nut))
+            init.discard(('useable', spanner))
+            init.add(('tightened', nut))
+            init.add(('at', spanner, nut_location))
+
+    return plan

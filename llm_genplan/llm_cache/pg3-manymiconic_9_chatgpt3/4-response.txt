@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    # Define the fixed sequence of actions
+    actions = ['(up f0_b0 f1_b0)',
+               '(board f1_b0 p0_b0)',
+               '(up f1_b0 f2_b0)',
+               '(depart f2_b0 p0_b0)',
+               '(down f2_b0 f1_b0)',
+               '(board f1_b0 p1_b0)',
+               '(down f1_b0 f0_b0)',
+               '(depart f0_b0 p1_b0)'
+              ]
+    plan = []
+
+    # Execute the fixed sequence of actions until the goal is achieved
+    while set(init) != set(goal):
+        for action in actions:
+            # Check if the preconditions of the action are satisfied
+            if all(p in init for p in get_preconditions(action)):
+                # Apply the effects of the action to the state
+                init = apply_effects(action, init)
+                # Add the action to the plan
+                plan.append(action)
+                break
+
+    return plan
+
+# Helper functions to extract preconditions and apply effects of actions
+def get_preconditions(action):
+    components = parse_action(action)
+    if ':precondition' in components:
+        return components['precondition']
+    else:
+        return []
+
+def apply_effects(action, state):
+    effects = parse_action(action)['effect']
+    return set(state).difference(set(effects)).union(set(effects))
+
+# Helper function to parse an action into a dictionary of its components
+def parse_action(action):
+    components = action.split()
+    op = components[0][1:]
+    if ':precondition' in components:
+        preconditions = components[components.index(':precondition')+1:components.index(':effect')]
+        effects = components[components.index(':effect')+1:]
+    else:
+        preconditions = []
+        effects = components[1:]
+    return {'operator': op, 'precondition': preconditions, 'effect': effects}

@@ -1,0 +1,10 @@
+def get_preconditions(action, timeout=1):
+    try:
+        components = [c.strip('()') for c in action.split()]
+        if ':precondition' not in components:
+            return []
+        preconditions = components[components.index(':precondition')+1:components.index(':effect')]
+        return [p for p in preconditions if p != '']
+    except Exception as e:
+        print(f"Error in get_preconditions: {e}")
+        return []

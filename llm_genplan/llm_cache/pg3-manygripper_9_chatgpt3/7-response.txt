@@ -1,0 +1,11 @@
+def get_plan(objects, init, goal):
+    # Find the closest ball to the gripper
+    gripper = next(obj for obj in objects if obj.startswith('gripper'))
+    closest_ball = min((obj for obj in objects if obj.startswith('ball')),
+                       key=lambda ball: abs(objects.index(ball) - objects.index(gripper)))
+    # Add the new carrying predicate to the initial state
+    init.append(('carry', closest_ball, gripper))
+    # Return the plan
+    return [f'(pick {closest_ball} ?room {gripper})',
+            f'(move ?room room{goal[0][2:]})',
+            f'(drop {closest_ball} room{goal[0][2:]} {gripper})']

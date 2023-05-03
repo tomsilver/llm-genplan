@@ -1,0 +1,5 @@
+The simple strategy for solving all problems in this domain without using search is to use a simple heuristic that involves always moving Robby to the room containing the closest ball and picking it up if the gripper is free, and then moving to the room where the ball needs to be dropped and dropping it if the gripper is carrying a ball. This strategy is commonly referred to as a "greedy" approach, as it always chooses the locally optimal action that appears to bring Robby closer to the goal, without considering the future consequences of the actions taken. 
+
+In other words, the strategy is to always choose the action that brings Robby closer to the nearest ball, pick it up if the gripper is free, and then move Robby to the room where the ball needs to be dropped and drop the ball if Robby is carrying a ball. This strategy is repeated until all the balls have been moved to their desired locations, and the goal is achieved. 
+
+While this simple strategy does not guarantee an optimal or even feasible solution in all cases, it can be effective in many situations and is a good starting point for solving problems in this domain.

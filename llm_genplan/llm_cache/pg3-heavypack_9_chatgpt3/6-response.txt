@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    # sort objects by weight in decreasing order
+    sorted_objects = sorted(objects, key=lambda obj: -sum(1 for p in init if len(p) == 2 and p[1] == obj and p[0] == 'heavier'))
+    # initialize state
+    state = set(init)
+    # initialize plan
+    plan = []
+    # pack objects
+    for obj in sorted_objects:
+        if all(('nothing-above', obj) in state and ('unpacked', obj) in state and ('packed', obj) not in state for obj in sorted_objects):
+            # if the object satisfies the conditions, pack it
+            plan.append('(pack-first {})'.format(obj))
+            state.add(('packed', obj))
+            state.remove(('unpacked', obj))
+        else:
+            # if the object does not satisfy the conditions, the problem is unsolvable
+            return None
+    # check if goal is satisfied
+    if all(g in state for g in goal):
+        return plan
+    else:
+        # if goal is not satisfied, the problem is unsolvable
+        return None if not plan else plan

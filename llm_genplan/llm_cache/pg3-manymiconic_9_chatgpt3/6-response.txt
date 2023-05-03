@@ -1,0 +1,46 @@
+from collections import deque
+from typing import List, Set, Tuple
+
+def get_successors(state: Set[Tuple[str, ...]], objects: Set[Tuple[str, str]]) -> Set[Tuple[str, ...]]:
+    """
+    Given a state, return a set of successor states that can be reached by applying one action.
+
+    :param state: a set of ground atoms representing the current state
+    :param objects: a set of (object name, type name) tuples
+    :return: a set of successor states, each represented as a set of ground atoms
+    """
+    successors = set()
+    for action in actions:
+        if all(p in state for p in get_preconditions(action)):
+            new_state = set(state)
+            for effect in get_effects(action):
+                new_state.add(effect)
+            successors.add(frozenset(new_state))
+    return successors
+
+def get_plan(objects: Set[Tuple[str, str]], init: Set[Tuple[str, ...]], goal: Set[Tuple[str, ...]]) -> List[str]:
+    """
+    Given the domain, initial state, and goal state, return a plan that achieves the goal state.
+
+    :param objects: a set of (object name, type name) tuples
+    :param init: a set of ground atoms representing the initial state
+    :param goal: a set of ground atoms representing the goal state
+    :return: a list of actions that achieves the goal state, represented as strings
+    """
+    state = frozenset(init)
+    visited = set()
+    queue = deque([(state, [])])
+    iterations = 0
+    while queue:
+        state, plan = queue.popleft()
+        visited.add(state)
+        if set(state) == set(goal):
+            return plan
+        successors = get_successors(state, objects)
+        for s in successors:
+            if s not in visited:
+                queue.append((s, plan + [action_strings[action] for action in actions if all(p in state for p in get_preconditions(action))]))
+        iterations += 1
+        if iterations > 10000: # maximum number of iterations
+            break
+    return None

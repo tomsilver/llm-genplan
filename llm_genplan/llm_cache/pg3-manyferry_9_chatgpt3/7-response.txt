@@ -1,0 +1,1 @@
+ferry = next(arg for (pred, arg) in init if pred == 'at-ferry')

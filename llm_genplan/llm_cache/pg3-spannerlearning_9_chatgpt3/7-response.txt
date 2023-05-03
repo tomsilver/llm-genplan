@@ -1,0 +1,32 @@
+def get_plan(objects, init, goal):
+    # Extract object locations from initial state
+    object_locations = {obj: loc for (pred, obj, loc) in init if pred == 'at'}
+
+    # Keep track of which objects are being carried by whom
+    carrying = {man: None for (pred, man) in objects if pred == 'man'}
+
+    # Initialize an empty plan
+    plan = []
+
+    # Loop until the goal is reached or there are no more applicable actions
+    while True:
+        # Check if the goal is satisfied
+        if all(g in init for g in goal):
+            return plan
+
+        # Check if there are no more applicable actions
+        applicable_actions = []
+        for action in ACTIONS:
+            if all(p in init for p in action.preconditions):
+                applicable_actions.append(action)
+        if not applicable_actions:
+            return []
+
+        # Apply the first applicable action
+        for action in applicable_actions:
+            if action.check_preconditions(object_locations, carrying):
+                plan.append(str(action))
+                action.apply(object_locations, carrying)
+                init = [p for p in init if p not in action.delete] + action.add
+                break
+    return []

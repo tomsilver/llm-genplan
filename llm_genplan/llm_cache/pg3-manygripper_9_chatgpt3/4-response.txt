@@ -1,0 +1,53 @@
+def get_plan(objects, init, goal):
+    # Initialize the gripper variable
+    gripper = None
+    # Convert objects set to a list
+    objects = list(objects)
+    # Initialize the plan list
+    plan = []
+    # Loop until the goal is achieved
+    while not all(atom in init for atom in goal):
+        # Find the closest ball to the robot's current location
+        closest_ball = None
+        closest_distance = float('inf')
+        for ball in objects:
+            if ('ball', ball) in init:
+                for room in objects:
+                    if ('room', room) in init and ('at', ball, room) in init:
+                        distance = abs(objects.index(room) - objects.index(gripper))
+                        if distance < closest_distance:
+                            closest_distance = distance
+                            closest_ball = ball
+        # If there are no more balls to pick up, return failure
+        if closest_ball is None:
+            return None
+        # Move the robot to the room containing the closest ball
+        for room in objects:
+            if ('room', room) in init and ('at-robby', room) in init:
+                if ('at', closest_ball, room) in init:
+                    break
+                else:
+                    plan.append('(move {} {})'.format(room, objects[objects.index(room) + 1]))
+        # Pick up the ball if the gripper is free
+        if ('free', gripper) in init:
+            plan.append('(pick {} {} {})'.format(closest_ball, room, gripper))
+            init.remove(('free', gripper))
+            init.append(('carry', closest_ball, gripper))
+        # Move the robot to the room where the ball needs to be dropped
+        for room in objects:
+            if ('room', room) in init and ('at-robby', room) in init:
+                if ('at', closest_ball, room) in goal:
+                    break
+                else:
+                    plan.append('(move {} {})'.format(room, objects[objects.index(room) + 1]))
+        # Drop the ball if the gripper is carrying a ball
+        if ('carry', closest_ball, gripper) in init:
+            plan.append('(drop {} {} {})'.format(closest_ball, room, gripper))
+            init.remove(('carry', closest_ball, gripper))
+            init.append(('free', gripper))
+        # Update the gripper variable
+        for g in objects:
+            if ('gripper', g) in init:
+                gripper = g
+                break
+    return plan
