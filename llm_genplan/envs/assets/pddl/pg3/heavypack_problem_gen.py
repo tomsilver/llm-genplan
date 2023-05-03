@@ -53,12 +53,13 @@ def _run(
     train_max_num_items: int = 10,
     test_min_num_items: int = 100,
     test_max_num_items: int = 250,
+    seed_offset: int = 0,
 ) -> None:
     for seed in range(num_seed):
-        rng = np.random.default_rng(seed)
-        train_seed_dir = train_dir / f"seed{seed}"
+        rng = np.random.default_rng(seed + seed_offset)
+        train_seed_dir = train_dir / f"seed{seed + seed_offset}"
         train_seed_dir.mkdir(parents=True, exist_ok=True)
-        test_seed_dir = test_dir / f"seed{seed}"
+        test_seed_dir = test_dir / f"seed{seed + seed_offset}"
         test_seed_dir.mkdir(parents=True, exist_ok=True)
 
         # Generate train problems.

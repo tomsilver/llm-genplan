@@ -19,16 +19,17 @@ def _main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--results_dir", default="results", type=str)
     args = parser.parse_args()
-    gen_plan_results, evaluation_results = _load_results(args.results_dir)
+    gen_plan_results, evaluation_results = load_results(args.results_dir)
     _create_success_table(evaluation_results)
     _create_interactive_debug_plot(gen_plan_results)
     _create_genplan_error_table(gen_plan_results)
     _create_num_training_tasks_plot(gen_plan_results)
 
 
-def _load_results(
+def load_results(
     results_dir: str,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the raw results into dataframes."""
     all_gen_plan_data = []
     all_evaluation_data = []
     git_commit_hashes = set()
