@@ -1,0 +1,58 @@
+def get_plan(objects, init, goal):
+    def find_predicate1_object():
+        for atom in init:
+            if atom[0] == "predicate1":
+                return atom[1]
+        return None
+
+    def find_predicate0_path(source, target):
+        path = []
+        visited = set()
+        queue = [(source, [])]
+
+        while queue:
+            current, current_path = queue.pop(0)
+            visited.add(current)
+
+            for atom in init:
+                if atom[0] == "predicate0" and atom[1] == current:
+                    next_object = atom[2]
+
+                    if next_object == target:
+                        return current_path + [current]
+
+                    if next_object not in visited:
+                        queue.append((next_object, current_path + [current]))
+
+        return None
+
+    def choose_operator(obj1, obj2):
+        has_predicate3 = any(atom[0] == "predicate3" and atom[1] == obj2 for atom in init)
+        has_predicate4 = any(atom[0] == "predicate4" and atom[1] == obj1 for atom in init)
+
+        if not has_predicate4:
+            return "operator1" if not has_predicate3 else "operator0"
+
+        return None
+
+    plan = []
+
+    goal_predicate1_object = next(atom[1] for atom in goal if atom[0] == "predicate1")
+    init_predicate1_object = find_predicate1_object()
+
+    if goal_predicate1_object and init_predicate1_object:
+        path = find_predicate0_path(init_predicate1_object, goal_predicate1_object)
+
+        if path:
+            for i in range(len(path) - 1):
+                obj1, obj2 = path[i], path[i + 1]
+                operator = choose_operator(obj1, obj2)
+
+                if operator:
+                    plan.append(f"({operator} {obj1} {obj2})")
+                else:
+                    # Reset plan to empty list if the operator is not found
+                    plan = []
+                    break
+
+    return plan

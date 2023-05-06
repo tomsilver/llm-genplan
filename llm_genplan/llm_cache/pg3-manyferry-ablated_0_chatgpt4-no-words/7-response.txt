@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    plan = []
+    predicate0, predicate8, predicate5_present = extract_state_info(init)
+    goal_predicate0 = extract_goal_info(goal)
+    predicate1_obj = find_predicate1(init)
+
+    for obj, desired_state in goal_predicate0.items():
+        current_state = predicate0[obj]
+
+        # Move from predicate8 to predicate0 if needed
+        if obj in predicate8:
+            plan.append(f'(operator1 {obj} {current_state})')
+            predicate8.remove(obj)
+
+        # Move any object to predicate0 to enable operator0
+        if not predicate5_present:
+            for obj_8 in predicate8:
+                current_state_8 = predicate0[obj_8]
+                plan.append(f'(operator1 {obj_8} {current_state_8})')
+                predicate8.remove(obj_8)
+                break
+
+        # Move predicate1 to the desired object if it's not already there
+        while predicate1_obj != obj:
+            object_satisfying_predicate7 = find_predicate7(init, predicate1_obj)
+            if object_satisfying_predicate7 is not None:
+                plan.append(f'(operator2 {predicate1_obj} {object_satisfying_predicate7})')
+                predicate1_obj = object_satisfying_predicate7
+            else:
+                break
+
+        # Move from current predicate0 state to desired predicate0 state
+        if current_state != desired_state:
+            plan.append(f'(operator0 {obj} {current_state})')
+            predicate0[obj] = desired_state
+
+    return plan

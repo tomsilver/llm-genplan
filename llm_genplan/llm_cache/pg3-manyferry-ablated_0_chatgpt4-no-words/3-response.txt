@@ -1,0 +1,44 @@
+def extract_state_info(init):
+    predicate0 = {}
+    predicate8 = set()
+    for atom in init:
+        if atom[0] == 'predicate0':
+            predicate0[atom[1]] = atom[2]
+        elif atom[0] == 'predicate8':
+            predicate8.add(atom[1])
+    return predicate0, predicate8
+
+def extract_goal_info(goal):
+    goal_predicate0 = {}
+    for atom in goal:
+        if atom[0] == 'predicate0':
+            goal_predicate0[atom[1]] = atom[2]
+    return goal_predicate0
+
+def get_plan(objects, init, goal):
+    plan = []
+    predicate0, predicate8 = extract_state_info(init)
+    goal_predicate0 = extract_goal_info(goal)
+
+    for obj, desired_state in goal_predicate0.items():
+        current_state = predicate0[obj]
+
+        # Move from predicate8 to predicate0 if needed
+        if obj in predicate8:
+            plan.append(f'(operator1 {obj} {current_state})')
+            predicate8.remove(obj)
+
+        # Move any object to predicate0 to enable operator0
+        if not any(atom.startswith('predicate5') for atom in init):
+            for obj_8 in predicate8:
+                current_state_8 = predicate0[obj_8]
+                plan.append(f'(operator1 {obj_8} {current_state_8})')
+                predicate8.remove(obj_8)
+                break
+
+        # Move from current predicate0 state to desired predicate0 state
+        if current_state != desired_state:
+            plan.append(f'(operator0 {obj} {current_state})')
+            predicate0[obj] = desired_state
+
+    return plan

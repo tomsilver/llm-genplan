@@ -1,0 +1,61 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object10
+    object11
+    object12
+    object13
+    object2
+    object3
+    object4
+    object5
+    ...
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object1 object9)
+    (predicate0 object2 object13)
+    (predicate0 object3 object7)
+    (predicate1 object12)
+    (predicate3 object0)
+    (predicate3 object1)
+    (predicate3 object2)
+    (predicate3 object3)
+    (predicate5)
+    (predicate6 object10)
+    (predicate6 object11)
+    (predicate6 object12)
+    (predicate6 object13)
+    (predicate6 object4)
+    (predicate6 object5)
+    (predicate6 object6)
+    (predicate6 object7)
+    (predicate6 object8)
+    (predicate6 object9)
+    (predicate7 object10 object11)
+    (predicate7 object10 object12)
+    (predicate7 object10 object13)
+    (predicate7 object10 object4)
+    (predicate7 object10 object5)
+    (predicate7 object10 object6)
+    (predicate7 object10 object7)
+    (predicate7 object10 object8)
+    (predicate7 object10 object9)
+    (predicate7 object11 object10)
+    ...
+  )
+  (:goal (and
+    (predicate0 object0 object11)
+    (predicate0 object1 object11)
+    (predicate0 object2 object12)
+    (predicate0 object3 object8)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator0 object2 object13)', '(operator0 object0 object10)', '(operator0 object1 object9)', '(operator0 object3 object7)'].
+NOTE: (operator0 object2 object13) has an unsatisfied precondition at time 0
+(Set (predicate1 object13) to true)
+Fix the code.

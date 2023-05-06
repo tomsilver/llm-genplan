@@ -1,0 +1,9 @@
+This domain, called "my-pddl-domain", involves objects of different types (type0, type2, type3, type4, type5, and type6) and various predicates (predicate0, predicate1, predicate2, predicate3, predicate6, and predicate7). There are three actions defined in this domain: operator0, operator1, and operator2.
+
+The objects in this domain can be classified into six different types. Type0 has subtypes type3, type4, and type6, while type5 is a parent type for type2.
+
+Predicates describe different relationships between the objects. For example, predicate0 connects objects of type0 and type2, and predicate1 links objects of type3 and type6.
+
+The actions involve different combinations of objects and predicates. Operator0, for instance, has a precondition that requires an object of type3 and type2 to be connected by predicate0, and an object of type6 and type2 to be connected by predicate0 as well. The effect of this action is to disconnect the type6 object from the type2 object and connect the type3 object to the type6 object using predicate1.
+
+The two example problems provided in the domain involve a set of objects of different types and their initial relationships defined by various predicates. The goal of both problems is to reach a state where objects of type4 (object5, object6, and object7 in the first problem, and object6, object7, and object8 in the second problem) are connected with predicate6.

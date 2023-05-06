@@ -1,0 +1,13 @@
+In this domain, the operators modify the relationships between objects based on the predicates. A simple strategy to solve all problems without using search can be achieved by following these steps:
+
+1. Identify the goal state relationships that need to be established using predicate0.
+
+2. For each of these relationships, find the current relationships involving the objects (using predicate0) in the initial state.
+
+3. For each such relationship, use operator1 to make the desired object (the second object in the predicate0 relationship) available by applying it to the current object in the relationship (the first object in the predicate0 relationship). This will make the desired object the "selected" object (as per predicate1).
+
+4. Apply operator2 for each object pair that needs to be connected, using the "selected" object from step 3 and the appropriate object from predicate6 (which is "free" as per predicate5). This will establish the relationship between the two objects using predicate3.
+
+5. Finally, apply operator0 for each object pair that needs to be connected, using the same objects as in step 4. This will change the relationship between the two objects from predicate3 to predicate0 and make the second object "free" again (as per predicate5).
+
+By following these steps, you can solve all problems in this domain without using search. Note that this strategy assumes there are always enough "free" objects (as per predicate5) to satisfy the goal state relationships.

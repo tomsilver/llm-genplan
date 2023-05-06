@@ -1,0 +1,11 @@
+This PDDL domain, named "my-pddl-domain," consists of three operators and a set of predicates. The predicates describe relationships between objects in the domain, such as predicate0, predicate1, and predicate9, among others.
+
+The three operators are:
+
+1. Operator1: This operator takes two variables as parameters, and its precondition requires both variables to satisfy predicate9 and the first variable to satisfy predicate1. The effect of this operator is to make the second variable satisfy predicate1 while removing this predicate from the first variable.
+
+2. Operator2: This operator takes three variables as parameters. The precondition checks if the first variable satisfies predicate2, the second variable satisfies predicate9 and predicate1, and the third variable satisfies predicate6 and predicate5. Additionally, the first and second variables should satisfy predicate0. The effect of this operator is to establish a predicate3 relationship between the first and third variables and remove predicate0 and predicate5 relationships from the first and second variables, and the third variable, respectively.
+
+3. Operator0: Similar to Operator2, this operator takes three variables as parameters. The precondition checks if the first variable satisfies predicate2, the second variable satisfies predicate9 and predicate1, and the third variable satisfies predicate6. Additionally, the first and third variables should satisfy predicate3. The effect of this operator is to establish a predicate0 relationship between the first and second variables, a predicate5 relationship for the third variable, and remove the predicate3 relationship between the first and third variables.
+
+Two example problems, "my-problem-9" and "my-problem-5," are defined within this domain. Both problems consist of a set of objects, an initial state described by various predicate relationships, and a goal state that the planner must achieve. The goal states involve specific predicate0 relationships between certain objects.

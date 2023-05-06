@@ -1,0 +1,6 @@
+The simple strategy for solving all problems in this domain without using search is to sequentially apply the actions in the following manner:
+
+1. Apply the action operator0 to each object in the problem. This action will negate predicate0, apply predicate4 and predicate2 to the objects, and negate predicate6 for the objects.
+2. For each object (let's call it A) for which predicate4 and predicate2 hold, find another object (let's call it B) that has predicate1 holding for the pair A and B, and predicate6 holding for object B. Apply the action operator1 to the pair of objects A and B. This action will negate predicate2 for object A, negate predicate6 for object B, and apply predicate4 and predicate2 to object B.
+
+By following this strategy, you will eventually have predicate4 applied to all objects in the problem, which is the goal state for the domain.

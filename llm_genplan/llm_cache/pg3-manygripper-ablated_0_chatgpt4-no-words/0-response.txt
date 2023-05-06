@@ -1,0 +1,17 @@
+This PDDL domain, called "my-pddl-domain", consists of 7 predicates and 3 operators.
+
+The predicates are as follows:
+1. predicate0: Takes 2 variables.
+2. predicate1: Takes 1 variable.
+3. predicate2: Takes 1 variable.
+4. predicate3: Takes 2 variables.
+5. predicate5: Takes 1 variable.
+6. predicate6: Takes 1 variable.
+7. predicate9: Takes 1 variable.
+
+The operators are as follows:
+1. operator1: Takes 2 parameters, has preconditions involving predicates 1 and 9, and affects predicates 1.
+2. operator2: Takes 3 parameters, has preconditions involving predicates 0, 1, 2, 5, 6, and 9, and affects predicates 0, 3, and 5.
+3. operator0: Takes 3 parameters, has preconditions involving predicates 1, 2, 3, 6, and 9, and affects predicates 0, 3, and 5.
+
+There are two example problems provided: "my-problem-9" and "my-problem-5". Each problem has a list of objects and initial conditions (described using the predicates) and a goal state. The goal state for each problem is represented using the predicate0 with specific object pairs. The objective of the planning problem is to find a sequence of actions (using the operators) that transitions from the initial state to the goal state.

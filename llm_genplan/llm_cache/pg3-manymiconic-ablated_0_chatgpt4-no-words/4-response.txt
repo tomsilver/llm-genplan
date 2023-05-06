@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    type0_objects = [obj for obj, obj_type in objects if obj_type == "type0"]
+    type2_objects = [obj for obj, obj_type in objects if obj_type == "type2"]
+    
+    predicate7_relations = {(pred_args[1], pred_args[2]) for pred_args in init if pred_args[0] == "predicate7"}
+    predicate4_relations = {(pred_args[1], pred_args[2]) for pred_args in init if pred_args[0] == "predicate4"}
+
+    for type2_obj in type2_objects:
+        # Find the connected type0 objects
+        connected_type0_7 = [type0_obj for type2, type0_obj in predicate7_relations if type2 == type2_obj]
+        connected_type0_4 = [type0_obj for type2, type0_obj in predicate4_relations if type2 == type2_obj]
+
+        if connected_type0_7:
+            # Perform operator0 on type2 and type0 objects connected through predicate7
+            type0_obj = connected_type0_7[0]
+            action = f"(operator0 {type2_obj} {type0_obj})"
+            plan.append(action)
+
+        if connected_type0_4:
+            # Perform operator1 on type2 and type0 objects connected through predicate4
+            type0_obj = connected_type0_4[0]
+            action = f"(operator1 {type2_obj} {type0_obj})"
+            plan.append(action)
+
+    return plan

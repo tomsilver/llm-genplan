@@ -1,0 +1,32 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Step 1: Apply operator1
+    p6_objects = [p[1] for p in init if p[0] == "predicate6"]
+    p0_objects = [p[1] for p in init if p[0] == "predicate0"]
+
+    while p6_objects:
+        p6_obj = p6_objects.pop(0)
+        p0_obj = p0_objects.pop(0)
+        plan.append(f"(operator1 {p0_obj} {p6_obj})")
+        p0_objects.append(p6_obj)
+
+    # Step 2: Apply operator2
+    p3_objects = [p[1] for p in init if p[0] == "predicate3"]
+    p8_objects = [p[1] for p in init if p[0] == "predicate8"]
+
+    while p3_objects and p8_objects:
+        p3_obj = p3_objects.pop(0)
+        p8_obj = p8_objects.pop(0)
+        plan.append(f"(operator2 {p8_obj} {p3_obj})")
+
+    # Step 3: Apply operator0
+    p1_objects = [p[1] for p in init if p[0] == "predicate1"]
+    p9_objects = [p[1] for p in init if p[0] == "predicate9"]
+
+    while p9_objects and p1_objects:
+        p9_obj = p9_objects.pop(0)
+        p1_obj = p1_objects.pop(0)
+        plan.append(f"(operator0 {p1_obj} {p9_obj})")
+
+    return plan

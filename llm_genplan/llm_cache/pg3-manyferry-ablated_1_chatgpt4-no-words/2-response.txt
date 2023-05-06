@@ -1,0 +1,8 @@
+The simple strategy for solving all problems in this domain without using search is to observe the pattern of actions and their effects on the predicates. The goal in both example problems is to achieve a specific configuration of the predicate0 relationships. To do this, we can follow these steps:
+
+1. Identify the objects related to predicate0 in the goal state.
+2. Apply the operator1 action for each object that needs to be disconnected from its current predicate0 relationship. This action will remove the predicate0 relationship and set predicate8 and predicate5.
+3. Apply the operator0 action to create new predicate0 relationships as required by the goal state. Make sure to follow the preconditions, which include having predicate8 and predicate5 for the objects involved.
+4. If any objects need to swap their predicate1 status, use the operator2 action. Ensure that the objects involved satisfy the preconditions, such as having a predicate7 relationship and the correct predicate1 and predicate6 statuses.
+
+By systematically applying these actions in the correct order and satisfying the preconditions, you can solve the problems in this domain without using search algorithms.

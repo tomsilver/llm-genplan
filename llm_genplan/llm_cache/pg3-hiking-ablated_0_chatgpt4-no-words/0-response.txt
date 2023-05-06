@@ -1,0 +1,5 @@
+This PDDL domain, called "my-pddl-domain", consists of a single type "type0" and five predicates: "predicate0" to "predicate4". Each predicate involves objects of type "type0". Predicates "predicate0" and "predicate5" involve two objects, while the others involve only one object.
+
+There are two actions defined in this domain: "operator1" and "operator0". Both actions have two parameters of "type0" and involve similar preconditions. The preconditions for "operator1" include the absence of "predicate3" on the second parameter, while "operator0" requires "predicate3" to be true for the second parameter. Both actions share the same effects: applying "predicate1" on the second parameter and negating "predicate1" on the first parameter.
+
+The domain contains two example problems, "my-problem-3" and "my-problem-2". Both problems have a set of objects of type "type0" and an initial state with various predicates applied to these objects. The goal states for both problems require "predicate1" to be true for specific objects ("object67" in "my-problem-3" and "object27" in "my-problem-2").

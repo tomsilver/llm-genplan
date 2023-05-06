@@ -1,0 +1,3 @@
+This PDDL domain, named "my-pddl-domain", defines a problem-solving environment with two types of objects: type0 and type2. There are six predicates, ranging from predicate0 to predicate8, that describe various relationships and states of the objects. The domain has four operators (actions) named operator0, operator1, operator2, and operator3, each with specific parameters, preconditions, and effects.
+
+Two example problems are given: "my-problem-9" and "my-problem-5". Both problems use the "my-pddl-domain" and have objects of type0 and type2, as well as initial states defined by a combination of predicates. The goal states for both problems involve achieving specific states (predicate8) for some of the type2 objects.

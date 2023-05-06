@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper functions
+    def find(predicate, *args):
+        for atom in init:
+            if atom[0] == predicate and all(arg == atom[i + 1] for i, arg in enumerate(args)):
+                return atom
+        return None
+
+    def available(obj):
+        return find('predicate1', obj) is not None
+
+    def make_available(obj):
+        if not available(obj):
+            pred0_obj = find('predicate0', obj)
+            if pred0_obj:
+                init.add(('predicate1', pred0_obj[2]))
+                init.discard(pred0_obj)
+                plan.append(f"(operator1 {obj} {pred0_obj[2]})")
+
+    def find_available_p6_p5():
+        for obj in objects:
+            if find('predicate6', obj) and find('predicate5', obj):
+                return obj
+        return None
+
+    for goal_atom in goal:
+        if goal_atom not in init:
+            obj1, obj2 = goal_atom[1], goal_atom[2]
+
+            make_available(obj2)
+
+            p6_p5_obj = find_available_p6_p5()
+            if p6_p5_obj:
+                current_p0 = find('predicate0', obj1)
+                if current_p0:
+                    make_available(current_p0[1])  # Ensure the connected object is available
+                    make_available(current_p0[2])  # Ensure the connected object is available
+                    init.discard(current_p0)
+                    init.add(('predicate3', obj1, p6_p5_obj))
+                    init.discard(('predicate5', p6_p5_obj))
+                    plan.append(f"(operator2 {obj1} {current_p0[2]} {p6_p5_obj})")
+
+                init.add(goal_atom)
+                init.add(('predicate5', p6_p5_obj))
+                init.discard(('predicate3', obj1, p6_p5_obj))
+                plan.append(f"(operator0 {obj1} {obj2} {p6_p5_obj})")
+
+    return plan

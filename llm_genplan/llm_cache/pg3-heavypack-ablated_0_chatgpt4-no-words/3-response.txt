@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Apply operator0 to all objects
+    for obj in objects:
+        action = f'(operator0 {obj})'
+        plan.append(action)
+
+    # Find pairs of objects A and B to apply operator1
+    pairs = set()
+    for atom in init:
+        if atom[0] == 'predicate1':
+            pairs.add((atom[1], atom[2]))
+
+    for obj_a in objects:
+        if ('predicate4', obj_a) in goal and ('predicate2', obj_a) in goal:
+            for obj_b in objects:
+                if (obj_a, obj_b) in pairs and ('predicate6', obj_b) in init:
+                    action = f'(operator1 {obj_a} {obj_b})'
+                    plan.append(action)
+    
+    return plan

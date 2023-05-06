@@ -1,0 +1,36 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Step 1: Apply operator1
+    for predicate in init:
+        if predicate[0] == "predicate6":
+            v3 = predicate[1]
+            for pred in init:
+                if pred[0] == "predicate0":
+                    v0 = pred[1]
+                    if ("predicate6", v0) in init:
+                        plan.append(f"(operator1 {v0} {v3})")
+                        break
+
+    # Step 2: Apply operator2
+    for predicate in init:
+        if predicate[0] == "predicate0":
+            v1 = predicate[1]
+            if ("predicate3", v1) in init:
+                for pred in init:
+                    if pred[0] == "predicate8":
+                        v2 = pred[1]
+                        plan.append(f"(operator2 {v2} {v1})")
+                        break
+
+    # Step 3: Apply operator0
+    for predicate in init:
+        if predicate[0] == "predicate0":
+            v1 = predicate[1]
+            for pred in init:
+                if pred[0] == "predicate1":
+                    v2 = pred[1]
+                    plan.append(f"(operator0 {v2} {v1})")
+                    break
+
+    return plan

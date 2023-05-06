@@ -1,0 +1,54 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0 - type0
+    object1 - type0
+    object10 - type0
+    object11 - type0
+    object12 - type0
+    object13 - type0
+    object2 - type0
+    object3 - type0
+    object4 - type0
+    object5 - type0
+    ...
+    object14 - type2
+    object15 - type2
+    object16 - type2
+    object17 - type2
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object0 object12)
+    (predicate0 object0 object2)
+    (predicate0 object0 object4)
+    (predicate0 object0 object6)
+    (predicate0 object0 object8)
+    (predicate0 object1 object11)
+    (predicate0 object1 object13)
+    (predicate0 object1 object3)
+    (predicate0 object1 object5)
+    ...
+    (predicate4 object14 object0)
+    (predicate4 object15 object5)
+    (predicate4 object16 object10)
+    (predicate4 object17 object11)
+    (predicate6 object1)
+    (predicate6 object6)
+    (predicate7 object14 object10)
+    (predicate7 object15 object3)
+    (predicate7 object16 object2)
+    (predicate7 object17 object5)
+  )
+  (:goal (and
+    (predicate8 object14)
+    (predicate8 object15)
+    (predicate8 object16)
+    (predicate8 object17)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator1 object14 object0)', '(operator1 object17 object11)', '(operator1 object16 object10)', '(operator1 object15 object5)'].
+NOTE: The plan did not achieve the goal.
+Fix the code.

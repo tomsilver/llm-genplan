@@ -1,0 +1,150 @@
+Domain:
+(define (domain my-pddl-domain)
+  (:requirements :strips)
+  (:types type2 - type1
+          type0 - type1
+  )
+
+(:predicates
+(predicate7 ?v7 - type2 ?v3 - type0)
+(predicate4 ?v7 - type2 ?v3 - type0)
+(predicate0 ?v4 - type0  ?v5 - type0)
+(predicate2 ?v7 - type2)
+(predicate8 ?v7 - type2)
+(predicate6 ?v3 - type0)
+)
+
+(:action operator0
+  :parameters (?v0 - type0 ?v6 - type2)
+  :precondition (and (predicate6 ?v0)
+                     (predicate7 ?v6 ?v0)
+                )
+  :effect (and (predicate2 ?v6)
+          )
+)
+
+(:action operator1
+  :parameters (?v0 - type0 ?v6 - type2)
+  :precondition (and (predicate6 ?v0)
+                     (predicate4 ?v6 ?v0)
+                     (predicate2 ?v6)
+                )
+  :effect (and (not (predicate2 ?v6))
+               (predicate8 ?v6)
+          )
+)
+
+(:action operator3
+  :parameters (?v1 - type0 ?v2 - type0)
+  :precondition (and (predicate6 ?v1)
+                     (predicate0 ?v1 ?v2)
+                )
+  :effect (and (predicate6 ?v2)
+               (not (predicate6 ?v1))
+          )
+)
+
+(:action operator2
+  :parameters (?v1 - type0 ?v2 - type0)
+  :precondition (and (predicate6 ?v1)
+                     (predicate0 ?v2 ?v1)
+                )
+  :effect (and (predicate6 ?v2)
+               (not (predicate6 ?v1))
+          )
+)
+)
+
+Example problems:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0 - type0
+    object1 - type0
+    object10 - type0
+    object11 - type0
+    object12 - type0
+    object13 - type0
+    object14 - type0
+    object15 - type0
+    object16 - type0
+    object17 - type0
+    ...
+    object20 - type2
+    object21 - type2
+    object22 - type2
+    object23 - type2
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object0 object12)
+    (predicate0 object0 object14)
+    (predicate0 object0 object16)
+    (predicate0 object0 object18)
+    (predicate0 object0 object2)
+    (predicate0 object0 object4)
+    (predicate0 object0 object6)
+    (predicate0 object0 object8)
+    (predicate0 object1 object11)
+    ...
+    (predicate4 object20 object0)
+    (predicate4 object21 object7)
+    (predicate4 object22 object18)
+    (predicate4 object23 object3)
+    (predicate6 object10)
+    (predicate6 object17)
+    (predicate7 object20 object8)
+    (predicate7 object21 object3)
+    (predicate7 object22 object14)
+    (predicate7 object23 object11)
+  )
+  (:goal (and
+    (predicate8 object20)
+    (predicate8 object21)
+    (predicate8 object22)
+    (predicate8 object23)
+    )
+  )    
+)
+        
+(define (problem my-problem-5 (:domain my-pddl-domain)
+  (:objects
+    object0 - type0
+    object1 - type0
+    object2 - type0
+    object3 - type0
+    object4 - type0
+    object5 - type0
+    object6 - type0
+    object7 - type0
+    object10 - type2
+    object8 - type2
+    object9 - type2
+  )
+  (:init
+    (predicate0 object0 object1)
+    (predicate0 object0 object2)
+    (predicate0 object0 object3)
+    (predicate0 object0 object4)
+    (predicate0 object0 object5)
+    (predicate0 object0 object6)
+    (predicate0 object0 object7)
+    (predicate0 object1 object2)
+    (predicate0 object1 object3)
+    (predicate0 object1 object4)
+    ...
+    (predicate4 object10 object6)
+    (predicate4 object8 object3)
+    (predicate4 object9 object0)
+    (predicate6 object2)
+    (predicate7 object10 object1)
+    (predicate7 object8 object5)
+    (predicate7 object9 object4)
+  )
+  (:goal (and
+    (predicate8 object10)
+    (predicate8 object8)
+    (predicate8 object9)
+    )
+  )    
+)
+Write a short summary of this domain in words.

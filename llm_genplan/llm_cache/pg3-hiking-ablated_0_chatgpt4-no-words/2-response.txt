@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is to focus on the goal condition, which requires "predicate1" to be true for a specific object. Since the only actions that affect "predicate1" are "operator1" and "operator0", we can look for the right sequence of actions to achieve the goal by examining the preconditions of these actions.
+
+1. Identify the target object for which "predicate1" must be true in the goal state.
+
+2. Find an object that has "predicate1" true in the initial state.
+
+3. Check if there is a valid sequence of "predicate0" relations between the object with "predicate1" and the target object.
+
+4. If the sequence exists, apply either "operator1" or "operator0" based on the presence or absence of "predicate3" for the connected objects in the sequence. Make sure that "predicate4" is false for the first parameter in each action. Keep applying the operators in the sequence, updating "predicate1" accordingly, until "predicate1" is true for the target object.
+
+By following this strategy, we can achieve the goal state without performing an exhaustive search through the state space.

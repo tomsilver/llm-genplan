@@ -1,0 +1,55 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object2
+    object3
+    object4
+    object5
+    object6
+  )
+  (:init
+    (predicate0)
+    (predicate1 object0 object1)
+    (predicate1 object0 object3)
+    (predicate1 object0 object4)
+    (predicate1 object1 object3)
+    (predicate1 object1 object4)
+    (predicate1 object2 object0)
+    (predicate1 object2 object1)
+    (predicate1 object2 object3)
+    (predicate1 object2 object4)
+    (predicate1 object2 object5)
+    ...
+    (predicate6 object0)
+    (predicate6 object1)
+    (predicate6 object2)
+    (predicate6 object3)
+    (predicate6 object4)
+    (predicate6 object5)
+    (predicate6 object6)
+  )
+  (:goal (and
+    (predicate4 object0)
+    (predicate4 object1)
+    (predicate4 object2)
+    (predicate4 object3)
+    (predicate4 object4)
+    (predicate4 object5)
+    (predicate4 object6)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator0 object2)'].
+NOTE: The goal is not satisfied
+(Follow each of:
+    (Set (predicate4 object0) to true)
+    and (Set (predicate4 object1) to true)
+    and (Set (predicate4 object3) to true)
+    and (Set (predicate4 object4) to true)
+    and (Set (predicate4 object5) to true)
+    and (Set (predicate4 object6) to true)
+)
+Fix the code.
