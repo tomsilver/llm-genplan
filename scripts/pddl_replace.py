@@ -19,7 +19,9 @@ def _main() -> None:
         num_eval=FLAGS.num_eval_tasks,
     )
     all_tasks = prompt_tasks + extra_train_tasks + eval_tasks
-    new_domain_file = utils.PDDL_DIR / "pg3" / f"{FLAGS.env}-ablated.pddl"
+    assert FLAGS.env.startswith("pg3-")
+    env = FLAGS.env[len("pg-3") :]
+    new_domain_file = utils.PDDL_DIR / "pg3" / f"{env}-ablated.pddl"
     # Get substitutions for domain.
     substitutions = _get_domain_substitutions(all_tasks[0])
     # Apply the substitutions to get a new domain.
@@ -41,9 +43,9 @@ def _main() -> None:
             _validate_transformed_task(new_task, task)
         # Save the new task.
         if is_test_task:
-            new_dir_name = f"{FLAGS.env}-ablated_test"
+            new_dir_name = f"{env}-ablated_test"
         else:
-            new_dir_name = f"{FLAGS.env}-ablated"
+            new_dir_name = f"{env}-ablated"
         new_problem_dir = utils.PDDL_DIR / "pg3" / new_dir_name / f"seed{FLAGS.seed}"
         os.makedirs(new_problem_dir, exist_ok=True)
         new_problem_file = new_problem_dir / f"task{i}.pddl"
