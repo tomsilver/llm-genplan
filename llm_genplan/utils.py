@@ -3,6 +3,7 @@
 import functools
 import logging
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from llm_genplan.flags import FLAGS, create_parser
-from llm_genplan.structs import Task
+from llm_genplan.structs import Metrics, Task
 
 # Global constants.
 _DIR = Path(__file__).parent
@@ -111,3 +112,70 @@ def reset_flags(args: Optional[Dict[str, Any]] = None, default_seed: int = 123) 
     if args is not None:
         arg_dict.update(args)
     FLAGS.__dict__.update(arg_dict)
+
+
+def run_fastdownward_planning(
+    task: Task,
+    alias: Optional[str] = "lama-first",
+    search: Optional[str] = None,
+    timeout: int = 30,
+) -> Tuple[List[str], Metrics]:
+    """Find a plan with fast downward.
+
+    Usage: Build and compile the Fast Downward planner, then set the environment
+    variable FD_EXEC_PATH to point to the `downward` directory. For example:
+    1) git clone https://github.com/ronuchit/downward.git
+    2) cd downward && ./build.py
+    3) export FD_EXEC_PATH="<your absolute path here>/downward"
+
+    Also make sure python3.9 is installed.
+    """
+    # Specify either a search flag or an alias.
+    assert (search is None) + (alias is None) == 1
+    # The SAS file isn't actually used, but it's important that we give it a
+    # name, because otherwise Fast Downward uses a fixed default name, which
+    # will cause issues if you run multiple processes simultaneously.
+    sas_file = tempfile.NamedTemporaryFile(delete=False).name
+    # Run Fast Downward followed by cleanup. Capture the output.
+    assert (
+        "FD_EXEC_PATH" in os.environ
+    ), "Please follow the instructions in the docstring of this method!"
+    if alias is not None:
+        alias_flag = f"--alias {alias}"
+    else:
+        alias_flag = ""
+    if search is not None:
+        search_flag = f"--search '{search}'"
+    else:
+        search_flag = ""
+    fd_exec_path = os.environ["FD_EXEC_PATH"]
+    exec_str = os.path.join(fd_exec_path, "fast-downward.py")
+    cmd_str = (
+        f'python3.9 "{exec_str}" {alias_flag} '
+        f"--overall-time-limit {timeout} "
+        f"--sas-file {sas_file} "
+        f'"{task.domain_file}" "{task.problem_file}" '
+        f"{search_flag}"
+    )
+    output = subprocess.getoutput(cmd_str)
+    cleanup_cmd_str = f"{exec_str} --cleanup"
+    subprocess.getoutput(cleanup_cmd_str)
+    # Parse and log metrics.
+    if "Time limit has been reached" in output:
+        duration = float(timeout)
+    else:
+        total_time = re.findall(r"Total time: (\d+\.\d+)", output)[0]
+        duration = float(total_time)
+    metrics = {
+        "duration": duration,
+    }
+    # Extract the plan from the output, if one exists.
+    if "Solution found!" not in output:
+        return [], metrics
+    if "Plan length: 0 step" in output:
+        # Handle the special case where the plan is found to be trivial.
+        return [], metrics
+    plan_str = re.findall(r"(.+) \(\d+?\)", output)
+    assert plan_str  # already handled empty plan case, so something went wrong
+    plan = [f"({a})" for a in plan_str]
+    return plan, metrics
