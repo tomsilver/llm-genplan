@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Get objects by type
+    type2_objects = {obj for obj, obj_type in objects if obj_type == "type2"}
+    type4_objects = {obj for obj, obj_type in objects if obj_type == "type4"}
+    type6_objects = {obj for obj, obj_type in objects if obj_type == "type6"}
+    
+    # Find object0
+    object0 = next(obj for obj, obj_type in objects if obj_type == "type3")
+
+    # Step 1: Apply operator2 to establish predicate0 relationship with every object of type2
+    predicate2_relations = {tuple(atom[1:]) for atom in init if atom[0] == "predicate2"}
+
+    for obj in type2_objects:
+        current_object = obj
+        while current_object != object0:
+            prev_object = next((x for x, y in predicate2_relations if y == current_object), object0)
+            if current_object != prev_object:
+                plan.append(f"(operator2 {prev_object} {current_object} {object0})")
+            current_object = prev_object
+
+    # Step 2: Apply operator0 to create predicate1 relationship between object0 and objects of type6
+    for obj in type6_objects:
+        obj_type2 = next(atom[2] for atom in init if atom[0] == "predicate0" and atom[1] == obj and atom[2] in type2_objects)
+        plan.append(f"(operator0 {obj_type2} {obj} {object0})")
+
+    # Step 3: Apply operator1 to achieve the goal state
+    for obj in type4_objects:
+        obj_type2 = next(atom[2] for atom in init if atom[0] == "predicate0" and atom[1] == obj and atom[2] in type2_objects)
+        obj_type6 = next(atom[2] for atom in goal if atom[0] == "predicate1" and atom[1] == object0 and atom[2] in type6_objects)
+        plan.append(f"(operator1 {obj_type2} {obj_type6} {object0} {obj})")
+
+    return plan

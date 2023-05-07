@@ -1,0 +1,47 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    def find(predicate, arg_idx, value, atoms):
+        for atom in atoms:
+            if atom[0] == predicate and atom[arg_idx + 1] == value:
+                return atom
+        return None
+
+    def find_available_object(init_atoms):
+        for obj in objects:
+            if ('predicate5', obj) in init_atoms and ('predicate6', obj) in init_atoms:
+                return obj
+        return None
+
+    for goal_atom in goal:
+        if goal_atom in init:
+            continue
+
+        object_x, object_y = goal_atom[1], goal_atom[2]
+
+        current_predicate0 = find('predicate0', 0, object_x, init)
+        object_z = current_predicate0[2]
+
+        if ('predicate1', object_z) in init:
+            plan.append(f'(operator1 {object_z} {object_y})')
+            init.remove(('predicate1', object_z))
+            init.add(('predicate1', object_y))
+
+        object_w = find_available_object(init)
+        if not object_w:
+            object_to_free_tuple = find('predicate3', 0, object_x, init)
+            if object_to_free_tuple:
+                object_to_free = object_to_free_tuple[2]
+                plan.append(f'(operator0 {object_x} {object_y} {object_to_free})')
+                init.remove(('predicate3', object_x, object_to_free))
+                init.add(('predicate0', object_x, object_y))
+                init.add(('predicate5', object_to_free))
+        else:
+            if ('predicate1', object_y) in init:
+                plan.append(f'(operator2 {object_x} {object_y} {object_w})')
+                init.remove(('predicate0', object_x, object_z))
+                init.remove(('predicate5', object_w))
+                init.add(('predicate3', object_x, object_w))
+                init.add(('predicate0', object_x, object_y))
+
+    return plan

@@ -1,0 +1,52 @@
+def find_predicate0_path(init, start, end):
+    graph = {}
+    for atom in init:
+        if atom[0] == 'predicate0':
+            src, dst = atom[1], atom[2]
+            if src not in graph:
+                graph[src] = []
+            graph[src].append(dst)
+
+    visited = set()
+    stack = [(start, [start])]
+    while stack:
+        node, path = stack.pop()
+        if node == end:
+            return [(path[i], path[i + 1]) for i in range(len(path) - 1)]
+        if node not in visited:
+            visited.add(node)
+            stack.extend((neighbor, path + [neighbor]) for neighbor in graph.get(node, []))
+
+    return []
+
+
+def get_plan(objects, init, goal):
+    object_types = {o[0]: o[1] for o in objects}
+    start_object = None
+    end_object = None
+    for atom in init:
+        if atom[0] == 'predicate1':
+            start_object = atom[1]
+        if atom[0] == 'predicate3':
+            end_object = atom[1]
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            end_object = atom[1]
+
+    plan = []
+    path = find_predicate0_path(init, start_object, end_object)
+    
+    # Start with the object with predicate1 set to true
+    current_object = start_object
+
+    for src, dst in path:
+        if ('predicate3', dst) in init:
+            operator = "operator0"
+        else:
+            operator = "operator1"
+
+        if current_object == src:
+            plan.append(f"({operator} {src} {dst})")
+            current_object = dst
+
+    return plan

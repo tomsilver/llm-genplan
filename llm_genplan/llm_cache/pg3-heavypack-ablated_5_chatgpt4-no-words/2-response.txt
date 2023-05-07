@@ -1,0 +1,9 @@
+The simple strategy to solve all problems in this domain without using search is as follows:
+
+1. Apply the `operator0` action on any object, since it only requires `predicate0` to be true as a precondition. This action will negate `predicate0`, make `predicate4` and `predicate2` true for the selected object, and negate `predicate6` for the selected object.
+
+2. Now that you have an object with `predicate4`, `predicate2`, and `predicate1` true, you can use the `operator1` action with the current object as the first parameter (let's call it `objectA`) and another object with `predicate6` true as the second parameter (let's call it `objectB`). Applying `operator1` will make `predicate4` and `predicate2` true for `objectB` while negating `predicate2` for `objectA` and `predicate6` for `objectB`.
+
+3. Repeat step 2 for the remaining objects. Since `predicate1` represents relationships between objects, you can find a sequence of objects that are related to each other, and successively apply `operator1` to propagate the `predicate4` and `predicate2` from one object to another.
+
+By following this strategy, you can achieve the goal of having `predicate4` true for all objects in the problem without using search.

@@ -1,0 +1,17 @@
+This PDDL domain, named "my-pddl-domain," consists of three operators (actions) and seven predicates. The predicates are as follows:
+
+1. predicate0: Represents a relationship between two objects (?v0 and ?v6).
+2. predicate1: Represents a property of a single object (?v6).
+3. predicate2: Represents another property of a single object (?v0).
+4. predicate3: Represents a relationship between two objects (?v4 and ?v2).
+5. predicate5: Represents a property of a single object (?v2).
+6. predicate6: Represents another property of a single object (?v2).
+7. predicate9: Represents a property of a single object (?v6).
+
+The three operators are:
+
+1. operator1: Takes two objects (?v1 and ?v8) as parameters and modifies the predicate1 property between them.
+2. operator2: Takes three objects (?v5, ?v7, and ?v3) as parameters and modifies the relationships and properties among these objects related to predicate0, predicate3, and predicate5.
+3. operator0: Takes three objects (?v5, ?v7, and ?v3) as parameters and modifies the relationships and properties among these objects related to predicate0, predicate3, and predicate5.
+
+Two example problems, "my-problem-9" and "my-problem-5," are provided, each with a different initial state and goal. The initial state consists of objects and their relationships defined by the seven predicates. The goal state for each problem specifies the desired relationships between specific objects using predicate0.

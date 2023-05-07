@@ -1,0 +1,8 @@
+This PDDL domain, named "my-pddl-domain," consists of 8 predicates and 3 action operators. The predicates are used to describe various properties and relationships between objects in the domain.
+
+The action operators are:
+1. operator2: It has two parameters (?v2 and ?v5) and changes the state of the objects based on the precondition (predicate7, predicate6, and predicate1). The effect is to modify predicate1 for both objects.
+2. operator0: It takes two parameters (?v1 and ?v4) and has a precondition involving predicate3, predicate6, predicate0, predicate1, and predicate5. The effect is to modify predicate8, predicate0, and predicate5.
+3. operator1: It also takes two parameters (?v1 and ?v4) and has a precondition involving predicate3, predicate6, predicate8, and predicate1. The effect is to modify predicate0, predicate5, and predicate8.
+
+Two example problems, "my-problem-9" and "my-problem-5," are provided. These problems consist of objects, initial states (with various predicate assignments), and goals (a set of desired predicate states). The problems involve rearranging the relationships between objects in the domain to reach the desired goal states.

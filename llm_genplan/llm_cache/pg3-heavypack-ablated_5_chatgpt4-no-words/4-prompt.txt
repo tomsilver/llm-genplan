@@ -1,0 +1,49 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object2
+    object3
+    object4
+  )
+  (:init
+    (predicate0)
+    (predicate1 object0 object1)
+    (predicate1 object2 object0)
+    (predicate1 object2 object1)
+    (predicate1 object2 object3)
+    (predicate1 object3 object0)
+    (predicate1 object3 object1)
+    (predicate1 object4 object0)
+    (predicate1 object4 object1)
+    (predicate1 object4 object2)
+    (predicate1 object4 object3)
+    (predicate6 object0)
+    (predicate6 object1)
+    (predicate6 object2)
+    (predicate6 object3)
+    (predicate6 object4)
+  )
+  (:goal (and
+    (predicate4 object0)
+    (predicate4 object1)
+    (predicate4 object2)
+    (predicate4 object3)
+    (predicate4 object4)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "<file-name-omitted>", line 41
+    return plan
+    ^^^^^^^^^^^
+SyntaxError: 'return' outside function
+
+Fix the code.

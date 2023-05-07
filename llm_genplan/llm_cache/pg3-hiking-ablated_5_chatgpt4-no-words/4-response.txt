@@ -1,0 +1,22 @@
+def find_predicate0_path(init, start, end):
+    path = []
+    visited = set()
+
+    def dfs(current):
+        if current == end:
+            return True
+        if current in visited or ('predicate4', current) in init:
+            return False
+        visited.add(current)
+        for atom in init:
+            if atom[0] == 'predicate0' and atom[1] == current:
+                next_object = atom[2]
+                if dfs(next_object):
+                    path.append((current, next_object))
+                    return True
+        return False
+
+    dfs(start)
+    return path
+
+# The rest of the code remains the same

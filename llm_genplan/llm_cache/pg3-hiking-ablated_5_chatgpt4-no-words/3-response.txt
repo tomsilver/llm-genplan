@@ -1,0 +1,48 @@
+def find_current_object(init):
+    for atom in init:
+        if atom[0] == 'predicate1':
+            return atom[1]
+    return None
+
+def find_target_object(goal):
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            return atom[1]
+    return None
+
+def find_predicate0_path(init, start, end):
+    path = []
+    visited = set()
+
+    def dfs(current):
+        if current == end:
+            return True
+        if current in visited:
+            return False
+        visited.add(current)
+        for atom in init:
+            if atom[0] == 'predicate0' and atom[1] == current:
+                next_object = atom[2]
+                if dfs(next_object):
+                    path.append((current, next_object))
+                    return True
+        return False
+
+    dfs(start)
+    return path
+
+def is_predicate3(init, obj):
+    return ('predicate3', obj) in init
+
+def get_plan(objects, init, goal):
+    plan = []
+    current_object = find_current_object(init)
+    target_object = find_target_object(goal)
+    predicate0_path = find_predicate0_path(init, current_object, target_object)
+
+    for (src, dst) in predicate0_path:
+        operator = 'operator1' if not is_predicate3(init, dst) else 'operator0'
+        action = f'({operator} {src} {dst})'
+        plan.append(action)
+
+    return plan

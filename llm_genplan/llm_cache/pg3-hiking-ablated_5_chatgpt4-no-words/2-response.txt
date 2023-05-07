@@ -1,0 +1,13 @@
+The simple strategy for solving all problems in this domain without using search involves carefully analyzing the structure of the domain and understanding the effects of the operators. 
+
+First, note that the goal in each problem is to have predicate1 hold for a particular object (e.g., object67 in "my-problem-3" and object27 in "my-problem-2"). Both operator1 and operator0 can make predicate1 hold for an object (their effects include (predicate1 ?v4)). They also remove predicate1 from the current object (their effects include (not (predicate1 ?v0))).
+
+The preconditions of operator1 and operator0 are similar, except that operator1 requires (not (predicate3 ?v4)), while operator0 requires (predicate3 ?v4). This means that you can choose the appropriate operator based on the predicate3 status of the target object.
+
+Here's the strategy:
+1. Identify the target object for which predicate1 should hold (from the goal).
+2. Find the current object for which predicate1 holds (from the initial state).
+3. Find a path between the current object and the target object using predicate0 relationships.
+4. Traverse the path step by step, applying either operator1 or operator0 based on the predicate3 status of the next object in the path. This will move predicate1 from the current object to the target object.
+
+This strategy does not require search, as it uses the relationships given by predicate0 and the operators' preconditions and effects to directly traverse the path from the current object to the target object.

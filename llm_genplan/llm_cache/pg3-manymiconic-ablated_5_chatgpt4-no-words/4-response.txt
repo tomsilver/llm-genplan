@@ -1,0 +1,45 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    predicate4_pairs = set(filter(lambda x: x[0] == 'predicate4', init))
+    predicate7_pairs = set(filter(lambda x: x[0] == 'predicate7', init))
+    predicate0_pairs = set(filter(lambda x: x[0] == 'predicate0', init))
+    predicate6_objects = set(filter(lambda x: x[0] == 'predicate6', init))
+    predicate2_objects = set()
+
+    # Step 2: Apply operator0 for predicate7 pairs
+    for pair in predicate7_pairs:
+        v6, v0 = pair[1], pair[2]
+        if ('predicate6', v0) in predicate6_objects:
+            plan.append(f'(operator0 {v0} {v6})')
+            predicate2_objects.add(('predicate2', v6))
+
+    # Step 3: Apply operator1 or operator0 and operator1 for predicate4 pairs
+    for pair in predicate4_pairs:
+        v6, v0 = pair[1], pair[2]
+        if ('predicate2', v6) in predicate2_objects:
+            if ('predicate6', v0) in predicate6_objects:
+                plan.append(f'(operator1 {v0} {v6})')
+            else:
+                v0_new = None
+                for p0_pair in predicate0_pairs:
+                    if p0_pair[1] == v0:
+                        v0_new = p0_pair[2]
+                        break
+                    elif p0_pair[2] == v0:
+                        v0_new = p0_pair[1]
+                        break
+
+                if v0_new is not None and ('predicate6', v0_new) in predicate6_objects:
+                    if ('predicate0', v0, v0_new) in predicate0_pairs:
+                        plan.append(f'(operator3 {v0} {v0_new})')
+                    else:
+                        plan.append(f'(operator2 {v0_new} {v0})')
+                    predicate6_objects.remove(('predicate6', v0))
+                    predicate6_objects.add(('predicate6', v0_new))
+
+                    plan.append(f'(operator0 {v0} {v6})')
+                    predicate2_objects.add(('predicate2', v6))
+                    plan.append(f'(operator1 {v0} {v6})')
+
+    return plan

@@ -1,0 +1,64 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object1 - type2
+    object10 - type2
+    object2 - type2
+    object3 - type2
+    object4 - type2
+    object5 - type2
+    object6 - type2
+    object0 - type3
+    object7 - type4
+    object8 - type4
+    object9 - type4
+    object11 - type6
+    object12 - type6
+    object13 - type6
+    object14 - type6
+    object15 - type6
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object11 object5)
+    (predicate0 object12 object6)
+    (predicate0 object13 object2)
+    (predicate0 object14 object6)
+    (predicate0 object15 object3)
+    (predicate0 object7 object1)
+    (predicate0 object8 object1)
+    (predicate0 object9 object1)
+    (predicate2 object10 object2)
+    (predicate2 object2 object3)
+    (predicate2 object3 object4)
+    (predicate2 object4 object5)
+    (predicate2 object5 object6)
+    (predicate2 object6 object1)
+    (predicate3 object7)
+    (predicate3 object8)
+    (predicate3 object9)
+    (predicate7 object11)
+    (predicate7 object12)
+    (predicate7 object13)
+    (predicate7 object14)
+    (predicate7 object15)
+  )
+  (:goal (and
+    (predicate6 object7)
+    (predicate6 object8)
+    (predicate6 object9)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 64, in get_plan
+    obj_type2 = next(x for atom in init if atom[0] == "predicate0" and atom[1] == obj and x in type2_objects)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<file-name-omitted>", line 64, in <genexpr>
+    obj_type2 = next(x for atom in init if atom[0] == "predicate0" and atom[1] == obj and x in type2_objects)
+                                                                                          ^
+NameError: name 'x' is not defined
+
+Fix the code.

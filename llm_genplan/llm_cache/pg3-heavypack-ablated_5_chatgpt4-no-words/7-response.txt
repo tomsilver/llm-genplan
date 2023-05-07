@@ -1,0 +1,48 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Find an object with predicate6
+    object_with_predicate6 = None
+    for atom in init:
+        if atom[0] == "predicate6":
+            object_with_predicate6 = atom[1]
+            break
+    
+    # Apply operator0 on the found object
+    plan.append(f"(operator0 {object_with_predicate6})")
+    
+    # Update the state
+    init.add(("predicate4", object_with_predicate6))
+    init.add(("predicate2", object_with_predicate6))
+    init.discard(("predicate6", object_with_predicate6))
+
+    # Apply operator1 to propagate predicate4 and predicate2
+    unsatisfied_goals = {atom for atom in goal if atom[0] == 'predicate4'}
+
+    while unsatisfied_goals:
+        objectA = None
+        objectB = None
+        
+        # Find objectA and objectB
+        for atom in init:
+            if atom[0] == "predicate1":
+                if ("predicate2", atom[1]) in init and ("predicate6", atom[2]) in init:
+                    objectA = atom[1]
+                    objectB = atom[2]
+                    break
+                    
+        if objectA and objectB:
+            # Apply operator1 on objectA and objectB
+            plan.append(f"(operator1 {objectA} {objectB})")
+            
+            # Update the state
+            init.add(("predicate4", objectB))
+            init.add(("predicate2", objectB))
+            init.discard(("predicate2", objectA))
+            init.discard(("predicate6", objectB))
+
+            unsatisfied_goals.discard(("predicate4", objectB))
+        else:
+            break
+        
+    return plan

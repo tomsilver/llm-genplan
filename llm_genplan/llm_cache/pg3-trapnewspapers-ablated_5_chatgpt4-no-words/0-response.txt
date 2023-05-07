@@ -1,0 +1,11 @@
+The given PDDL domain, named "my-pddl-domain", represents a simplified environment with two types of objects: type0 and type1. There are a total of seven predicates, five of which involve objects of type0, and two involving objects of type1.
+
+There are three actions defined in this domain:
+
+1. operator2: This action takes one object of each type as parameters. It has a precondition that the type0 object satisfies the predicate0 and predicate3, and the type1 object satisfies predicate8. The effect of this action is to negate predicate8 for the type1 object and assert predicate1 for it.
+
+2. operator1: This action has two type0 objects as parameters. Its precondition requires that the first type0 object satisfies predicate0 and predicate6. The effect of this action is to negate predicate0 for the first type0 object and assert predicate0 for the second type0 object.
+
+3. operator0: This action takes one object of each type as parameters. Its precondition requires that the type0 object satisfies predicate0, and the type1 object satisfies predicate1. The effect of this action is to negate predicate1 for the type1 object, negate predicate9 for the type0 object, and assert predicate7 for the type0 object.
+
+Two example problems are provided. Both problems involve initializing a set of objects of type0 and type1 with specific predicates and defining a goal state that involves asserting predicate7 for certain objects of type0. The first problem has a larger set of objects and a more complex goal state, while the second problem involves fewer objects and a simpler goal state.

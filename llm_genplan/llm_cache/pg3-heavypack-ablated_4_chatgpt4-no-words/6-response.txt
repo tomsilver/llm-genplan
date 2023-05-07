@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Check if predicate0 is true in the initial state
+    if ('predicate0',) in init:
+        # Apply operator0 to the first object with predicate6
+        for obj in objects:
+            if ('predicate6', obj) in init:
+                plan.append(f'(operator0 {obj})')
+                # Remove predicate6 for the object
+                init.remove(('predicate6', obj))
+                # Add predicate2 for the object
+                init.add(('predicate2', obj))
+                break
+
+    # Step 2: Apply action operator1 to related pairs of objects
+    while True:
+        applied = False
+        for atom in init:
+            if atom[0] == 'predicate1':
+                obj1, obj2 = atom[1], atom[2]
+                if ('predicate6', obj2) in init and ('predicate2', obj1) in init:
+                    plan.append(f'(operator1 {obj1} {obj2})')
+                    # Remove predicate6 and predicate2 for the related objects
+                    init.remove(('predicate6', obj2))
+                    init.remove(('predicate2', obj1))
+                    # Add predicate2 for the new object
+                    init.add(('predicate2', obj2))
+                    # Add predicate4 for both objects
+                    init.add(('predicate4', obj1))
+                    init.add(('predicate4', obj2))
+                    applied = True
+                    break
+        if not applied:
+            break
+
+    return plan
