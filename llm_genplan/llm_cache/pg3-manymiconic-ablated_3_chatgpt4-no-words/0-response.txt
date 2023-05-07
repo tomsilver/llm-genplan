@@ -1,0 +1,9 @@
+This PDDL domain, called "my-pddl-domain," contains two types, type0 and type2, which are subtypes of type1. There are six predicates (predicate0 to predicate8) and four actions (operator0 to operator3). The predicates involve relationships between objects of type0 and type2.
+
+The four actions are as follows:
+1. operator0: Requires a precondition of predicate6 and predicate7, and has an effect of predicate2.
+2. operator1: Requires a precondition of predicate6, predicate4, and predicate2, and has an effect of negating predicate2 and asserting predicate8.
+3. operator3: Requires a precondition of predicate6 and predicate0, and has an effect of asserting predicate6 and negating predicate6 for different objects.
+4. operator2: Similar to operator3, but with a different ordering of objects in the precondition.
+
+The domain also provides two example problems, my-problem-9 and my-problem-5, each with a set of objects, initial state conditions, and goal states. The problems involve moving objects between different states and achieving certain conditions. The main objective is to reach a goal state where predicate8 holds for all objects of type2.

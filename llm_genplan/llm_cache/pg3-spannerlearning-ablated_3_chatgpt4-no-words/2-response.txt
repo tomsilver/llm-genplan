@@ -1,0 +1,7 @@
+A simple strategy to solve problems in this domain without using search is to follow these steps:
+
+1. For each object of type4 with predicate3 in the initial state, find a corresponding object of type3 with predicate0 and an object of type6 with predicate7. The objects of type2 that are linked to type4 and type6 objects by predicate0 should be the same.
+
+2. Perform the operator1 action for each set of objects found in step 1. This will have the effect of removing predicate3 and predicate7 for the involved objects and adding predicate6 for the type4 objects.
+
+By following this strategy, you will satisfy the goal conditions for all the problems in this domain without the need for a search algorithm.

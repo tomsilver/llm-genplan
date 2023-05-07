@@ -1,0 +1,62 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def get_object_state(init, predicate):
+        return {tuple(atom[1:]) for atom in init if atom[0] == predicate}
+
+    def find_object_with_predicate1(predicate1_set):
+        return next(iter(predicate1_set))
+
+    def update_state(init, operator, params):
+        if operator == "operator1":
+            init.remove(('predicate1', params[0]))
+            init.add(('predicate1', params[1]))
+        elif operator == "operator2":
+            if ('predicate0', params[0], params[1]) in init:
+                init.remove(('predicate0', params[0], params[1]))
+            if ('predicate5', params[2][0]) in init:  # Add this check
+                init.remove(('predicate5', params[2][0]))
+            init.add(('predicate3', params[0], params[2][0]))
+        elif operator == "operator0":
+            init.remove(('predicate3', params[0], params[2][0]))
+            init.add(('predicate0', params[0], params[1]))
+            init.add(('predicate5', params[2][0]))
+
+    predicate0_set = get_object_state(init, 'predicate0')
+    predicate1_set = get_object_state(init, 'predicate1')
+    predicate2_set = get_object_state(init, 'predicate2')
+    predicate3_set = get_object_state(init, 'predicate3')
+    predicate5_set = get_object_state(init, 'predicate5')
+    predicate6_set = get_object_state(init, 'predicate6')
+    predicate9_set = get_object_state(init, 'predicate9')
+
+    for g in goal:
+        _, goal_source, goal_target = g
+        current_source = find_object_with_predicate1(predicate1_set)
+
+        connected_object = None
+        for p0 in predicate0_set:
+            if p0[0] == current_source:
+                connected_object = p0[1]
+                break
+
+        if connected_object and connected_object != goal_target:
+            resource = None
+            for p6 in predicate6_set:
+                if (current_source, p6) in predicate3_set:
+                    resource = p6
+                    break
+
+            plan.append(f"(operator0 {current_source} {connected_object} {resource})")
+            update_state(init, "operator0", (current_source, connected_object, resource))
+
+        resource = None
+        for p5 in predicate5_set:
+            if (goal_target, p5) not in predicate0_set:
+                resource = p5
+                break
+
+        plan.append(f"(operator2 {goal_source} {goal_target} {resource})")
+        update_state(init, "operator2", (goal_source, goal_target, resource))
+
+    return plan

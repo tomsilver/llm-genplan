@@ -1,0 +1,9 @@
+In this domain, the primary objective is to make predicate1 true for a specific object, given that it is initially true for another object. Since the effects of both actions (operator1 and operator0) are the same, the strategy to solve any problem in this domain without using search is as follows:
+
+1. Identify the object for which predicate1 should be true in the goal state (target object).
+2. Find the object for which predicate1 is initially true (source object).
+3. Check if there is a sequence of predicate0 connections between the source object and the target object, ensuring that predicate4 is not true for any object in the sequence.
+4. Determine if predicate3 is true or not for the target object.
+5. Apply the appropriate action (operator1 or operator0) for each connection in the sequence, based on the value of predicate3 for the target object. Start with the source object and move towards the target object.
+
+By following this strategy, you can transfer the truth of predicate1 from the source object to the target object without using search, solving any problem in this domain.

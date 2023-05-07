@@ -1,0 +1,53 @@
+def get_predicate_value(predicate_name, init):
+    for atom in init:
+        if atom[0] == predicate_name:
+            return atom[1:]
+    return None
+
+def get_target_object(goal):
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            return atom[1]
+    return None
+
+def find_path(connections, source, target, visited=None):
+    if visited is None:
+        visited = set()
+    if source == target:
+        return [source]
+    if source not in visited:
+        visited.add(source)
+        for neighbor in connections[source]:
+            path = find_path(connections, neighbor, target, visited)
+            if path:
+                return [source] + path
+    return None
+
+def get_plan(objects, init, goal):
+    source_object = get_predicate_value('predicate1', init)
+    target_object = get_target_object(goal)
+    if not source_object or not target_object:
+        return []
+
+    connections = {}
+    for atom in init:
+        if atom[0] == 'predicate0':
+            v2, v3 = atom[1], atom[2]
+            if v2 not in connections:
+                connections[v2] = []
+            connections[v2].append(v3)
+
+    predicate3_value = get_predicate_value('predicate3', init)
+    predicate4_values = {atom[1] for atom in init if atom[0] == 'predicate4'}
+
+    path = find_path(connections, source_object[0], target_object, set())
+    if not path:
+        return []
+
+    plan = []
+    action = 'operator1' if target_object not in predicate3_value else 'operator0'
+    for i in range(len(path) - 1):
+        if path[i] not in predicate4_values:
+            plan.append(f'({action} {path[i]} {path[i+1]})')
+
+    return plan

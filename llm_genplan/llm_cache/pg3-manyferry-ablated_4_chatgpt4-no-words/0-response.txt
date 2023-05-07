@@ -1,0 +1,12 @@
+This PDDL domain, named "my-pddl-domain", consists of three operators (actions) and eight predicates. The operators are operator0, operator1, and operator2, and they manipulate the relations between objects defined by the predicates.
+
+The predicates are as follows:
+1. predicate0: Represents a relationship between two objects.
+2. predicate1: Represents a property of an object.
+3. predicate3: Represents a specific type of object.
+4. predicate5: Represents a global property.
+5. predicate6: Represents another specific type of object.
+6. predicate7: Represents a relationship between two objects of type predicate6.
+7. predicate8: Represents a property of an object of type predicate3.
+
+The actions have preconditions and effects that modify the relationships and properties of the objects involved. The example problems provided, my-problem-9 and my-problem-5, consist of a set of objects, initial states defined by the predicates, and goal states that need to be achieved by applying the operators defined in the domain. The problems involve rearranging the relationships between objects and achieving desired properties for the objects in the domain.

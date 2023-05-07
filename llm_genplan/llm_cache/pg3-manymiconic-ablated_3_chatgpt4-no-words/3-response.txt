@@ -1,0 +1,24 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    type2_objects = {obj for obj, obj_type in objects if obj_type == "type2"}
+    type0_objects = {obj for obj, obj_type in objects if obj_type == "type0"}
+
+    predicate7_relations = {(v7, v3) for (predicate, v7, v3) in init if predicate == "predicate7"}
+    predicate4_relations = {(v7, v3) for (predicate, v7, v3) in init if predicate == "predicate4"}
+    predicate6_objects = {v3 for (predicate, v3) in init if predicate == "predicate6"}
+
+    for type2_obj in type2_objects:
+        # Find the corresponding type0 object for which predicate7 is true
+        type0_obj = next((v3 for v7, v3 in predicate7_relations if v7 == type2_obj), None)
+
+        if type0_obj:
+            plan.append(f"(operator0 {type0_obj} {type2_obj})")
+
+        # Find the corresponding type0 object for which predicate4 is true
+        type0_obj = next((v3 for v7, v3 in predicate4_relations if v7 == type2_obj), None)
+
+        if type0_obj and type0_obj in predicate6_objects:
+            plan.append(f"(operator1 {type0_obj} {type2_obj})")
+
+    return plan

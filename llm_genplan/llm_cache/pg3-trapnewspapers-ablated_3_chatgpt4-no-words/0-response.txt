@@ -1,0 +1,5 @@
+This PDDL domain, called "my-pddl-domain", consists of two types: type0 and type1. There are seven predicates defined, five of which involve type0 variables, while the remaining two involve type1 variables. 
+
+There are three actions, operator0, operator1, and operator2, defined in the domain. Each action involves parameters of either type0, type1, or both. These actions have specific preconditions and effects on the involved variables.
+
+Two example problems, my-problem-4 and my-problem-3, are provided, each with a unique set of objects of type0 and type1. The initial states (using :init) are described with certain predicates and objects, and the goal states (using :goal) are defined as a conjunction of desired conditions. The problems have different numbers of objects and goal states, illustrating the flexibility of the domain.

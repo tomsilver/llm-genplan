@@ -1,0 +1,34 @@
+def find_atom(predicate, atoms):
+    for atom in atoms:
+        if atom[0] == predicate:
+            return atom
+    return None
+
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    for g in goal:
+        if g not in init:
+            x, y = g[1], g[2]
+
+            current_pred0 = find_atom(('predicate0', x), init)
+            if current_pred0:
+                init.remove(current_pred0)
+                init.add(('predicate8', x))
+                plan.append(f'(operator1 {x} {current_pred0[2]})')
+
+            current_pred1 = find_atom('predicate1', init)
+            if current_pred1:
+                v = current_pred1[1]
+                init.remove(current_pred1)
+                init.add(('predicate1', y))
+                plan.append(f'(operator2 {v} {y})')
+
+            if ('predicate8', x) in init:
+                init.remove(('predicate8', x))
+            init.add(('predicate0', x, y))
+            init.add(('predicate5',))
+            plan.append(f'(operator0 {x} {y})')
+
+    return plan

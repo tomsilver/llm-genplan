@@ -1,0 +1,9 @@
+This PDDL domain, called my-pddl-domain, consists of seven predicates and three operators. The predicates are predicate0, predicate1, predicate2, predicate3, predicate5, predicate6, and predicate9. The three operators are operator0, operator1, and operator2.
+
+Operator1 takes two parameters and has the precondition that both parameters satisfy predicate9 and the first parameter satisfies predicate1. The effect of operator1 is to remove predicate1 from the first parameter and apply it to the second parameter.
+
+Operator2 has three parameters and requires that the first parameter satisfies predicate2, the second parameter satisfies predicate9 and predicate1, the third parameter satisfies predicate6 and predicate5, and predicate0 is true for the first and second parameters. The effect of operator2 is to remove predicate0 and predicate5 from their respective parameters and apply predicate3 to the first and third parameters.
+
+Operator0 also has three parameters and requires that the first parameter satisfies predicate2, the second parameter satisfies predicate9 and predicate1, and the third parameter satisfies predicate6. Additionally, predicate3 must be true for the first and third parameters. The effect of operator0 is to remove predicate3 from the first and third parameters and apply predicate0 to the first and second parameters, as well as predicate5 to the third parameter.
+
+The domain includes two example problems, my-problem-9 and my-problem-5. Both problems consist of multiple objects and initial conditions specified using the domain's predicates. The goal for each problem is to achieve specific combinations of predicate0 involving certain objects.

@@ -1,0 +1,7 @@
+This PDDL domain, named "my-pddl-domain," consists of five predicates (predicate0, predicate1, predicate2, predicate4, and predicate6) and two actions (operator0 and operator1). The domain aims to transform objects by applying the actions under specific conditions.
+
+The action "operator0" can be executed when predicate0 is true. It results in the negation of predicate0, making predicates 4 and 2 true for the given object (?v1), and negating predicate6 for the same object.
+
+The action "operator1" requires the existence of predicates 4 and 2 for an object (?v0) and predicates 1 and 6 for another object (?v4) connected to the first object. When executed, it transfers predicates 4 and 2 from the first object (?v0) to the second object (?v4) and negates predicate 6 for the second object.
+
+Two example problems (my-problem-9 and my-problem-5) are provided, each with a different number of objects. The goal for both problems is to make predicate4 true for all objects. To achieve this goal, the given actions (operator0 and operator1) must be applied to transform the initial state according to the specified conditions.

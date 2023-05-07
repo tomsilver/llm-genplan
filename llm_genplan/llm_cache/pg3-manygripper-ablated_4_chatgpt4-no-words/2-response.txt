@@ -1,0 +1,11 @@
+The simple strategy for solving all problems in this domain without using search is as follows:
+
+1. Identify the current object with predicate1 (source object) and the target object where you want to apply predicate1 (goal object).
+
+2. Check if the source object is already connected to a different object with predicate0. If so, use operator0 to disconnect the source object (by applying predicate3) and free the resource (by applying predicate5).
+
+3. Connect the source object with the goal object using operator2. This will also consume the resource (removing predicate5) and create a connection between the source object and the goal object (applying predicate0).
+
+4. If you need to move predicate1 to another object, use operator1 to transfer it from the current source object to the new goal object.
+
+Repeat steps 2-4 until all goals are achieved. This strategy works because the operators have been designed in such a way that they only change the relationships between objects and the presence of predicate1, without introducing any additional complexity.

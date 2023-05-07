@@ -1,0 +1,58 @@
+def find_atoms(predicate, atoms):
+    found_atoms = []
+    for atom in atoms:
+        if atom[0] == predicate:
+            found_atoms.append(atom)
+    return found_atoms
+
+
+def get_plan(objects, init, goal):
+    plan = []
+    init = set(init)
+
+    for g in goal:
+        if g not in init:
+            x, y = g[1], g[2]
+
+            # Remove the current predicate0 atom
+            current_pred0 = find_atoms(('predicate0', x), init)
+            if current_pred0:
+                init -= set(current_pred0)
+                init.add(('predicate8', x))
+                for atom in current_pred0:
+                    plan.append(f'(operator1 {x} {atom[2]})')
+
+            # Move the predicate1 atom
+            current_pred1 = find_atoms('predicate1', init)
+            if current_pred1:
+                for atom in current_pred1:
+                    v = atom[1]
+                    init.remove(atom)
+                    init.add(('predicate1', y))
+                    plan.append(f'(operator2 {v} {y})')
+
+            # Add the new predicate0 atom
+            if ('predicate8', x) in init:
+                init.remove(('predicate8', x))
+            if ('predicate5',) in init:
+                init.remove(('predicate5',))
+            init.add(('predicate0', x, y))
+            init.add(('predicate5',))
+            plan.append(f'(operator0 {x} {y})')
+
+    # Check if there are any unsatisfied preconditions
+    unsatisfied_preconditions = []
+    for action in plan:
+        action_name, x, y = action.strip('()').split()
+        if action_name == "operator0":
+            if ('predicate0', x, y) not in goal:
+                unsatisfied_preconditions.append(action)
+
+    # Remove actions with unsatisfied preconditions
+    for action in unsatisfied_preconditions:
+        action_name, x, y = action.strip('()').split()
+        plan.remove(action)
+        init.remove(('predicate0', x, y))
+        init.add(('predicate5',))
+
+    return plan

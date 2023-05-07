@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    def get_objects_by_type(type_name):
+        return [obj for obj, obj_type in objects if obj_type == type_name]
+
+    def get_object_with_predicates(predicates):
+        for predicate in predicates:
+            for obj in get_objects_by_type(predicate[1]):
+                if (predicate[0], obj) in init:
+                    return obj
+        return None
+
+    def execute_operator1(object0, object1):
+        return f'(operator1 {object0} {object1})'
+
+    def execute_operator2(object1, object2):
+        return f'(operator2 {object2} {object1})'
+
+    def execute_operator0(object1, object2):
+        return f'(operator0 {object2} {object1})'
+
+    type0_objects = get_objects_by_type('type0')
+    type1_objects = get_objects_by_type('type1')
+
+    for goal_predicate in goal:
+        object_with_predicate0 = get_object_with_predicates([('predicate0', 'type0'), ('predicate9', 'type0')])
+
+        if object_with_predicate0 is None:
+            object_with_predicate0 = get_object_with_predicates([('predicate0', 'type0')])
+            target_object = get_object_with_predicates([('predicate9', 'type0')])
+
+            if target_object:
+                plan.append(execute_operator1(object_with_predicate0, target_object))
+                object_with_predicate0 = target_object
+
+        object_with_predicate8 = get_object_with_predicates([('predicate8', 'type1')])
+        plan.append(execute_operator2(object_with_predicate0, object_with_predicate8))
+
+        object_with_predicate1 = get_object_with_predicates([('predicate1', 'type1')])
+        plan.append(execute_operator0(object_with_predicate0, object_with_predicate1))
+
+    return plan

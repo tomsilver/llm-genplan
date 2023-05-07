@@ -1,0 +1,57 @@
+def find_path(connections, source, target, visited=None):
+    if visited is None:
+        visited = set()
+
+    if source == target:
+        return [source]
+
+    if source not in visited:
+        visited.add(source)
+        for neighbor in connections[source]:
+            path = find_path(connections, neighbor, target, visited)
+            if path:
+                return [source] + path
+    return None
+
+def get_plan(objects, init, goal):
+    def get_predicate_value(predicate_name, init):
+        return {tuple(atom[1:]) for atom in init if atom[0] == predicate_name}
+
+    source_object = get_predicate_value('predicate1', init)
+    target_object = get_predicate_value('predicate1', goal)
+
+    if not source_object or not target_object:
+        return []
+
+    connections = {}
+    for atom in init:
+        if atom[0] == 'predicate0':
+            v2, v3 = atom[1], atom[2]
+            if v2 not in connections:
+                connections[v2] = []
+            connections[v2].append(v3)
+
+    predicate4_values = get_predicate_value('predicate4', init)
+    predicate5_values = get_predicate_value('predicate5', init)
+
+    source_object = list(source_object)[0][0]
+    target_object = list(target_object)[0][0]
+
+    # Remove connections that are in predicate5_values
+    for pair in predicate5_values:
+        if pair[0] in connections and pair[1] in connections[pair[0]]:
+            connections[pair[0]].remove(pair[1])
+
+    path = find_path(connections, source_object, target_object)
+    if not path:
+        return []
+
+    plan = []
+    for i in range(len(path) - 1):
+        operator = 'operator1'
+        if (path[i], path[i+1]) in predicate4_values:
+            operator = 'operator0'
+
+        plan.append(f'({operator} {path[i]} {path[i+1]})')
+
+    return plan
