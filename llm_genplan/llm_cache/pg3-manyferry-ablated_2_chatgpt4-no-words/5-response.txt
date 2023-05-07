@@ -1,0 +1,61 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_state = set(init)
+
+    def apply_operator(operator, *args):
+        action = f"({operator} {' '.join(args)})"
+        plan.append(action)
+
+    def find_predicate(predicate, *args):
+        for atom in current_state:
+            if atom[0] == predicate and all(a == b for a, b in zip(args, atom[1:])):
+                return True
+        return False
+
+    for g in goal:
+        if g[0] == 'predicate0':
+            first_object, second_object = g[1], g[2]
+
+            if not find_predicate('predicate0', first_object, second_object):
+                # Apply operator1 to remove existing predicate0 relationship
+                for atom in current_state:
+                    if atom[0] == 'predicate0' and atom[1] == first_object:
+                        current_existing_second_object = atom[2]
+                        
+                        # Ensure preconditions are met for operator1
+                        if not find_predicate('predicate8', first_object):
+                            apply_operator('operator0', first_object, current_existing_second_object)
+                            current_state.discard(('predicate0', first_object, current_existing_second_object))
+                            current_state.add(('predicate8', first_object))
+
+                        if not find_predicate('predicate1', second_object):
+                            for atom in current_state:
+                                if atom[0] == 'predicate1':
+                                    current_predicate1_object = atom[1]
+                                    apply_operator('operator2', current_predicate1_object, second_object)
+                                    current_state.discard(('predicate1', current_predicate1_object))
+                                    current_state.add(('predicate1', second_object))
+                                    break
+
+                        apply_operator('operator1', first_object, current_existing_second_object)
+                        current_state.discard(('predicate0', first_object, current_existing_second_object))
+                        current_state.add(('predicate8', first_object))
+                        break
+
+                # Apply operator2 to switch predicate1 property
+                if not find_predicate('predicate1', second_object):
+                    for atom in current_state:
+                        if atom[0] == 'predicate1':
+                            current_predicate1_object = atom[1]
+                            apply_operator('operator2', current_predicate1_object, second_object)
+                            current_state.discard(('predicate1', current_predicate1_object))
+                            current_state.add(('predicate1', second_object))
+                            break
+
+                # Apply operator0 to create desired predicate0 relationship
+                if find_predicate('predicate8', first_object) and find_predicate('predicate1', second_object):
+                    apply_operator('operator0', first_object, second_object)
+                    current_state.add(('predicate0', first_object, second_object))
+                    current_state.discard(('predicate8', first_object))
+
+    return plan

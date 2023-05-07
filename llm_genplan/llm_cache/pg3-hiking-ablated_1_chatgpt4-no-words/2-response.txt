@@ -1,0 +1,9 @@
+In this domain, the goal is to change the state of "predicate1" for specific objects. Since the only actions available are "operator1" and "operator0," which have the effects of changing "predicate1," we can follow a simple strategy to achieve the desired state without using search.
+
+For each problem in this domain, follow these steps:
+1. Identify the target object for which the goal is to change the state of "predicate1."
+2. Check the initial state to find an object with "predicate1" that can be used as a source for the target object.
+3. Verify that the source and target objects are connected by "predicate0" and neither of them has "predicate4."
+4. Depending on the target object's state of "predicate3," choose the appropriate action ("operator1" or "operator0") and apply it using the source and target objects as parameters.
+
+This strategy should solve the problems in this domain without the need for search, as it directly identifies and applies the actions required to achieve the desired state.

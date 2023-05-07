@@ -1,0 +1,12 @@
+This PDDL domain represents a system with various objects and predicates that define relationships between these objects. There are three operators (actions) in this domain, namely operator0, operator1, and operator2, each with its own set of parameters, preconditions, and effects.
+
+The domain has 8 predicates in total, with different arity:
+1. predicate0: Binary predicate that relates two objects.
+2. predicate1: Unary predicate indicating a specific property of an object.
+3. predicate3: Unary predicate indicating another property of an object.
+4. predicate5: Nullary predicate representing a global property.
+5. predicate6: Unary predicate indicating another property of an object.
+6. predicate7: Binary predicate that relates two objects.
+7. predicate8: Unary predicate indicating a specific property of an object.
+
+The operators manipulate the relationships between objects and the properties of these objects, based on their preconditions and effects. The example problems provided contain a set of objects, initial conditions (relationships and properties of objects), and a goal state that must be achieved through the application of these operators. The goal state in each problem is a desired configuration of relationships between objects, as specified by the predicate0.

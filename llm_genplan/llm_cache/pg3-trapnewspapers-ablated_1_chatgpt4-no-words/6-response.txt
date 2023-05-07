@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    plan = []
+    state = set(init)
+
+    # Find objects of type0 and type1
+    type0_objects = [obj for obj, obj_type in objects if obj_type == 'type0']
+    type1_objects = [obj for obj, obj_type in objects if obj_type == 'type1']
+
+    # Operator1 actions
+    for obj in type0_objects:
+        if ('predicate0', obj) in state and ('predicate6', obj) in state:
+            second_obj = next((o for o in type0_objects if ('predicate7', o) not in goal and o != obj), None)
+            if second_obj:
+                plan.append(f'(operator1 {obj} {second_obj})')
+                state.remove(('predicate0', obj))
+                state.add(('predicate0', second_obj))
+
+    # Operator2 actions
+    for obj0 in type0_objects:
+        for obj1 in type1_objects:
+            if ('predicate0', obj0) in state and ('predicate3', obj0) in state and ('predicate8', obj1) in state:
+                plan.append(f'(operator2 {obj1} {obj0})')
+                state.remove(('predicate8', obj1))
+                state.add(('predicate1', obj1))
+
+    # Operator0 actions
+    all_goals_satisfied = False
+    while not all_goals_satisfied:
+        action_applied = False
+        for obj0 in type0_objects:
+            for obj1 in type1_objects:
+                if ('predicate0', obj0) in state and ('predicate1', obj1) in state and ('predicate9', obj0) in state:
+                    plan.append(f'(operator0 {obj1} {obj0})')
+                    state.remove(('predicate1', obj1))
+                    state.remove(('predicate9', obj0))
+                    state.add(('predicate7', obj0))
+                    action_applied = True
+        all_goals_satisfied = all(('predicate7', obj0) in state for _, obj0 in goal) or not action_applied
+
+    return plan

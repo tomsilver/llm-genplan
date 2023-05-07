@@ -1,0 +1,61 @@
+Given this task:
+(define (problem my-problem-3 (:domain my-pddl-domain)
+  (:objects
+    object0 - type0
+    object1 - type0
+    object10 - type0
+    object11 - type0
+    object12 - type0
+    object13 - type0
+    object14 - type0
+    object15 - type0
+    object16 - type0
+    object17 - type0
+    ...
+  )
+  (:init
+    (predicate0 object0 object1)
+    (predicate0 object0 object10)
+    (predicate0 object1 object0)
+    (predicate0 object1 object11)
+    (predicate0 object1 object2)
+    (predicate0 object10 object0)
+    (predicate0 object10 object11)
+    (predicate0 object10 object20)
+    (predicate0 object11 object1)
+    (predicate0 object11 object10)
+    ...
+    (predicate1 object40)
+    (predicate3 object71)
+    (predicate4 object14)
+    (predicate4 object15)
+    (predicate4 object24)
+    (predicate4 object25)
+    (predicate4 object44)
+    (predicate4 object45)
+    (predicate4 object64)
+    (predicate4 object65)
+    (predicate4 object74)
+    (predicate4 object75)
+    (predicate5 object40 object41)
+    (predicate5 object41 object51)
+    (predicate5 object51 object61)
+    (predicate5 object61 object71)
+    (predicate5 object71 object81)
+    (predicate5 object77 object67)
+    (predicate5 object81 object82)
+    (predicate5 object82 object83)
+    (predicate5 object83 object84)
+    (predicate5 object84 object85)
+    ...
+  )
+  (:goal (and
+    (predicate1 object67)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator1 object41 object42)', '(operator1 object42 object43)', '(operator1 object43 object44)', '(operator1 object34 object33)', '(operator1 object33 object32)', '(operator1 object32 object31)', '(operator1 object31 object30)', '(operator1 object30 object20)', '(operator1 object20 object10)', '(operator1 object10 object11)', '(operator1 object11 object21)', '(operator1 object21 object22)', '(operator1 object22 object23)', '(operator1 object23 object24)', '(operator1 object16 object6)', '(operator1 object6 object7)', '(operator1 object7 object8)', '(operator1 object8 object9)', '(operator1 object9 object19)', '(operator1 object19 object29)', '(operator1 object29 object28)', '(operator1 object28 object18)', '(operator1 object18 object17)', '(operator1 object17 object27)', '(operator1 object27 object26)', '(operator1 object26 object36)', '(operator1 object36 object35)', '(operator1 object35 object45)', '(operator1 object46 object47)', '(operator1 object47 object37)', '(operator1 object37 object38)', '(operator1 object38 object39)', '(operator1 object39 object49)', '(operator1 object49 object59)', '(operator1 object59 object69)', '(operator1 object69 object68)', '(operator1 object68 object67)'].
+NOTE: (operator1 object41 object42) has an unsatisfied precondition at time 0
+(Set (predicate1 object41) to true)
+Fix the code.

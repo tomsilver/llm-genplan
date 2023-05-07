@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper function to find objects of a specific type
+    def find_objects_of_type(target_type):
+        return [obj for obj, obj_type in objects if obj_type == target_type]
+
+    type2_objects = find_objects_of_type("type2")
+    type3_objects = find_objects_of_type("type3")
+    type4_objects = find_objects_of_type("type4")
+    type6_objects = find_objects_of_type("type6")
+
+    for obj4 in type4_objects:
+        if ('predicate3', obj4) in init:
+            obj1 = [x[1] for x in init if x[0] == 'predicate0' and x[2] == obj4][0]
+            obj3 = [x[1] for x in init if x[0] == 'predicate0' and x[2] == obj1][0]
+            obj6_candidates = [x[1] for x in init if x[0] == 'predicate1' and x[1] == obj3]
+
+            if not obj6_candidates:
+                for obj6 in type6_objects:
+                    if ('predicate7', obj6) in init:
+                        obj2 = [x[1] for x in init if x[0] == 'predicate0' and x[2] == obj6][0]
+                        if obj2 == obj1:
+                            plan.append(f'(operator0 {obj1} {obj6} {obj3})')
+                            obj6_candidates = [x[1] for x in init if x[0] == 'predicate1' and x[1] == obj3]
+                            break
+
+            if obj6_candidates:
+                obj6 = obj6_candidates[0]
+                plan.append(f'(operator1 {obj1} {obj6} {obj3} {obj4})')
+            else:
+                while obj1 != obj3:
+                    obj7 = [x[1] for x in init if x[0] == 'predicate2' and x[1] == obj1][0]
+                    plan.append(f'(operator2 {obj1} {obj7} {obj3})')
+                    obj1 = obj7
+
+    return plan

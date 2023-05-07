@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain," represents a problem-solving environment with specific types, predicates, and actions. There is a single type, "type0," and five predicates: "predicate0" to "predicate4." Each predicate takes a varying number of arguments of type "type0."
+
+There are two actions, "operator1" and "operator0," each with parameters of type "type0" and specific preconditions. The effects of these actions involve changing the state of the "predicate1" for the objects involved.
+
+Two example problems, "my-problem-3" and "my-problem-2," are provided, each with a different set of objects and initial states. Both problems involve objects of type "type0" and various instances of predicates representing the relationships among these objects. The goal of each problem is to change the state of "predicate1" for specific objects.

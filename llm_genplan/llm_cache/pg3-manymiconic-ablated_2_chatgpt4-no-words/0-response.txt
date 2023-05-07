@@ -1,0 +1,9 @@
+This PDDL domain, named "my-pddl-domain," involves two types of objects: type0 and type2, which are both subtypes of type1. The domain includes five predicates (predicate0 to predicate8) and four actions (operator0 to operator3).
+
+The actions in the domain have the following effects:
+1. operator0: When applied, it makes predicate2 true for the type2 object involved.
+2. operator1: When applied, it makes predicate8 true for the type2 object involved and makes predicate2 false for the same object.
+3. operator3: When applied, it makes predicate6 true for the second type0 object and false for the first type0 object.
+4. operator2: When applied, it has the same effect as operator3.
+
+The example problems provided consist of a list of objects (type0 and type2), an initial state with predicates set for specific objects, and a goal state in which predicate8 must be true for certain type2 objects. The problems involve achieving the goal state by applying actions from the domain to the objects in a specific sequence.

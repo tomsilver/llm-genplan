@@ -1,0 +1,9 @@
+This PDDL domain, called "my-pddl-domain," consists of three operators (actions) and seven predicates. The predicates define different relationships between the objects in the domain. The operators describe the actions that can be taken to change the relationships between objects.
+
+The three operators are:
+
+1. `operator1`: This operator changes the `predicate1` property from one object (`?v1`) to another object (`?v8`). Both objects must have the `predicate9` property.
+2. `operator2`: This operator removes the `predicate0` relationship between objects `?v5` and `?v7` and adds a `predicate3` relationship between `?v5` and `?v3`. It also removes the `predicate5` property from `?v3`. The preconditions for this operator include having the `predicate2`, `predicate9`, `predicate6`, `predicate0`, `predicate1`, and `predicate5` properties for the respective objects.
+3. `operator0`: This operator removes the `predicate3` relationship between objects `?v5` and `?v3` and adds a `predicate0` relationship between `?v5` and `?v7`. It also adds the `predicate5` property to `?v3`. The preconditions for this operator include having the `predicate2`, `predicate9`, `predicate6`, `predicate3`, and `predicate1` properties for the respective objects.
+
+Two example problems are provided, each with a different set of objects and initial states. The goal for each problem is to reach a specific set of `predicate0` relationships between objects.

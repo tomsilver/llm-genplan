@@ -1,0 +1,41 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Step 1: Apply operator0
+    for atom in init:
+        if atom[0] == 'predicate6':
+            obj_v0 = atom[1]
+            for atom2 in init:
+                if atom2[0] == 'predicate7' and atom2[2] == obj_v0:
+                    obj_v6 = atom2[1]
+                    action = f'(operator0 {obj_v0} {obj_v6})'
+                    plan.append(action)
+
+    # Step 2: Apply operator1
+    for atom in init:
+        if atom[0] == 'predicate6':
+            obj_v0 = atom[1]
+            for atom2 in init:
+                if atom2[0] == 'predicate4' and atom2[2] == obj_v0:
+                    obj_v6 = atom2[1]
+                    for atom3 in init:
+                        if atom3[0] == 'predicate2' and atom3[1] == obj_v6:
+                            action = f'(operator1 {obj_v0} {obj_v6})'
+                            plan.append(action)
+
+    # Step 3: Apply operator2 or operator3
+    for atom in init:
+        if atom[0] == 'predicate6':
+            obj_v1 = atom[1]
+            for atom2 in init:
+                if atom2[0] == 'predicate0':
+                    if atom2[1] == obj_v1:
+                        obj_v2 = atom2[2]
+                        action = f'(operator3 {obj_v1} {obj_v2})'
+                        plan.append(action)
+                    elif atom2[2] == obj_v1:
+                        obj_v2 = atom2[1]
+                        action = f'(operator2 {obj_v1} {obj_v2})'
+                        plan.append(action)
+
+    return plan

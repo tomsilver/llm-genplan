@@ -1,0 +1,9 @@
+This PDDL domain, named "my-pddl-domain", consists of two types: type0 and type1. There are seven predicates defined, with five predicates involving variables of type0 and two predicates involving variables of type1. The domain features three actions named operator0, operator1, and operator2.
+
+operator2 takes two parameters: one of type1 and one of type0. The action is executed if the type0 variable satisfies predicate0 and predicate3, and the type1 variable satisfies predicate8. Upon execution, it changes the state of the type1 variable from predicate8 to predicate1.
+
+operator1 takes two parameters: both of type0. This action is executed if the first type0 variable satisfies predicate0 and predicate6. The effect of this action is that the first type0 variable no longer satisfies predicate0, while the second type0 variable starts to satisfy predicate0.
+
+operator0 also takes two parameters: one of type1 and one of type0. The action is executed if the type0 variable satisfies predicate0, and the type1 variable satisfies predicate1. Upon execution, it removes predicate1 from the type1 variable, removes predicate9 from the type0 variable, and adds predicate7 to the type0 variable.
+
+Two example problems are provided. Both problems have a set of objects of type0 and type1 and an initial state describing the predicates that are true for these objects. The goal of both problems is to achieve a state where certain objects of type0 satisfy predicate7.

@@ -130,7 +130,7 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
     outfile = "num_automated_debug.png"
     with plt.style.context("bmh"):
         plt.figure()
-        plt.plot(xs, ys)
+        plt.plot(xs, ys, marker="o")
         plt.ylim((-0.1, 1.1))
         plt.xticks(xs)
         plt.xlabel("# Debug Steps")

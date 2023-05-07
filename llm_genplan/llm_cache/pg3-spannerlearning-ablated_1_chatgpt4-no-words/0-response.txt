@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain", involves various types and predicates, and defines three actions (operators) that can be performed in the domain. The domain has six types, where type0 is the parent type for type3, type4, and type6, while type2 and type5 are separate types. Six predicates are defined, each representing a specific relationship between objects of certain types.
+
+Three actions are defined in this domain: operator2, operator0, and operator1. Each action has specific parameters, preconditions, and effects on the predicates involving objects of the mentioned types. The actions primarily manipulate the relationships between the objects by updating the predicates' truth values.
+
+Two example problems are provided for this domain, named "my-problem-9" and "my-problem-5". Both problems have a set of objects belonging to the various types, initial conditions (predicates' initial values), and a goal state. The goal state in both problems is to achieve the predicate6 for three objects of type4. The problems have different initial conditions, which require a suitable sequence of actions to achieve the goal state.

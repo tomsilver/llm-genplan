@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Find the target object for which the goal is to change the state of "predicate1"
+    target_object = None
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            target_object = atom[1]
+            break
+
+    # Find an object with "predicate1" as a source for the target object
+    source_object = None
+    for atom in init:
+        if atom[0] == 'predicate1':
+            source_object = atom[1]
+            break
+
+    # Check if the source and target objects are connected by "predicate0" and not "predicate4"
+    connected = False
+    target_has_predicate3 = False
+    for atom in init:
+        if atom[0] == 'predicate0' and atom[1] == source_object and atom[2] == target_object:
+            connected = True
+        if atom[0] == 'predicate3' and atom[1] == target_object:
+            target_has_predicate3 = True
+
+    # If connected, choose the appropriate action based on the target object's "predicate3" state
+    if connected:
+        if target_has_predicate3:
+            action = f'(operator0 {source_object} {target_object})'
+        else:
+            action = f'(operator1 {source_object} {target_object})'
+        plan.append(action)
+
+    return plan

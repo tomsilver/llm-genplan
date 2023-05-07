@@ -1,0 +1,58 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def atom_exists(atom_set, predicate, *args):
+        return (predicate, *args) in atom_set
+
+    def find_related_objects(predicate):
+        related_objects = []
+        for atom in init:
+            if atom[0] == predicate:
+                related_objects.append((atom[1], atom[2]))
+        return related_objects
+
+    # Identify type0 objects that initially satisfy predicate6
+    type0_objects_with_predicate6 = [atom[1] for atom in init if atom[0] == "predicate6"]
+
+    # Keep applying operator0, operator1, and operator3 (or operator2) until the goal is reached
+    while not goal.issubset(init):
+        applied = False
+
+        # Apply operator0
+        related_objects_op0 = find_related_objects("predicate7")
+        for obj in related_objects_op0:
+            type2_object, type0_object = obj
+            if type0_object in type0_objects_with_predicate6 and atom_exists(init, "predicate6", type0_object) and not atom_exists(init, "predicate2", type2_object):
+                plan.append(f"(operator0 {type0_object} {type2_object})")
+                init.add(("predicate2", type2_object))
+                applied = True
+
+        # Apply operator1
+        related_objects_op1 = find_related_objects("predicate4")
+        for obj in related_objects_op1:
+            type2_object, type0_object = obj
+            if type0_object in type0_objects_with_predicate6 and atom_exists(init, "predicate6", type0_object) and atom_exists(init, "predicate2", type2_object) and not atom_exists(init, "predicate8", type2_object):
+                plan.append(f"(operator1 {type0_object} {type2_object})")
+                init.discard(("predicate2", type2_object))
+                init.add(("predicate8", type2_object))
+                applied = True
+
+        # Apply operator3 (or operator2)
+        for obj1 in type0_objects_with_predicate6:
+            for obj2 in type0_objects_with_predicate6:
+                if obj1 != obj2 and atom_exists(init, "predicate6", obj1) and atom_exists(init, "predicate0", obj1, obj2) and not atom_exists(init, "predicate6", obj2):
+                    plan.append(f"(operator3 {obj1} {obj2})")
+                    init.add(("predicate6", obj2))
+                    init.discard(("predicate6", obj1))
+                    type0_objects_with_predicate6.remove(obj1)
+                    type0_objects_with_predicate6.append(obj2)
+                    applied = True
+                    break
+
+            if applied:
+                break
+
+        if not applied:
+            break
+
+    return plan

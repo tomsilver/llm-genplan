@@ -1,0 +1,7 @@
+This PDDL domain, named "my-pddl-domain," contains two action operators and five predicates. The predicates are used to describe the relationship between the variables, and the two action operators, "operator0" and "operator1," define the possible actions within the domain.
+
+The action "operator0" has one parameter, ?v1, and requires the precondition "predicate0" to be true. Upon execution, this action negates "predicate0," adds "predicate4" and "predicate2" for the given variable ?v1, and negates "predicate6" for the same variable.
+
+The action "operator1" has two parameters, ?v0 and ?v4, and requires the preconditions "predicate4" and "predicate2" to be true for ?v0, "predicate1" to be true for ?v0 and ?v4, and "predicate6" to be true for ?v4. Upon execution, this action adds "predicate4" and "predicate2" for ?v4, and negates "predicate2" for ?v0 and "predicate6" for ?v4.
+
+Two example problems, "my-problem-9" and "my-problem-5," are provided for this domain. Both problems have a set of objects, initial states with "predicate0," "predicate1," and "predicate6" relationships, and a goal condition that requires all objects to have "predicate4" true. The problems differ in the number of objects and the specific relationships among them.

@@ -1,0 +1,55 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0 - type0
+    object1 - type0
+    object10 - type0
+    object11 - type0
+    object12 - type0
+    object13 - type0
+    object14 - type0
+    object15 - type0
+    object16 - type0
+    object17 - type0
+    ...
+    object20 - type2
+    object21 - type2
+    object22 - type2
+    object23 - type2
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object0 object12)
+    (predicate0 object0 object14)
+    (predicate0 object0 object16)
+    (predicate0 object0 object18)
+    (predicate0 object0 object2)
+    (predicate0 object0 object4)
+    (predicate0 object0 object6)
+    (predicate0 object0 object8)
+    (predicate0 object1 object11)
+    ...
+    (predicate4 object20 object0)
+    (predicate4 object21 object7)
+    (predicate4 object22 object18)
+    (predicate4 object23 object3)
+    (predicate6 object10)
+    (predicate6 object17)
+    (predicate7 object20 object8)
+    (predicate7 object21 object3)
+    (predicate7 object22 object14)
+    (predicate7 object23 object11)
+  )
+  (:goal (and
+    (predicate8 object20)
+    (predicate8 object21)
+    (predicate8 object22)
+    (predicate8 object23)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator2 object17 object5)', '(operator2 object17 object15)', '(operator2 object17 object9)', '(operator3 object17 object19)', '(operator2 object17 object1)', '(operator2 object17 object7)', '(operator2 object17 object11)', '(operator2 object17 object3)', '(operator2 object17 object13)', '(operator3 object10 object12)', '(operator2 object10 object2)', '(operator3 object10 object16)', '(operator2 object10 object0)', '(operator3 object10 object14)', '(operator2 object10 object4)', '(operator2 object10 object6)', '(operator3 object10 object18)', '(operator2 object10 object8)'].
+NOTE: (operator2 object17 object15) has an unsatisfied precondition at time 1
+(Set (predicate6 object17) to true)
+Fix the code.

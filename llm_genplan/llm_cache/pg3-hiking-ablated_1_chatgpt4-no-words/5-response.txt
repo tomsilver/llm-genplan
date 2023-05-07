@@ -1,0 +1,57 @@
+def find_path(init, source_object, target_object):
+    visited = set()
+    stack = [(source_object, [])]
+
+    while stack:
+        node, path = stack.pop()
+        visited.add(node)
+
+        for atom in init:
+            if atom[0] == 'predicate0' and atom[1] == node and atom[2] not in visited:
+                new_path = path + [atom[2]]
+                if atom[2] == target_object:
+                    return new_path
+                stack.append((atom[2], new_path))
+
+    return None
+
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find the target object for which the goal is to change the state of "predicate1"
+    target_object = None
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            target_object = atom[1]
+            break
+
+    # Find an object with "predicate1" as a source for the target object
+    source_object = None
+    for atom in init:
+        if atom[0] == 'predicate1':
+            source_object = atom[1]
+            break
+
+    # Find a path from source_object to target_object through "predicate0" connections
+    path = find_path(init, source_object, target_object)
+
+    if path:
+        # Iterate over the path to apply the appropriate action
+        for i in range(len(path) - 1):
+            current_object = path[i]
+            next_object = path[i + 1]
+            target_has_predicate3 = any(
+                atom[0] == 'predicate3' and atom[1] == next_object for atom in init
+            )
+            current_object_has_predicate4 = any(
+                atom[0] == 'predicate4' and atom[1] == current_object for atom in init
+            )
+            if not current_object_has_predicate4:
+                if target_has_predicate3:
+                    action = f'(operator0 {current_object} {next_object})'
+                else:
+                    action = f'(operator1 {current_object} {next_object})'
+                plan.append(action)
+
+    return plan
