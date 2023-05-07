@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    type2_objects = {obj for obj, obj_type in objects if obj_type == "type2"}
+    type3_objects = {obj for obj, obj_type in objects if obj_type == "type3"}
+    type4_objects = {obj for obj, obj_type in objects if obj_type == "type4"}
+    type6_objects = {obj for obj, obj_type in objects if obj_type == "type6"}
+
+    predicate0_relations = {tuple(atom[1:]) for atom in init if atom[0] == "predicate0"}
+    predicate3_objects = {atom[1] for atom in init if atom[0] == "predicate3"}
+    predicate7_objects = {atom[1] for atom in init if atom[0] == "predicate7"}
+
+    for type4_object in predicate3_objects:
+        type2_object = [obj for obj in type2_objects if (type4_object, obj) in predicate0_relations][0]
+        type3_object_candidates = [obj for obj in type3_objects if (obj, type2_object) in predicate0_relations]
+        if not type3_object_candidates:
+            continue
+        type3_object = type3_object_candidates[0]
+        type6_object = [obj for obj in type6_objects if (obj, type2_object) in predicate0_relations][0]
+
+        plan.append(f"(operator0 {type2_object} {type6_object} {type3_object})")
+
+        if type6_object not in predicate7_objects:
+            predicate7_objects.add(type6_object)
+
+        plan.append(f"(operator1 {type2_object} {type6_object} {type3_object} {type4_object})")
+
+    return plan

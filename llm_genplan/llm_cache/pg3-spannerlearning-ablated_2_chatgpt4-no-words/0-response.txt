@@ -1,0 +1,7 @@
+This domain, named "my-pddl-domain", involves objects of various types, such as type2, type3, type4, and type6, and a few actions that manipulate these objects. There are six predicates in the domain, which are used to describe relations between the objects.
+
+The domain consists of three actions: operator0, operator1, and operator2. Each action has specific parameters and preconditions that must be met to perform the action, as well as effects that result from the action's execution.
+
+Two example problems are provided for this domain. Both problems involve a set of objects of different types, initial states defined by the predicates, and a goal state that needs to be achieved. The goal state for both problems requires reaching a state where certain type4 objects have the predicate6 relation.
+
+Overall, the domain involves manipulation of objects through various actions to achieve a desired goal state.

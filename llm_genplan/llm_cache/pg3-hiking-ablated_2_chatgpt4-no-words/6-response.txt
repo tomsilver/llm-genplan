@@ -1,0 +1,32 @@
+def depth_first_search(current_object, target_object, init, visited, path):
+    if current_object == target_object:
+        return path
+
+    visited.add(current_object)
+    predicate0_atoms = [atom for atom in init if atom[0] == 'predicate0']
+    connected_objects = [atom[2] for atom in predicate0_atoms if atom[1] == current_object and atom[2] not in visited]
+
+    for next_object in connected_objects:
+        action = find_appropriate_action(current_object, next_object, init)
+        if action is None:
+            continue
+
+        new_path = path.copy()
+        new_path.append(action)
+
+        result = depth_first_search(next_object, target_object, init, visited, new_path)
+        if result is not None:
+            return result
+
+    visited.remove(current_object)
+    return None
+
+def get_plan(objects, init, goal):
+    source_object = [atom[1] for atom in init if atom[0] == 'predicate1'][0]
+    target_object = [atom[1] for atom in goal if atom[0] == 'predicate1'][0]
+
+    visited = set()
+    path = []
+
+    plan = depth_first_search(source_object, target_object, init, visited, path)
+    return plan

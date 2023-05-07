@@ -1,0 +1,9 @@
+This PDDL domain, named "my-pddl-domain," features two types: type0 and type1. There are seven predicates, five of which involve variables of type0, and two involve variables of type1.
+
+There are three actions in this domain: operator0, operator1, and operator2. Each action has different preconditions and effects, but all involve variables of either type0 or type1.
+
+- operator2: Requires a precondition with two variables (one of each type) and changes the state of one type1 predicate.
+- operator1: Requires a precondition with two type0 variables and modifies the state of one type0 predicate.
+- operator0: Requires a precondition with two variables (one of each type) and modifies the state of one type1 predicate and two type0 predicates.
+
+There are two example problems provided: my-problem-4 and my-problem-3. Both problems have a specific set of objects belonging to either type0 or type1, as well as a defined initial state and goal state. The goal state in both problems involves reaching a particular state for several type0 predicates.

@@ -1,0 +1,13 @@
+The simple strategy for solving all problems in this domain without using search is to follow the chain of predicate0 connections from the initial object with predicate1 (source) to the goal object where predicate1 should be applied (target), using the appropriate action (operator1 or operator0) at each step.
+
+Here are the steps to follow this strategy:
+
+1. Identify the object with predicate1 in the initial state (source object).
+2. Identify the target object, as specified in the goal condition, where predicate1 should be applied.
+3. Follow the chain of predicate0 connections from the source object to the target object. This can be done by checking which object is connected to the current object with predicate0, and then moving to the connected object.
+4. At each step, apply the appropriate action (operator1 or operator0) based on the preconditions, effectively transferring predicate1 from the current object to the next one in the chain.
+   - If the connected object does not have predicate3, apply operator1.
+   - If the connected object has predicate3, apply operator0.
+5. Repeat steps 3-4 until the target object has predicate1 applied, which means the goal is achieved.
+
+This strategy is based on the fact that both actions (operator1 and operator0) transfer predicate1 from one object to another, and the preconditions for the actions involve the presence of predicate0 and predicate3. By following the chain of predicate0 connections, the goal condition of applying predicate1 to the target object can be achieved without the need for search.

@@ -1,0 +1,60 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find an object with predicate6 true
+    object_with_predicate6 = None
+    for atom in init:
+        if atom[0] == 'predicate6':
+            object_with_predicate6 = atom[1]
+            break
+
+    # Apply operator0 to the object with predicate6 true
+    plan.append(f'(operator0 {object_with_predicate6})')
+
+    # Get predicate1 relationships
+    predicate1_relationships = {}
+    for atom in init:
+        if atom[0] == 'predicate1':
+            if atom[1] not in predicate1_relationships:
+                predicate1_relationships[atom[1]] = []
+            predicate1_relationships[atom[1]].append(atom[2])
+
+    # Apply operator1 iteratively
+    remaining_objects = objects.copy()
+    remaining_objects.remove(object_with_predicate6)
+    source_object = object_with_predicate6
+
+    while remaining_objects:
+        action_applied = False
+        for target_object in predicate1_relationships.get(source_object, []):
+            if target_object in remaining_objects:
+                plan.append(f'(operator1 {source_object} {target_object})')
+                remaining_objects.remove(target_object)
+                source_object = target_object
+                action_applied = True
+                break
+        if not action_applied:
+            break
+
+    # Check if the goal is satisfied
+    current_state = set(init)
+    for action in plan:
+        action_name, *args = action.strip("()").split()
+        if action_name == "operator0":
+            obj = args[0]
+            current_state.discard(('predicate6', obj))
+            current_state.add(('predicate4', obj))
+            current_state.add(('predicate2', obj))
+        elif action_name == "operator1":
+            src, tgt = args
+            current_state.discard(('predicate2', src))
+            current_state.discard(('predicate6', tgt))
+            current_state.add(('predicate4', tgt))
+            current_state.add(('predicate2', tgt))
+
+    goal_satisfied = all(atom in current_state for atom in goal)
+
+    if goal_satisfied:
+        return plan
+    else:
+        return []

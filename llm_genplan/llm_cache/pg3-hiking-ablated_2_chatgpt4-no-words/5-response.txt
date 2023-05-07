@@ -1,0 +1,31 @@
+def find_appropriate_action(current_object, next_object, init):
+    if ('predicate4', current_object) in init:
+        return None
+    if ('predicate3', next_object) not in init:
+        return f'(operator1 {current_object} {next_object})'
+    else:
+        return f'(operator0 {current_object} {next_object})'
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    source_object = [atom[1] for atom in init if atom[0] == 'predicate1'][0]
+    target_object = [atom[1] for atom in goal if atom[0] == 'predicate1'][0]
+
+    predicate0_atoms = [atom for atom in init if atom[0] == 'predicate0']
+
+    current_object = source_object
+    visited_objects = set()
+
+    while current_object != target_object:
+        visited_objects.add(current_object)
+        next_object = find_connected_object(current_object, predicate0_atoms, visited_objects)
+        if next_object is None:
+            break  # Exit the loop if no connected object is found
+        action = find_appropriate_action(current_object, next_object, init)
+        if action is None:
+            break  # Exit the loop if an action with unsatisfied preconditions is encountered
+        plan.append(action)
+        current_object = next_object
+
+    return plan
