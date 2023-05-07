@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain", consists of two types (type0 and type1) and seven predicates (predicate0 to predicate9, excluding predicate2, predicate4, and predicate5). There are three actions defined in the domain: operator0, operator1, and operator2. 
+
+The domain deals with objects of type0 and type1 and models the relationships between them. The actions, operator0, operator1, and operator2, each have specific preconditions and effects that alter the state of the objects and their relationships. 
+
+Two example problems are provided: my-problem-4 and my-problem-3. Both problems consist of a set of objects belonging to type0 and type1, an initial state describing the relationships between the objects, and a goal state to be achieved. The problems differ in the set of objects and the relationships in the initial and goal states. The objective is to find a sequence of actions that transforms the initial state into the goal state.

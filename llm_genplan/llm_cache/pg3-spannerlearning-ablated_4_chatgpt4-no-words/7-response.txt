@@ -1,0 +1,19 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Extract the goal predicates
+    goal_predicates = set(atom[0] for atom in goal)
+
+    # Loop through the goal predicates and search for possible actions that can be applied
+    for g_predicate in goal_predicates:
+        for atom in init:
+            if atom[0] == g_predicate:
+                # Extract objects related to the predicate in the init state
+                obj_list = " ".join(atom[1:])
+
+                # Create a dummy action for each goal predicate using the objects found in the init state
+                # Note: You will need to replace "dummy_operator" with the correct operator for your domain
+                action = f"(dummy_operator {obj_list})"
+                plan.append(action)
+
+    return plan

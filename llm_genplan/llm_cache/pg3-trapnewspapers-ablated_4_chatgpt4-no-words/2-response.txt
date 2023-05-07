@@ -1,0 +1,13 @@
+The strategy for solving all problems in this domain without using search is as follows:
+
+1. Identify the objects in the problem that need to have their predicates changed to satisfy the goal state. In the example problems, the goal is to achieve (predicate7 objectX) for specific objects of type0.
+
+2. Perform the "operator1" action to transfer the "predicate0" from the current object having it to the target object that needs to achieve the goal state (predicate7). Make sure to choose the target object that also has "predicate6".
+
+3. Perform the "operator2" action to change the state of an object of type1 from having "predicate8" to having "predicate1". This object of type1 will be used in the "operator0" action.
+
+4. Perform the "operator0" action on the target object (with predicate0) and the object of type1 (with predicate1) to change the target object's state to have "predicate7" and the object of type1 to lose "predicate1".
+
+5. Repeat steps 2 to 4 for each target object that needs to achieve the goal state.
+
+By following this strategy, you can solve all problems in this domain without using search, as it directly manipulates the objects and their predicates according to the goal state.

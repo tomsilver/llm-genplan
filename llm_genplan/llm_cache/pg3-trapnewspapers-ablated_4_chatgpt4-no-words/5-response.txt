@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find target objects for predicate7 in the goal
+    target_objects = [atom[1] for atom in goal if atom[0] == 'predicate7']
+
+    # Find the initial object with predicate0
+    initial_object = [atom[1] for atom in init if atom[0] == 'predicate0'][0]
+
+    # Find objects with predicate8 (type1 objects)
+    objects_with_predicate8 = [atom[1] for atom in init if atom[0] == 'predicate8']
+
+    # Find objects with predicate3 (required for operator2)
+    objects_with_predicate3 = [atom[1] for atom in init if atom[0] == 'predicate3']
+
+    for target_object in target_objects:
+        # Step 2: Perform operator1 action if the initial object is different from the target object
+        if initial_object != target_object:
+            action = f'(operator1 {initial_object} {target_object})'
+            plan.append(action)
+            initial_object = target_object
+
+        # Ensure the target_object has predicate3 before performing operator2
+        if target_object not in objects_with_predicate3:
+            action = f'(add_predicate3 {initial_object})'
+            plan.append(action)
+            objects_with_predicate3.append(target_object)
+
+        # Step 3: Perform operator2 action with the first available object with predicate8
+        object_with_predicate8 = objects_with_predicate8.pop(0)
+        action = f'(operator2 {object_with_predicate8} {initial_object})'
+        plan.append(action)
+
+        # Step 4: Perform operator0 action with the target object and the object with predicate1
+        action = f'(operator0 {object_with_predicate8} {initial_object})'
+        plan.append(action)
+
+    return plan

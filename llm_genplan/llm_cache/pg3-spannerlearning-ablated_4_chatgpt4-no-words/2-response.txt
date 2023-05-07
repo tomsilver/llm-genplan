@@ -1,0 +1,15 @@
+The simple strategy to solve all problems in this domain without using search can be summarized in the following steps:
+
+1. Identify objects of type4 with the "predicate3" relation, which are the objects that need to have the "predicate6" relation in the goal state.
+
+2. For each object of type4, find the related object of type2 via the "predicate0" relation.
+
+3. Find an object of type3 that has a "predicate0" relation with the same object of type2 (from step 2).
+
+4. Find an object of type6 that has a "predicate0" relation with the same object of type2 (from step 2) and has a "predicate7" relation.
+
+5. Apply the "operator1" action using the objects of type2, type3, type4, and type6 found in the previous steps. This action will result in changing the "predicate3" relation to "predicate6" for the object of type4 and removing the "predicate7" relation for the object of type6.
+
+6. Repeat steps 2-5 for all other objects of type4 that initially have the "predicate3" relation.
+
+This strategy ensures that all objects of type4 with the initial "predicate3" relation have the "predicate6" relation in the final state, as required by the goal.

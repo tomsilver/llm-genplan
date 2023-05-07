@@ -1,0 +1,7 @@
+A simple strategy for solving all problems in this domain without using search can be achieved by following these steps:
+
+1. Identify the goal object for which predicate1 must hold.
+2. Traverse the relationships defined by predicate0 from the initial object with predicate1 (source object) to the goal object.
+3. Apply operator1 or operator0 in the sequence based on the traversed relationships.
+
+The strategy works by following the connected path of predicate0 relationships from the source object to the goal object. At each step, check if predicate3 holds for the current object. If it does, apply operator0, and if it doesn't, apply operator1. This will transfer predicate1 from one object to another until it reaches the goal object.

@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain", is characterized by a set of objects belonging to various types (type0, type2, type3, type4, type5, and type6). The domain includes six predicates (predicate0 to predicate7) that describe relations between these objects. There are three action operators (operator0, operator1, and operator2) that enable transformations between the states of the objects.
+
+The provided example problems, "my-problem-9" and "my-problem-5", consist of a set of objects with their respective types and initial states, described by the predicates. The goal in both problems is to achieve a state where objects of type4 (object6, object7, and object8) have a "predicate6" relation.
+
+Overall, this domain is focused on manipulating the relationships between objects of various types through the provided action operators, with the aim of achieving a specific goal state.

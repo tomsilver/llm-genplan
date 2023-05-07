@@ -1,0 +1,54 @@
+def get_plan(objects, init, goal):
+    def find_object_with_predicate1(init_atoms):
+        for atom in init_atoms:
+            if atom[0] == "predicate1":
+                return atom[1]
+        return None
+
+    def find_path_to_goal(current_object, goal_object, init_atoms, visited):
+        if current_object == goal_object:
+            return [current_object]
+
+        visited.add(current_object)
+
+        for atom in init_atoms:
+            if atom[0] == "predicate0" and atom[1] == current_object and atom[2] not in visited:
+                path = find_path_to_goal(atom[2], goal_object, init_atoms, visited)
+                if path:
+                    return [current_object] + path
+
+        return []
+
+    def is_predicate3(object, init_atoms):
+        for atom in init_atoms:
+            if atom[0] == "predicate3" and atom[1] == object:
+                return True
+        return False
+
+    def is_predicate4(object, init_atoms):
+        for atom in init_atoms:
+            if atom[0] == "predicate4" and atom[1] == object:
+                return True
+        return False
+
+    source_object = find_object_with_predicate1(init)
+    goal_object = list(goal)[0][1]
+    visited_objects = set()
+    path = find_path_to_goal(source_object, goal_object, init, visited_objects)
+
+    plan = []
+    for i in range(len(path) - 1):
+        current_object = path[i]
+        next_object = path[i + 1]
+
+        if is_predicate4(current_object, init):
+            continue
+
+        if is_predicate3(next_object, init):
+            action = f"(operator0 {current_object} {next_object})"
+        else:
+            action = f"(operator1 {current_object} {next_object})"
+
+        plan.append(action)
+
+    return plan

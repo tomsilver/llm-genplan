@@ -1,0 +1,51 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def get_objects_by_type(type_name):
+        return [obj for obj, obj_type in objects if obj_type == type_name]
+
+    def get_object_with_predicates(predicates):
+        candidates = [obj for obj in get_objects_by_type(predicates[0][1])]
+        for predicate in predicates:
+            candidates = [obj for obj in candidates if (predicate[0], obj) in init]
+        return candidates
+
+    def execute_operator1(object0, object1):
+        return f'(operator1 {object0} {object1})'
+
+    def execute_operator2(object1, object2):
+        return f'(operator2 {object2} {object1})'
+
+    def execute_operator0(object1, object2):
+        return f'(operator0 {object2} {object1})'
+
+    type0_objects = get_objects_by_type('type0')
+    type1_objects = get_objects_by_type('type1')
+
+    while not all((goal_predicate[0], obj) in init for goal_predicate in goal for obj in get_objects_by_type(goal_predicate[1])):
+
+        object_with_predicate0 = get_object_with_predicates([('predicate0', 'type0')])[0]
+
+        target_objects = get_object_with_predicates([('predicate9', 'type0')])
+        if target_objects:
+            target_object = target_objects[0]
+            if target_object != object_with_predicate0:
+                plan.append(execute_operator1(object_with_predicate0, target_object))
+                init.remove(('predicate0', object_with_predicate0))
+                init.add(('predicate0', target_object))
+                object_with_predicate0 = target_object
+
+            object_with_predicate8 = get_object_with_predicates([('predicate8', 'type1')])[0]
+            plan.append(execute_operator2(object_with_predicate0, object_with_predicate8))
+            init.remove(('predicate8', object_with_predicate8))
+            init.add(('predicate1', object_with_predicate8))
+
+            object_with_predicate1 = get_object_with_predicates([('predicate1', 'type1')])[0]
+            plan.append(execute_operator0(object_with_predicate0, object_with_predicate1))
+            init.remove(('predicate1', object_with_predicate1))
+            init.remove(('predicate9', object_with_predicate0))
+            init.add(('predicate7', object_with_predicate0))
+        else:
+            break
+
+    return plan

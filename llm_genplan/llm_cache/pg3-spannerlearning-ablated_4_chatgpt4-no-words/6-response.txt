@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Step 1: Find objects of type4 with the "predicate3" relation
+    type4_predicate3_objects = set([atom[1] for atom in init if atom[0] == "predicate3"])
+
+    for obj4 in type4_predicate3_objects:
+        # Step 2: Find the related object of type2 via the "predicate0" relation
+        obj2 = next(atom[2] for atom in init if atom[0] == "predicate0" and atom[1] == obj4)
+
+        # Step 3: Find an object of type3 that has a "predicate0" relation with the same object of type2
+        obj3 = next((atom[1] for atom in init if atom[0] == "predicate0" and atom[2] == obj2 and (atom[1], "type3") in objects and atom[1] not in type4_predicate3_objects), None)
+
+        if not obj3:
+            continue
+
+        # Step 4: Find an object of type6 that has a "predicate1" relation with the object of type3 and has a "predicate7" relation
+        obj6 = next((atom[2] for atom in init if atom[0] == "predicate7" and atom[1] == obj3), None)
+
+        if not obj6:
+            continue
+
+        # Check if the "predicate2" relation between obj2 and obj1 exists, where obj1 is the object related to obj3 via "predicate0"
+        obj1 = next(atom[2] for atom in init if atom[0] == "predicate0" and atom[1] == obj3)
+        predicate2_exists = any(atom for atom in init if atom[0] == "predicate2" and atom[1] == obj2 and atom[2] == obj1)
+
+        if not predicate2_exists:
+            continue
+
+        # Step 5: Apply the "operator1" action using the objects of type2, type3, type4, and type6
+        action = f"(operator1 {obj1} {obj6} {obj3} {obj4})"
+        plan.append(action)
+
+    return plan
