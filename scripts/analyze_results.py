@@ -37,6 +37,8 @@ def load_results(
         with open(filepath, "rb") as f:
             outdata = pickle.load(f)
         env, seed, experiment_id = Path(filepath).stem.split("__")
+        if env.endswith("-ablated"):
+            env = env[: -len("-ablated")]
         git_commit_hashes.add(outdata["git_commit_hash"])
         # Evaluation results.
         successes: List[float] = []  # include success rate in genplan dataframe
