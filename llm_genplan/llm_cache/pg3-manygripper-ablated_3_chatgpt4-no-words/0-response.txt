@@ -1,0 +1,17 @@
+This PDDL domain, named "my-pddl-domain", consists of seven predicates and three actions (operators). The predicates are used to define relationships between various objects in the domain, while the actions represent possible operations that can be performed to achieve a specific goal.
+
+The predicates are:
+1. predicate9: Represents a single-argument property of an object.
+2. predicate2: Represents a single-argument property of an object.
+3. predicate6: Represents a single-argument property of an object.
+4. predicate1: Represents a single-argument property of an object.
+5. predicate0: Represents a two-argument relationship between objects.
+6. predicate5: Represents a single-argument property of an object.
+7. predicate3: Represents a two-argument relationship between objects.
+
+The actions are:
+1. operator1: Changes the property of two objects (predicate1) based on the precondition that both objects have predicate9 and one of them has predicate1.
+2. operator2: Modifies the relationship between objects (predicate0 and predicate3) based on the precondition that an object has predicate2, another object has predicate9 and predicate1, and a third object has predicate6 and predicate5.
+3. operator0: Modifies the relationship between objects (predicate0 and predicate3) based on the precondition that an object has predicate2, another object has predicate9 and predicate1, and a third object has predicate6 and is related to the first object through predicate3.
+
+Two example problems are provided, each with a specific set of objects, initial states, and goals. The problems describe different scenarios where the domain's actions need to be applied in order to achieve the specified goals.

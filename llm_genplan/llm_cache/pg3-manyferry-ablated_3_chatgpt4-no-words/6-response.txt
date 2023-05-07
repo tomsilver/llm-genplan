@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    plan = []
+    current_init = init.copy()
+
+    for g in goal:
+        v1, v4 = g[1], g[2]
+
+        # Find the corresponding 'predicate8 ?v1' and 'predicate1 ?v4' in the current state
+        pred8_v1 = next((atom for atom in current_init if atom[0] == 'predicate8' and atom[1] == v1), None)
+
+        # If 'predicate8 ?v1' exists, apply the 'operator1' action with the parameters '(?v1, ?v4)'
+        if pred8_v1:
+            action = f'(operator1 {v1} {v4})'
+            plan.append(action)
+            current_init.remove(('predicate8', v1))
+            current_init.add(('predicate0', v1, v4))
+            current_init.add(('predicate5',))
+
+    # Iterate through goal predicates again to ensure 'predicate1' is present before applying 'operator0'
+    for g in goal:
+        v1, v4 = g[1], g[2]
+
+        pred1_v4 = next((atom for atom in current_init if atom[0] == 'predicate1' and atom[1] == v4), None)
+
+        # If 'predicate1 ?v4' does not exist, apply the 'operator2' action with parameters '(?v5, ?v4)'
+        if not pred1_v4:
+            pred7_v5_v4 = next((atom for atom in current_init if atom[0] == 'predicate7' and atom[2] == v4 and ('predicate1', atom[1]) in current_init), None)
+            if pred7_v5_v4:
+                v5 = pred7_v5_v4[1]
+                action = f'(operator2 {v5} {v4})'
+                plan.append(action)
+                current_init.remove(('predicate1', v5))
+                current_init.add(('predicate1', v4))
+
+    # Apply the 'operator0' action with parameters '(?v1, ?v4)' for each goal predicate
+    for g in goal:
+        v1, v4 = g[1], g[2]
+        pred0_v1_v4 = next((atom for atom in current_init if atom[0] == 'predicate0' and atom[1] == v1 and atom[2] == v4), None)
+        pred1_v4 = next((atom for atom in current_init if atom[0] == 'predicate1' and atom[1] == v4), None)
+        pred5 = next((atom for atom in current_init if atom[0] == 'predicate5'), None)
+
+        if pred0_v1_v4 and pred1_v4 and pred5:
+            action = f'(operator0 {v1} {v4})'
+            plan.append(action)
+
+    return plan

@@ -1,0 +1,7 @@
+The given PDDL domain is named "my-pddl-domain" and consists of five predicates: predicate0, predicate1, predicate2, predicate4, and predicate6. There are two actions defined in the domain: operator0 and operator1, each with their specific parameters, preconditions, and effects.
+
+The example problems for this domain involve objects that need to fulfill specific goal conditions. In both problems, the goal is to have all objects reach the "predicate4" state. The initial state in each problem contains predicate0, predicate1, and predicate6 applied to various objects.
+
+The operator0 action requires the precondition predicate0 and, when executed, sets predicate4 and predicate2 for an object while removing predicate0 and predicate6. The operator1 action has preconditions that require an object to have predicate4, predicate2, predicate1, and another object with predicate6. The effect of this action is to set predicate4 and predicate2 for the second object while removing predicate2 from the first object and predicate6 from the second object.
+
+These example problems involve reaching a specific goal by applying the defined actions in the domain to manipulate the states of the given objects.

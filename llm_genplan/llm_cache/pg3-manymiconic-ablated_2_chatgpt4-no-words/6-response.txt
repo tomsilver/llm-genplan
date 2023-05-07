@@ -1,0 +1,49 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Function to check if an atom exists in a set
+    def atom_exists(atom_set, predicate, *args):
+        return (predicate, *args) in atom_set
+
+    # Function to find all atoms with the given predicate and object
+    def find_atoms_with_predicate(predicate, object_name=None):
+        atoms = []
+        for atom in init:
+            if atom[0] == predicate:
+                if object_name is None or object_name in atom:
+                    atoms.append(atom)
+        return atoms
+
+    while not goal.issubset(init):
+        applied = False
+
+        # Iterate through all type2 objects
+        for type2_object, _ in filter(lambda x: x[1] == "type2", objects):
+            # Check if the goal is already satisfied for this type2_object
+            if atom_exists(goal, "predicate8", type2_object):
+                continue
+
+            # Find the related type0 object and apply operator0
+            predicate7_atoms = find_atoms_with_predicate("predicate7", type2_object)
+            if predicate7_atoms:
+                type0_object = predicate7_atoms[0][2]
+                predicate6_atoms = find_atoms_with_predicate("predicate6", type0_object)
+                if predicate6_atoms and not atom_exists(init, "predicate2", type2_object):
+                    plan.append(f"(operator0 {type0_object} {type2_object})")
+                    init.add(("predicate2", type2_object))
+                    applied = True
+                    continue
+
+            # Apply operator1
+            if atom_exists(init, "predicate2", type2_object) and atom_exists(init, "predicate4", type2_object) and not atom_exists(init, "predicate8", type2_object):
+                type0_object = find_atoms_with_predicate("predicate4", type2_object)[0][2]
+                plan.append(f"(operator1 {type0_object} {type2_object})")
+                init.discard(("predicate2", type2_object))
+                init.add(("predicate8", type2_object))
+                applied = True
+                continue
+
+        if not applied:
+            break
+
+    return plan

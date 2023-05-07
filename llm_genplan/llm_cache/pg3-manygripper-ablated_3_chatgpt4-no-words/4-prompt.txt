@@ -1,0 +1,58 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object10
+    object11
+    object12
+    object13
+    object14
+    object15
+    object16
+    object17
+    ...
+  )
+  (:init
+    (predicate0 object0 object10)
+    (predicate0 object1 object7)
+    (predicate0 object2 object12)
+    (predicate0 object3 object19)
+    (predicate0 object4 object15)
+    (predicate1 object7)
+    (predicate2 object0)
+    (predicate2 object1)
+    (predicate2 object2)
+    (predicate2 object3)
+    (predicate2 object4)
+    (predicate5 object5)
+    (predicate5 object6)
+    (predicate6 object5)
+    (predicate6 object6)
+    (predicate9 object10)
+    (predicate9 object11)
+    (predicate9 object12)
+    (predicate9 object13)
+    (predicate9 object14)
+    (predicate9 object15)
+    (predicate9 object16)
+    (predicate9 object17)
+    (predicate9 object18)
+    (predicate9 object19)
+    ...
+  )
+  (:goal (and
+    (predicate0 object2 object16)
+    (predicate0 object3 object18)
+    (predicate0 object4 object22)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 24, in get_plan
+    predicate1_init.remove(obj2_current)
+KeyError: 'object15'
+
+Fix the code.

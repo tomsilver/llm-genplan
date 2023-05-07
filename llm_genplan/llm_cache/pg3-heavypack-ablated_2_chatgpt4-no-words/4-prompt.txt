@@ -1,0 +1,37 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object2
+    object3
+  )
+  (:init
+    (predicate0)
+    (predicate1 object0 object1)
+    (predicate1 object2 object0)
+    (predicate1 object2 object1)
+    (predicate1 object2 object3)
+    (predicate1 object3 object0)
+    (predicate1 object3 object1)
+    (predicate6 object0)
+    (predicate6 object1)
+    (predicate6 object2)
+    (predicate6 object3)
+  )
+  (:goal (and
+    (predicate4 object0)
+    (predicate4 object1)
+    (predicate4 object2)
+    (predicate4 object3)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<file-name-omitted>", line 34, in get_plan
+    init_state.remove(("predicate2", object_with_predicate6))
+KeyError: ('predicate2', 'object2')
+
+Fix the code.

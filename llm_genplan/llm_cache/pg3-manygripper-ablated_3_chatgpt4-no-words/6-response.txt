@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Extract initial relationships and properties from the 'init' set
+    predicate0_init = {tuple(atom[1:]) for atom in init if atom[0] == 'predicate0'}
+    predicate1_init = {atom[1] for atom in init if atom[0] == 'predicate1'}
+    predicate5_init = {atom[1] for atom in init if atom[0] == 'predicate5'}
+    
+    # Extract goal relationships from the 'goal' set
+    predicate0_goal = {tuple(atom[1:]) for atom in goal if atom[0] == 'predicate0'}
+    
+    for obj1, obj2_goal in predicate0_goal:
+        # Check if the goal relationship already exists in the initial state
+        if (obj1, obj2_goal) not in predicate0_init:
+            # Find the current object associated with obj1 in predicate0_init
+            obj2_current = next(obj2 for obj1_, obj2 in predicate0_init if obj1_ == obj1)
+            
+            # Apply operator1 to update predicate1 property if necessary
+            if obj2_current in predicate1_init:
+                plan.append(f'(operator1 {obj2_current} {obj2_goal})')
+                predicate1_init.remove(obj2_current)
+                predicate1_init.add(obj2_goal)
+            elif obj2_goal not in predicate1_init:
+                obj2_temp = next(obj for obj in predicate1_init if obj != obj2_current)
+                plan.append(f'(operator1 {obj2_temp} {obj2_goal})')
+                predicate1_init.remove(obj2_temp)
+                predicate1_init.add(obj2_goal)
+                
+            # Find an available object with predicate5 and predicate6
+            available_obj = next(obj for obj in predicate5_init)
+            
+            # Apply operator2 to unlink obj1 and obj2_current
+            plan.append(f'(operator2 {obj1} {obj2_current} {available_obj})')
+            predicate0_init.remove((obj1, obj2_current))
+            predicate5_init.remove(available_obj)
+            
+            # Apply operator0 to link obj1 and obj2_goal
+            plan.append(f'(operator0 {obj1} {obj2_goal} {available_obj})')
+            predicate0_init.add((obj1, obj2_goal))
+            predicate5_init.add(available_obj)
+    
+    return plan

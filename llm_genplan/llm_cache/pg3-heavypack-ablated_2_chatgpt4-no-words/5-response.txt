@@ -1,0 +1,34 @@
+def get_plan(objects, init, goal):
+    plan = []
+    init_state = set(init)
+
+    def find_predicate_atoms(predicate, state):
+        return [atom for atom in state if atom[0] == predicate]
+
+    def find_connected_objects(obj, state):
+        predicate1_atoms = find_predicate_atoms("predicate1", state)
+        return [atom[2] for atom in predicate1_atoms if atom[1] == obj]
+
+    while any(atom[0] == "predicate6" for atom in init_state):
+        # Find an object with predicate6
+        object_with_predicate6 = next(atom[1] for atom in init_state if atom[0] == "predicate6")
+
+        # Execute operator0 on the object with predicate6
+        plan.append(f"(operator0 {object_with_predicate6})")
+        init_state.remove(("predicate6", object_with_predicate6))
+        init_state.add(("predicate4", object_with_predicate6))
+        init_state.add(("predicate2", object_with_predicate6))
+
+        # Find connected objects
+        connected_objects = find_connected_objects(object_with_predicate6, init_state)
+
+        for connected_object in connected_objects:
+            if ("predicate6", connected_object) in init_state and ("predicate2", object_with_predicate6) in init_state:
+                # Execute operator1 on the object with predicate4 and connected_object
+                plan.append(f"(operator1 {object_with_predicate6} {connected_object})")
+                init_state.remove(("predicate6", connected_object))
+                init_state.add(("predicate4", connected_object))
+                init_state.remove(("predicate2", object_with_predicate6))
+                init_state.add(("predicate2", connected_object))
+
+    return plan

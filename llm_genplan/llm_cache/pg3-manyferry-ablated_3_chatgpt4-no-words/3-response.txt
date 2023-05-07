@@ -1,0 +1,28 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    for g in goal:
+        v1, v4 = g[1], g[2]
+
+        # Find the corresponding 'predicate8 ?v1' and 'predicate1 ?v4' in the initial state
+        pred8_v1 = next((atom for atom in init if atom[0] == 'predicate8' and atom[1] == v1), None)
+        pred1_v4 = next((atom for atom in init if atom[0] == 'predicate1' and atom[1] == v4), None)
+
+        # If 'predicate8 ?v1' exists, apply the 'operator1' action with the parameters '(?v1, ?v4)'
+        if pred8_v1:
+            action = f'(operator1 {v1} {v4})'
+            plan.append(action)
+
+        # If 'predicate1 ?v4' does not exist, apply the 'operator2' action with parameters '(?v5, ?v4)'
+        if not pred1_v4:
+            pred7_v5_v4 = next((atom for atom in init if atom[0] == 'predicate7' and atom[2] == v4 and ('predicate1', atom[1]) in init), None)
+            if pred7_v5_v4:
+                v5 = pred7_v5_v4[1]
+                action = f'(operator2 {v5} {v4})'
+                plan.append(action)
+
+        # Apply the 'operator0' action with parameters '(?v1, ?v4)'
+        action = f'(operator0 {v1} {v4})'
+        plan.append(action)
+
+    return plan

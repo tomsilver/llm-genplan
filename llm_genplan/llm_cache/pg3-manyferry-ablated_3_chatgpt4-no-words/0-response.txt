@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain," consists of 8 predicates and 3 actions. The predicates represent various relationships and properties among objects in the domain. The actions are "operator2," "operator0," and "operator1," each with its own set of parameters, preconditions, and effects.
+
+The "operator2" action modifies the properties of two objects that are connected by a "predicate7" relationship, while the "operator0" and "operator1" actions involve objects connected by "predicate0" and "predicate8" relationships, respectively. These actions also involve the "predicate5" property, which can be toggled by the effects of "operator0" and "operator1."
+
+Two example problems, "my-problem-9" and "my-problem-5," are provided to illustrate the use of this domain. Each problem specifies a set of objects, initial conditions (using the domain's predicates), and a goal state. The goal state for each problem describes the desired relationships between objects using the "predicate0" predicate.
