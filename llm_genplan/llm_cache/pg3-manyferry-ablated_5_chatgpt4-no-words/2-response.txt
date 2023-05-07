@@ -1,0 +1,10 @@
+A simple strategy for solving all problems in this domain without using search would involve applying the actions operator0, operator1, and operator2 in a sequential and deterministic manner based on the initial and goal states of the problem.
+
+1. Identify the desired relationships in the goal state.
+2. For each object in the goal state with a predicate0 relationship, perform the following steps:
+   a. If the object's current relationship is different from the goal state, apply operator0 to remove the current relationship.
+   b. Apply operator1 to establish the relationship specified in the goal state.
+3. For each pair of objects in the goal state where one object should have predicate1 property, perform the following steps:
+   a. If the object with predicate1 is different from the goal state, apply operator2 to transfer the predicate1 property from the current object to the desired object.
+
+By following this strategy, we can systematically modify the relationships and properties of the objects to match the goal state without using search.

@@ -1,0 +1,7 @@
+The given PDDL domain represents a system with various objects and relationships between them. There are three main actions in this domain: operator0, operator1, and operator2. The domain has a set of predicates that describe the relationships between objects and their properties.
+
+The operator2 action is used to change the state of two objects (variables ?v2 and ?v5) based on their relationship predicate7 and their properties predicate6 and predicate1. When the action is executed, the predicate1 property is transferred from one object to another.
+
+The operator0 and operator1 actions are used to manipulate relationships between the objects that have predicate3 and predicate6 properties. The operator0 action is used to remove the relationship predicate0 between an object ?v1 with predicate3 property and an object ?v4 with predicate6 property while setting the predicate8 property for object ?v1 and resetting the predicate5 property. The operator1 action is used to establish the relationship predicate0 between the objects ?v1 and ?v4 while setting the predicate5 property and removing the predicate8 property for object ?v1.
+
+The example problems provided define a set of objects and their initial relationships and properties. The goal of each problem is to reach a specific set of relationships between the objects.

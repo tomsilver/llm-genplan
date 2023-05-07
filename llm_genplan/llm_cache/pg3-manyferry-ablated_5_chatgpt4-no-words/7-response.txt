@@ -1,0 +1,55 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Helper function to find the relationship of an object
+    def find_relationship(obj, relationships):
+        for rel in relationships:
+            if rel[1] == obj:
+                return rel[2]
+        return None
+
+    # Extract the relationships and properties from the initial state
+    relationships = {predicate for predicate in init if predicate[0] == 'predicate0'}
+    properties = {predicate for predicate in init if predicate[0] == 'predicate1'}
+    predicate8 = {predicate for predicate in init if predicate[0] == 'predicate8'}
+    predicate5 = {predicate for predicate in init if predicate[0] == 'predicate5'}
+
+    # Iterate over the goal state relationships
+    for g_rel in goal:
+        if g_rel[0] == 'predicate0':
+            obj = g_rel[1]
+            goal_rel = g_rel[2]
+            current_rel = find_relationship(obj, relationships)
+
+            # If the object's current relationship is different from the goal state, apply operator0
+            if current_rel != goal_rel:
+                # Transfer the predicate1 property to the object to be detached
+                if ('predicate1', current_rel) not in properties:
+                    for p in properties:
+                        if p[0] == 'predicate1':
+                            plan.append(f'(operator2 {p[1]} {current_rel})')
+                            properties.remove(p)
+                            properties.add(('predicate1', current_rel))
+                            break
+                
+                # Check if the predicate5 precondition is satisfied
+                if predicate5:
+                    plan.append(f'(operator0 {obj} {current_rel})')
+                    relationships.remove(('predicate0', obj, current_rel))
+                    predicate8.add(('predicate8', obj))
+                    predicate5.clear()
+
+                # Check if preconditions for operator1 are satisfied
+                if ('predicate8', obj) in predicate8 and ('predicate1', goal_rel) in properties and not predicate5:
+                    # Apply operator1 to establish the relationship specified in the goal state
+                    plan.append(f'(operator1 {obj} {goal_rel})')
+                    relationships.add(('predicate0', obj, goal_rel))
+                    predicate8.remove(('predicate8', obj))
+                    predicate5.add('predicate5')
+
+    # Check if the goal state is satisfied
+    unsatisfied_goals = [g for g in goal if g not in relationships]
+    if unsatisfied_goals:
+        return f"The goal is not satisfied: {unsatisfied_goals}"
+    else:
+        return plan

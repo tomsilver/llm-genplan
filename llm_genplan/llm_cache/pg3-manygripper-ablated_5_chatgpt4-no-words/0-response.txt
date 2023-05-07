@@ -1,0 +1,8 @@
+This PDDL domain consists of three main actions (operators) and several predicates that describe the relationships between objects. The actions are named operator0, operator1, and operator2. The domain includes nine predicates: predicate0 to predicate9. 
+
+The actions are defined as follows:
+1. operator1: This action takes two parameters and has preconditions that both parameters should be related to predicate9, and the first parameter should be related to predicate1. The effect of this action is to transfer the predicate1 relation from the first parameter to the second parameter.
+2. operator2: This action takes three parameters and has preconditions involving predicate2, predicate9, predicate6, predicate0, predicate1, and predicate5. The effect of this action is to remove the relation of predicate0 and predicate5 and establish a new relation with predicate3.
+3. operator0: This action also takes three parameters and has preconditions involving predicate2, predicate9, predicate6, predicate3, and predicate1. The effect of this action is to remove the relation of predicate3 and establish new relations with predicate0 and predicate5.
+
+The example problems provided have various objects and initial conditions involving the defined predicates. The goal conditions for the problems involve achieving specific relationships between objects using the actions defined in the domain.

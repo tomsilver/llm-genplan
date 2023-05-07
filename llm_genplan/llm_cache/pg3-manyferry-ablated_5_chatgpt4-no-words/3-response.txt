@@ -1,0 +1,43 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Helper function to find the relationship of an object
+    def find_relationship(obj, relationships):
+        for rel in relationships:
+            if rel[1] == obj:
+                return rel[2]
+        return None
+
+    # Extract the relationships and properties from the initial state
+    relationships = {predicate for predicate in init if predicate[0] == 'predicate0'}
+    properties = {predicate for predicate in init if predicate[0] == 'predicate1'}
+
+    # Iterate over the goal state relationships
+    for g_rel in goal:
+        if g_rel[0] == 'predicate0':
+            obj = g_rel[1]
+            goal_rel = g_rel[2]
+            current_rel = find_relationship(obj, relationships)
+
+            # If the object's current relationship is different from the goal state, apply operator0
+            if current_rel != goal_rel:
+                plan.append(f'(operator0 {obj} {current_rel})')
+                relationships.remove(('predicate0', obj, current_rel))
+
+            # Apply operator1 to establish the relationship specified in the goal state
+            plan.append(f'(operator1 {obj} {goal_rel})')
+            relationships.add(('predicate0', obj, goal_rel))
+
+    # Iterate over the goal state properties
+    for g_prop in goal:
+        if g_prop[0] == 'predicate1':
+            goal_obj = g_prop[1]
+            current_obj = [p[1] for p in properties][0]
+
+            # If the object with predicate1 is different from the goal state, apply operator2
+            if current_obj != goal_obj:
+                plan.append(f'(operator2 {current_obj} {goal_obj})')
+                properties.remove(('predicate1', current_obj))
+                properties.add(('predicate1', goal_obj))
+
+    return plan
