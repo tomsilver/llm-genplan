@@ -1,0 +1,59 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    objects_dict = {obj[0]: obj[1] for obj in objects}
+
+    def find_predicate(predicate_name, arg1=None, arg2=None):
+        for atom in init:
+            if atom[0] == predicate_name:
+                if (arg1 is None or atom[1] == arg1) and (arg2 is None or atom[2] == arg2):
+                    return atom
+        return None
+
+    def remove_predicate(predicate_name, arg1=None, arg2=None):
+        atom = find_predicate(predicate_name, arg1, arg2)
+        if atom:
+            init.remove(atom)
+
+    def add_predicate(predicate_name, arg1, arg2):
+        init.add((predicate_name, arg1, arg2))
+
+    def move_predicate6(src, dest):
+        if not find_predicate('predicate6', src):
+            return False
+        if find_predicate('predicate0', src, dest):
+            plan.append(f'(operator3 {src} {dest})')
+        elif find_predicate('predicate0', dest, src):
+            plan.append(f'(operator2 {dest} {src})')
+        else:
+            return False
+        remove_predicate('predicate6', src)
+        add_predicate('predicate6', dest, None)
+        return True
+
+    for obj, obj_type in objects:
+        if obj_type == 'type2':
+            # Apply operator0
+            predicate7_obj = find_predicate('predicate7', obj)
+            if predicate7_obj:
+                v0 = predicate7_obj[2]
+                if not move_predicate6(find_predicate('predicate6')[1], v0):
+                    predicate0_obj = find_predicate('predicate0', None, v0)
+                    if predicate0_obj:
+                        move_predicate6(predicate0_obj[1], v0)
+                plan.append(f'(operator0 {v0} {obj})')
+                add_predicate('predicate2', obj, None)
+
+            # Apply operator1
+            predicate4_obj = find_predicate('predicate4', obj)
+            if predicate4_obj:
+                v0 = predicate4_obj[2]
+                if not move_predicate6(find_predicate('predicate6')[1], v0):
+                    predicate0_obj = find_predicate('predicate0', None, v0)
+                    if predicate0_obj:
+                        move_predicate6(predicate0_obj[1], v0)
+                plan.append(f'(operator1 {v0} {obj})')
+                remove_predicate('predicate2', obj)
+                add_predicate('predicate8', obj, None)
+
+    return plan

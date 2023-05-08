@@ -1,0 +1,17 @@
+This PDDL domain represents a system with various objects and predicates that describe relationships among these objects. There are three operators (actions) defined in this domain: operator1, operator2, and operator0.
+
+The system consists of objects that belong to certain predicates:
+- predicate9: Represents a group of objects.
+- predicate2: Represents a group of objects that perform certain actions.
+- predicate6: Represents a group of objects with specific properties.
+- predicate1: Represents objects with a certain attribute.
+- predicate0: Represents a relationship between two objects.
+- predicate5: Represents objects with a specific state.
+- predicate3: Represents a relationship between two objects with different properties.
+
+The actions have the following effects:
+1. operator1: Transfers a specific attribute from one object to another.
+2. operator2: Changes the relationship between two objects and modifies the state of one of the objects.
+3. operator0: Reverts the changes made by operator2, restoring the previous relationship and state.
+
+The example problems provide initial states and goals for specific situations within this domain. The problems involve rearranging relationships between objects and achieving desired states using the defined actions.

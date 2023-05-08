@@ -1,0 +1,35 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    type2_objects = sorted([obj for obj, typ in objects if typ == "type2"])
+    type3_objects = [obj for obj, typ in objects if typ == "type3"]
+    type4_objects = [obj for obj, typ in objects if typ == "type4"]
+    type6_objects = [obj for obj, typ in objects if typ == "type6"]
+
+    predicate0 = {tuple(atom[1:]) for atom in init if atom[0] == "predicate0"}
+    predicate2 = {tuple(atom[1:]) for atom in init if atom[0] == "predicate2"}
+    predicate3 = {atom[1] for atom in init if atom[0] == "predicate3"}
+
+    for type4_obj in type4_objects:
+        current_type2 = next(iter([t2 for t2 in type2_objects if (type4_obj, t2) in predicate0]))
+        while current_type2 != type2_objects[-1]:
+            next_type2_candidates = [t2 for t2, t1 in predicate2 if t1 == current_type2]
+            if not next_type2_candidates:
+                break
+            next_type2 = next_type2_candidates[0]
+            plan.append(f"(operator2 {current_type2} {next_type2} {type4_obj})")
+            predicate0.remove((type4_obj, current_type2))
+            predicate0.add((type4_obj, next_type2))
+            current_type2 = next_type2
+
+        for type3_obj in type3_objects:
+            for target_type6 in type6_objects:
+                if (type3_obj, target_type6) in predicate0:
+                    plan.append(f"(operator0 {current_type2} {target_type6} {type4_obj})")
+                    for type4_obj in predicate3:
+                        if (type4_obj, current_type2) in predicate0:
+                            plan.append(f"(operator1 {current_type2} {target_type6} {type3_obj} {type4_obj})")
+                            predicate3.remove(type4_obj)
+                            break
+
+    return plan

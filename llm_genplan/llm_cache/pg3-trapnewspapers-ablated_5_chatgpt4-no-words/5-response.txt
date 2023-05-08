@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    type0_objects = [obj for obj, obj_type in objects if obj_type == 'type0']
+    type1_objects = [obj for obj, obj_type in objects if obj_type == 'type1']
+
+    plan = []
+
+    # Step 1: Apply operator2
+    for t0 in type0_objects:
+        for t1 in type1_objects:
+            if ('predicate0', t0) in init and ('predicate3', t0) in init and ('predicate8', t1) in init:
+                plan.append(f'(operator2 {t1} {t0})')
+                init.remove(('predicate8', t1))
+                init.add(('predicate1', t1))
+
+    # Step 2: Apply operator1
+    while True:
+        applied = False
+        for t0 in type0_objects:
+            for t3 in type0_objects:
+                if ('predicate0', t0) in init and ('predicate6', t0) in init and ('predicate0', t3) not in init:
+                    plan.append(f'(operator1 {t0} {t3})')
+                    init.remove(('predicate0', t0))
+                    init.add(('predicate0', t3))
+                    applied = True
+                    break
+            if applied:
+                break
+        if not applied:
+            break
+
+    # Step 3: Apply operator0
+    for t0 in type0_objects:
+        for t1 in type1_objects:
+            if ('predicate0', t0) in init and ('predicate1', t1) in init and ('predicate9', t0) in init:
+                plan.append(f'(operator0 {t1} {t0})')
+
+    return plan

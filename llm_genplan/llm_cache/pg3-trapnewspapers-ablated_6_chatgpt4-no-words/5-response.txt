@@ -1,0 +1,42 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Helper function to find objects of a given type
+    def find_objects_of_type(objects, type_name):
+        return [obj for obj, t in objects if t == type_name]
+    
+    type0_objects = find_objects_of_type(objects, "type0")
+    type1_objects = find_objects_of_type(objects, "type1")
+
+    # Apply operator2
+    for v1 in type0_objects:
+        if ('predicate0', v1) in init and ('predicate3', v1) in init:
+            for v2 in type1_objects:
+                if ('predicate8', v2) in init:
+                    plan.append(f'(operator2 {v2} {v1})')
+                    init.remove(('predicate8', v2))
+                    init.add(('predicate1', v2))
+    
+    # Apply operator0
+    for v1 in type0_objects:
+        if ('predicate0', v1) in init:
+            for v2 in type1_objects:
+                if ('predicate1', v2) in init:
+                    plan.append(f'(operator0 {v2} {v1})')
+                    init.remove(('predicate1', v2))
+                    if ('predicate9', v1) in init:
+                        init.remove(('predicate9', v1))
+                    init.add(('predicate7', v1))
+    
+    # Apply operator1
+    while not goal.issubset(init) and any(('predicate0', v0) in init and ('predicate6', v0) in init for v0 in type0_objects):
+        for v0 in type0_objects:
+            if ('predicate0', v0) in init and ('predicate6', v0) in init:
+                for v3 in type0_objects:
+                    if v0 != v3 and ('predicate0', v3) not in init:
+                        plan.append(f'(operator1 {v0} {v3})')
+                        init.remove(('predicate0', v0))
+                        init.add(('predicate0', v3))
+                        break
+
+    return plan

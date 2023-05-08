@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find the target object from the goal state
+    target_object = None
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            target_object = atom[1]
+            break
+
+    # Find the object with predicate1 already applied
+    current_object = None
+    for atom in init:
+        if atom[0] == 'predicate1':
+            current_object = atom[1]
+            break
+
+    # Find the connections and apply actions
+    while current_object != target_object:
+        next_object = None
+        for atom in init:
+            if atom[0] == 'predicate0' and atom[1] == current_object:
+                next_object = atom[2]
+                break
+
+        # If no next_object is found, raise an error
+        if next_object is None:
+            raise ValueError(f"Could not find a valid connection for object {current_object}")
+
+        # Check if predicate3 is present
+        predicate3_present = any(atom[0] == 'predicate3' and atom[1] == next_object for atom in init)
+        
+        # Check if predicate4 is present for current_object
+        predicate4_present = any(atom[0] == 'predicate4' and atom[1] == current_object for atom in init)
+
+        # Apply suitable action
+        if predicate4_present:
+            current_object = next_object
+        elif predicate3_present:
+            plan.append(f'(operator0 {current_object} {next_object})')
+            current_object = next_object
+        else:
+            plan.append(f'(operator1 {current_object} {next_object})')
+            current_object = next_object
+
+    return plan

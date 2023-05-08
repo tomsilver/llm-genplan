@@ -1,0 +1,9 @@
+In this domain, the primary goal is to achieve a specific state for one of the objects using predicate1. To solve all problems without using search, you can follow this strategy:
+
+1. Identify the target object from the goal state, which should have predicate1 applied to it.
+2. Check the initial conditions to find the object that has predicate1 already applied.
+3. Identify the connection between the target object and the object with predicate1 using predicate0.
+4. Follow the connection established by predicate0 and apply the suitable action (operator1 or operator0) based on the presence or absence of predicate3 and predicate4 in the preconditions.
+5. Keep applying the chosen action until the target object has predicate1 applied to it.
+
+This simple strategy allows you to solve all problems in this domain without the need for extensive search.

@@ -1,0 +1,23 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Find the object that initially satisfies predicate6 and predicate0
+    predicate0_object = None
+    predicate6_objects = set()
+    for atom in init:
+        if atom[0] == 'predicate6':
+            predicate6_objects.add(atom[1])
+        if atom[0] == 'predicate0':
+            predicate0_object = list(predicate6_objects)[0]
+
+    # Apply operator0 to the object that satisfies predicate6 and predicate0
+    plan.append(f'(operator0 {predicate0_object})')
+    predicate6_objects.remove(predicate0_object)
+
+    # Apply operator1 sequentially for the remaining objects that satisfy predicate6
+    previous_object = predicate0_object
+    for current_object in predicate6_objects:
+        plan.append(f'(operator1 {previous_object} {current_object})')
+        previous_object = current_object
+
+    return plan

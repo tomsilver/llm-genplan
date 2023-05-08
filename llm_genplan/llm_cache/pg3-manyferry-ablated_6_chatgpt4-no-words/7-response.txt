@@ -1,0 +1,46 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Helper function to find the current connected object
+    def current_connection(obj):
+        for atom in init:
+            if atom[0] == 'predicate0' and atom[1] == obj:
+                return atom[2]
+        return None
+
+    # Helper function to check if an object has a predicate
+    def has_predicate(obj, predicate):
+        for atom in init:
+            if atom[0] == predicate and atom[1] == obj:
+                return True
+        return False
+
+    # Iterate through the goal predicates
+    for g in goal:
+        if g[0] == 'predicate0':
+            obj1, obj2 = g[1], g[2]
+            current_obj2 = current_connection(obj1)
+
+            # If the connection is not the desired one
+            if current_obj2 != obj2:
+
+                # Disconnect obj1 from its current connection using operator1
+                if current_obj2 is not None:
+                    # Ensure predicate8 is true for obj1
+                    if not has_predicate(obj1, 'predicate8'):
+                        plan.append(f"(operator0 {obj1} {current_obj2})")
+                        init.add(('predicate8', obj1))
+                        init.remove(('predicate0', obj1, current_obj2))
+                        init.discard(('predicate5',))
+
+                    plan.append(f"(operator1 {obj1} {current_obj2})")
+
+                # If predicate1 is not true for obj2, make it true using operator2
+                if not has_predicate(obj2, 'predicate1'):
+                    plan.append(f"(operator2 {obj2} object4)")
+                    init.add(('predicate1', obj2))
+
+                # Connect obj1 to the desired object using operator0
+                plan.append(f"(operator0 {obj1} {obj2})")
+
+    return plan
