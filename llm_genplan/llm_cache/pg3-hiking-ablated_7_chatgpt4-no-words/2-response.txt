@@ -1,0 +1,8 @@
+Given the structure of the domain and the actions available, a simple strategy to solve all problems in this domain without using search is to follow the chain of connected objects in predicate0 and predicate5 while considering the preconditions of the actions.
+
+1. Start with the object that has predicate1 in the initial state.
+2. Check the preconditions of both actions (operator1 and operator0) for this object.
+3. If the preconditions of either operator1 or operator0 are met, perform the respective action to transfer predicate1 to the connected object.
+4. Repeat steps 2-3 for the new object with predicate1 until the goal object has predicate1.
+
+Since there are no loops or branches in the problem structure, this strategy can solve the problems in this domain without search. This approach essentially follows the chain of connected objects, transferring predicate1 from one object to the next until the goal is reached.

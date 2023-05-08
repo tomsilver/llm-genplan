@@ -1,0 +1,3 @@
+This PDDL domain, named "my-pddl-domain," consists of two types: type0 and type2, which are both subtypes of type1. There are six predicates defined in the domain: predicate7, predicate4, predicate0, predicate2, predicate8, and predicate6. The domain has four operators: operator0, operator1, operator3, and operator2, each with their own preconditions and effects.
+
+The example problems provided, my-problem-9 and my-problem-5, include different sets of objects of type0 and type2, as well as various initial conditions (predicates) and goals. The goals in both problems are to achieve a certain state for the predicate8, which involves applying the operators based on the preconditions and effects defined in the domain.

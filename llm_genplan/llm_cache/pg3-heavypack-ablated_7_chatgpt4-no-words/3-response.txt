@@ -1,0 +1,16 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Apply operator0 to each object
+    for obj in objects:
+        action = f'(operator0 {obj})'
+        plan.append(action)
+    
+    # Apply operator1 for each pair of objects where predicate1 is true
+    for atom in init:
+        if atom[0] == 'predicate1':
+            obj_v0, obj_v4 = atom[1], atom[2]
+            action = f'(operator1 {obj_v0} {obj_v4})'
+            plan.append(action)
+    
+    return plan

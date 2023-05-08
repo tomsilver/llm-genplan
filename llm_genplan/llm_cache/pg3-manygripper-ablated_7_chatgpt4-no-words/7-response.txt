@@ -1,0 +1,3 @@
+I apologize for the confusion in my previous responses. I misunderstood the context of the problem. The error provided is a traceback from a Python script, and the error message you provided is not part of the code. The SyntaxError at line 59 is likely caused by something else in your Python script.
+
+To help you fix the issue, please provide the relevant portion of the Python code that is causing the SyntaxError, and I will be able to assist you with the appropriate modifications.

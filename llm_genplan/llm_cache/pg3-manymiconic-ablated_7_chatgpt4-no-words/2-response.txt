@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to follow a sequential approach. For each object of type2, perform the following steps:
+
+1. Use operator0: Find the corresponding object of type0 that satisfies the precondition (predicate6 ?v0) and (predicate7 ?v6 ?v0). Apply operator0, which will result in (predicate2 ?v6) being true.
+
+2. Use operator1: With the same pair of objects (type0 and type2), check the preconditions (predicate6 ?v0), (predicate4 ?v6 ?v0), and (predicate2 ?v6). Apply operator1, which will remove (predicate2 ?v6) and add (predicate8 ?v6).
+
+3. Use operator3 or operator2: If applicable, move the (predicate6 ?v0) to another object of type0 by finding a suitable pair of objects that satisfy the preconditions for either operator3 or operator2. Apply the respective operator, which will update the (predicate6 ?v0) accordingly.
+
+Repeat these steps for each object of type2. After performing the steps for all type2 objects, all the goals with (predicate8 ?v6) will be achieved.

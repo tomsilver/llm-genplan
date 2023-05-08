@@ -1,0 +1,37 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    predicate0_object = None
+    predicate6_objects = []
+    predicate8_objects = []
+    predicate1_objects = []
+    predicate9_objects = []
+    
+    for atom in init:
+        if atom[0] == 'predicate0':
+            predicate0_object = atom[1]
+        elif atom[0] == 'predicate6':
+            predicate6_objects.append(atom[1])
+        elif atom[0] == 'predicate8':
+            predicate8_objects.append(atom[1])
+        elif atom[0] == 'predicate9':
+            predicate9_objects.append(atom[1])
+    
+    # Step 1: Apply operator1
+    for obj in predicate6_objects:
+        if predicate0_object != obj:
+            plan.append(f'(operator1 {predicate0_object} {obj})')
+            predicate0_object = obj
+            break
+    
+    # Step 2: Apply operator2
+    for obj in predicate8_objects:
+        plan.append(f'(operator2 {obj} {predicate0_object})')
+        predicate1_objects.append(obj)
+    
+    # Step 3: Apply operator0
+    for pred9_obj in predicate9_objects:
+        for pred1_obj in predicate1_objects:
+            plan.append(f'(operator0 {pred1_obj} {pred9_obj})')
+    
+    return plan

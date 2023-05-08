@@ -1,0 +1,65 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object0
+    object1
+    object10
+    object11
+    object12
+    object13
+    object14
+    object15
+    object16
+    object17
+    ...
+  )
+  (:init
+    (predicate0 object0 object5)
+    (predicate0 object1 object19)
+    (predicate0 object2 object19)
+    (predicate0 object3 object16)
+    (predicate0 object4 object5)
+    (predicate1 object13)
+    (predicate3 object0)
+    (predicate3 object1)
+    (predicate3 object2)
+    (predicate3 object3)
+    (predicate3 object4)
+    (predicate5)
+    (predicate6 object10)
+    (predicate6 object11)
+    (predicate6 object12)
+    (predicate6 object13)
+    (predicate6 object14)
+    (predicate6 object15)
+    (predicate6 object16)
+    (predicate6 object17)
+    (predicate6 object18)
+    (predicate6 object19)
+    ...
+    (predicate7 object10 object11)
+    (predicate7 object10 object12)
+    (predicate7 object10 object13)
+    (predicate7 object10 object14)
+    (predicate7 object10 object15)
+    (predicate7 object10 object16)
+    (predicate7 object10 object17)
+    (predicate7 object10 object18)
+    (predicate7 object10 object19)
+    (predicate7 object10 object5)
+    ...
+  )
+  (:goal (and
+    (predicate0 object0 object5)
+    (predicate0 object1 object18)
+    (predicate0 object2 object10)
+    (predicate0 object3 object12)
+    (predicate0 object4 object14)
+    )
+  )    
+)
+        
+The code failed. It returned the following plan: ['(operator1 object2 object13)', '(operator1 object2 object19)', '(operator2 object13 object10)', '(operator0 object2 object10)', '(operator1 object1 object10)', '(operator1 object1 object19)', '(operator2 object10 object18)', '(operator0 object1 object18)', '(operator1 object3 object18)', '(operator1 object3 object16)', '(operator2 object18 object12)', '(operator0 object3 object12)', '(operator1 object4 object12)', '(operator1 object4 object5)', '(operator2 object12 object14)', '(operator0 object4 object14)'].
+NOTE: (operator1 object2 object13) has an unsatisfied precondition at time 0
+(Set (predicate8 object2) to true)
+Fix the code.

@@ -1,0 +1,22 @@
+def get_plan(objects, init, goal):
+    predicate0_connections = {atom[1]: atom[2] for atom in init if atom[0] == 'predicate0'}
+    predicate1_object = next(atom[1] for atom in init if atom[0] == 'predicate1')
+    goal_object = next(atom[1] for atom in goal if atom[0] == 'predicate1')
+    
+    plan = []
+    
+    while predicate1_object != goal_object:
+        next_object = predicate0_connections[predicate1_object]
+        operator = 'operator1' if ('predicate3', next_object) not in init else 'operator0'
+        plan.append(f"({operator} {predicate1_object} {next_object})")
+        predicate1_object = next_object
+    
+    return plan
+
+# Example usage:
+objects = {('object0', 'type0'), ('object1', 'type0'), ('object10', 'type0'), ...}
+init = {('predicate0', 'object0', 'object1'), ('predicate0', 'object0', 'object10'), ...}
+goal = {('predicate1', 'object27')}
+
+plan = get_plan(objects, init, goal)
+print(plan)

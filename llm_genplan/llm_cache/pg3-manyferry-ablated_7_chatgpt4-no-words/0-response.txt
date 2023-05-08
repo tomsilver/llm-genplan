@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain", consists of three operators (actions) and eight predicates. The operators are operator2, operator0, and operator1, which are used to manipulate the relationships among objects in this domain. The predicates describe various properties and relationships among the objects, such as whether an object is connected to another, whether an object is active, or whether a specific condition is met.
+
+In this domain, objects can be related to one another (predicate7), some objects have unique roles (predicate3 and predicate6), certain objects can be active (predicate1), and objects can be connected to one another in pairs (predicate0). Additionally, there is a specific condition represented by predicate5 and a status represented by predicate8.
+
+The given example problems describe specific instances of this domain with objects and initial conditions. The goal of the problems is to achieve a certain configuration of object connections (predicate0) using the operators provided.

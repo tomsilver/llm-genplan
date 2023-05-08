@@ -1,0 +1,65 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object1 - type2
+    object12 - type2
+    object2 - type2
+    object3 - type2
+    object4 - type2
+    object5 - type2
+    object6 - type2
+    object0 - type3
+    object10 - type4
+    object11 - type4
+    object7 - type4
+    object8 - type4
+    object9 - type4
+    object13 - type6
+    object14 - type6
+    object15 - type6
+    object16 - type6
+    object17 - type6
+  )
+  (:init
+    (predicate0 object0 object12)
+    (predicate0 object10 object1)
+    (predicate0 object11 object1)
+    (predicate0 object13 object2)
+    (predicate0 object14 object3)
+    (predicate0 object15 object2)
+    (predicate0 object16 object6)
+    (predicate0 object17 object5)
+    (predicate0 object7 object1)
+    (predicate0 object8 object1)
+    ...
+    (predicate2 object12 object2)
+    (predicate2 object2 object3)
+    (predicate2 object3 object4)
+    (predicate2 object4 object5)
+    (predicate2 object5 object6)
+    (predicate2 object6 object1)
+    (predicate3 object10)
+    (predicate3 object11)
+    (predicate3 object7)
+    (predicate3 object8)
+    (predicate3 object9)
+    (predicate7 object13)
+    (predicate7 object14)
+    (predicate7 object15)
+    (predicate7 object16)
+    (predicate7 object17)
+  )
+  (:goal (and
+    (predicate6 object10)
+    (predicate6 object11)
+    (predicate6 object7)
+    (predicate6 object8)
+    (predicate6 object9)
+    )
+  )    
+)
+        
+The code returned this plan: ['(operator2 object7)', '(operator2 object9)', '(operator2 object10)', '(operator2 object11)', '(operator2 object8)']
+However, the action (operator2 object7) is invalid at step 0.
+NOTE: the valid operators are: (operator0 ?v1 ?v6 ?v4) (operator1 ?v1 ?v6 ?v4 ?v5) (operator2 ?v7 ?v0 ?v4).
+Fix the code.

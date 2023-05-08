@@ -1,0 +1,8 @@
+The given PDDL domain, named "my-pddl-domain", defines a problem-solving environment with two types (type0 and type1) and seven predicates (predicate0 to predicate9). There are three actions (operators) defined in this domain: operator0, operator1, and operator2.
+
+The actions have the following effects:
+1. operator2: Removes the predicate8 from a type1 object and adds predicate1 to it, given that the associated type0 object has both predicate0 and predicate3.
+2. operator1: Changes the association of predicate0 from one type0 object to another, given that the initial type0 object has both predicate0 and predicate6.
+3. operator0: Removes predicate1 from a type1 object and changes the state of a type0 object from predicate9 to predicate7, given that the type0 object has predicate0.
+
+Two example problems, my-problem-3 and my-problem-4, are provided. Both problems involve changing the states of type0 objects from having predicate9 to predicate7, given certain initial conditions. The problems are solved by applying the appropriate actions (operators) to reach the specified goal conditions.

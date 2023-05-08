@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Step 1: Find objects of type4 (for which predicate3 holds) and their associated objects of type2 (for which predicate0 holds)
+    type4_objects = {obj for obj, obj_type in objects if obj_type == 'type4'}
+    predicate0_dict = {args[1]: args[0] for pred, *args in init if pred == 'predicate0'}
+    type4_type2_pairs = [(type4_obj, type2_obj) for type4_obj in type4_objects if (type2_obj := predicate0_dict.get(type4_obj)) is not None]
+
+    # Step 2: Find objects of type3 (for which predicate0 holds) and their associated objects of type6 (for which predicate1 holds)
+    type3_objects = {obj for obj, obj_type in objects if obj_type == 'type3'}
+    predicate1_dict = {args[0]: args[1] for pred, *args in init if pred == 'predicate1'}
+    type3_type6_pairs = [(type3_obj, type6_obj) for type3_obj in type3_objects if (type6_obj := predicate1_dict.get(type3_obj)) is not None]
+
+    # Step 3: Check that predicate7 holds for each object of type6 found in step 2
+    type6_objects_with_predicate7 = {args[0] for pred, *args in init if pred == 'predicate7'}
+    for _, type6_obj in type3_type6_pairs:
+        assert type6_obj in type6_objects_with_predicate7, f"predicate7 does not hold for {type6_obj}"
+
+    # Step 4: Execute operator1 for each object of type4, object of type2, object of type3, and object of type6
+    for type4_obj, type2_obj in type4_type2_pairs:
+        for type3_obj, type6_obj in type3_type6_pairs:
+            if predicate0_dict[type2_obj] == type3_obj:
+                plan.append(f'(operator1 {type2_obj} {type6_obj} {type3_obj} {type4_obj})')
+
+    # Step 5: Execute operator2 for each object of type4 to satisfy the goal conditions
+    goal_conditions = {args[0] for pred, *args in goal if pred == 'predicate6'}
+    for type4_obj in goal_conditions:
+        plan.append(f'(operator2 {type4_obj})')
+
+    return plan

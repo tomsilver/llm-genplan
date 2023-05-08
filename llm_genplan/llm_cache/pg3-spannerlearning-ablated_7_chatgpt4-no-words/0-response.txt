@@ -1,0 +1,7 @@
+This PDDL domain represents a problem-solving environment with several types, predicates, and actions. The domain has six types: type2, type0, type5, type3, type4, and type6. Type0 is the parent type of type3, type4, and type6, while type5 is the parent type of type2 and type0. 
+
+There are six predicates in this domain: predicate0, predicate1, predicate2, predicate3, predicate6, and predicate7. These predicates describe relationships between objects of different types. 
+
+The domain also contains three actions: operator0, operator1, and operator2. Each action has specific parameters and preconditions that need to be satisfied for the action to be executed. Additionally, each action has associated effects that describe how the state of the domain changes upon the action's execution.
+
+Two example problems are provided, my-problem-9 and my-problem-5, each with a set of objects, initial conditions, and goal conditions. The objects belong to different types, and the initial conditions describe the relationships between these objects using the domain's predicates. The goal conditions specify the desired final state of the problem, which needs to be achieved by applying the domain's actions in a specific order.

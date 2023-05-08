@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search involves the sequential application of the operators in a specific order:
+
+1. Apply `operator1` to transfer the `predicate0` from the current type0 object to another type0 object that has `predicate6`. This is possible since all problems in this domain have at least one type0 object with both `predicate0` and `predicate6`.
+
+2. Apply `operator2` to every type1 object with `predicate8`, such that the type0 object associated with it has both `predicate0` and `predicate3`. This will change the state of the type1 objects from having `predicate8` to `predicate1`.
+
+3. Finally, apply `operator0` to all type0 objects that have `predicate9` and type1 objects with `predicate1`. This will remove `predicate1` from type1 objects and change the state of type0 objects from having `predicate9` to `predicate7`.
+
+By following this strategy, the goal of changing the state of type0 objects from having `predicate9` to `predicate7` will be achieved for all problems in this domain.
