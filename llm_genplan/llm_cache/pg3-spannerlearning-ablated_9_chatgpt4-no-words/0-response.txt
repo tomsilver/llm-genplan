@@ -1,0 +1,16 @@
+This domain, named "my-pddl-domain", involves manipulating objects of various types. There are 6 types of objects (type0, type2, type3, type4, type5, and type6), and some types are subtypes of others (e.g., type3, type4, and type6 are subtypes of type0).
+
+There are 6 predicates in this domain:
+1. predicate0: It connects an object of type0 with an object of type2.
+2. predicate1: It connects an object of type3 with an object of type6.
+3. predicate7: It represents a property of an object of type6.
+4. predicate2: It connects two objects of type2.
+5. predicate6: It represents a property of an object of type4.
+6. predicate3: It represents a property of an object of type4.
+
+There are 3 action operators in this domain:
+1. operator2: Changes the connection between objects of type0 and type2.
+2. operator0: Connects an object of type3 with an object of type6, given that they share a common object of type2.
+3. operator1: Changes the properties of objects of type4 and type6 based on their connections with objects of type2 and type3.
+
+Two example problems are provided, both aiming to achieve a goal state where the property represented by predicate6 is true for all objects of type4. The initial states of the problems contain objects of various types and their connections or properties, represented by the predicates. The action operators are used to manipulate these connections and properties to reach the desired goal state.

@@ -1,0 +1,12 @@
+The strategy to solve problems in this domain without using search is to follow the chain of connected objects through the predicate0 relationship, starting from the object with predicate1 (the initial object), and applying the appropriate operator (operator1 or operator0) based on the predicate3 condition of the connected object. This strategy will eventually lead to the object specified in the goal condition with predicate1 applied.
+
+Here are the steps for the simple strategy:
+
+1. Identify the object with predicate1 (initial object) in the initial state.
+2. Check the predicate0 relationships for the initial object to find the connected object.
+3. Determine whether the connected object has predicate3 applied or not.
+4. Apply the appropriate operator (operator1 if predicate3 is not applied, operator0 if predicate3 is applied) to the initial object and the connected object.
+5. The connected object now has predicate1 applied. Set this object as the new initial object.
+6. Repeat steps 2-5 until the object specified in the goal condition has predicate1 applied.
+
+By following this strategy, you can systematically transfer the predicate1 from one object to the next along the chain of connected objects, ultimately reaching the goal state without the need for search algorithms.

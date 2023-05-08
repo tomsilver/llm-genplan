@@ -1,0 +1,40 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    # Helper function to extract objects of a specific type
+    def get_objects_of_type(obj_type):
+        return [obj for obj, t in objects if t == obj_type]
+
+    # Helper function to find a related object with a specific predicate
+    def find_related_object(predicate, obj):
+        for atom in init:
+            if atom[0] == predicate and atom[-1] == obj:
+                return atom[1]
+        return None
+
+    # Helper function to check if an object fulfills a specific predicate
+    def object_fulfills_predicate(predicate, obj):
+        for atom in init:
+            if atom[0] == predicate and atom[1] == obj:
+                return True
+        return False
+
+    type0_objects = get_objects_of_type('type0')
+    type2_objects = get_objects_of_type('type2')
+
+    for type2_object in type2_objects:
+        # Apply operator0
+        type0_object_for_op0 = find_related_object('predicate7', type2_object)
+        if type0_object_for_op0 and object_fulfills_predicate('predicate6', type0_object_for_op0):
+            plan.append(f'(operator0 {type0_object_for_op0} {type2_object})')
+            init.remove(('predicate6', type0_object_for_op0))
+            init.add(('predicate2', type2_object))
+
+        # Apply operator1
+        type0_object_for_op1 = find_related_object('predicate4', type2_object)
+        if type0_object_for_op1 and object_fulfills_predicate('predicate6', type0_object_for_op1) and ('predicate2', type2_object) in init:
+            plan.append(f'(operator1 {type0_object_for_op1} {type2_object})')
+            init.remove(('predicate2', type2_object))
+            init.add(('predicate8', type2_object))
+
+    return plan

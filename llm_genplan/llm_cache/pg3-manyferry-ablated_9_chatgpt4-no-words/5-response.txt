@@ -1,0 +1,62 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def find_connections(atoms, predicate):
+        return {tuple(atom[1:]) for atom in atoms if atom[0] == predicate}
+
+    def find_object_property(atoms, predicate):
+        return {atom[1] for atom in atoms if atom[0] == predicate}
+
+    def find_single_predicate(atoms, predicate):
+        return {atom[1] for atom in atoms if atom[0] == predicate}
+
+    def disconnect_objects(source, target):
+        return f'(operator0 {source} {target})'
+
+    def connect_objects(source, target):
+        return f'(operator1 {source} {target})'
+
+    def transfer_property(source, target):
+        return f'(operator2 {source} {target})'
+
+    init_connections = find_connections(init, 'predicate0')
+    goal_connections = find_connections(goal, 'predicate0')
+    objects_with_predicate1 = find_object_property(init, 'predicate1')
+    objects_with_predicate3 = find_single_predicate(init, 'predicate3')
+    objects_with_predicate6 = find_single_predicate(init, 'predicate6')
+    predicate5 = True
+
+    for init_conn, goal_conn in zip(init_connections, goal_connections):
+        if init_conn != goal_conn:
+            if not predicate5:
+                arbitrary_disconnected = objects_with_predicate3.pop()
+                plan.append(connect_objects(arbitrary_disconnected, objects_with_predicate6.pop()))
+                predicate5 = True
+
+            source, target = init_conn
+            plan.append(disconnect_objects(source, target))
+            objects_with_predicate3.add(source)
+            predicate5 = False
+
+            if goal_conn[1] not in objects_with_predicate1:
+                while goal_conn[1] != list(objects_with_predicate1)[0]:
+                    transfer_src = list(objects_with_predicate1)[0]
+                    connected_objects = [obj for obj in objects_with_predicate6 if (transfer_src, obj) in init]
+                    if connected_objects:
+                        transfer_tgt = connected_objects[0]
+                        plan.append(transfer_property(transfer_src, transfer_tgt))
+                        objects_with_predicate1.remove(transfer_src)
+                        objects_with_predicate1.add(transfer_tgt)
+                    else:
+                        break
+
+            if not predicate5:
+                arbitrary_connected = objects_with_predicate3.pop()
+                plan.append(disconnect_objects(arbitrary_connected, objects_with_predicate6.pop()))
+                predicate5 = True
+
+            plan.append(connect_objects(goal_conn[0], goal_conn[1]))
+            if goal_conn[0] in objects_with_predicate3:
+                objects_with_predicate3.remove(goal_conn[0])
+
+    return plan

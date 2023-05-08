@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    def find_predicate(predicate, atom_set):
+        return [atom for atom in atom_set if atom[0] == predicate]
+
+    def find_connected_object(predicate0_list, predicate5_list, obj):
+        for atom in predicate0_list:
+            if atom[1] == obj:
+                return atom[2], 'predicate0'
+        for atom in predicate5_list:
+            if atom[1] == obj:
+                return atom[2], 'predicate5'
+        return None, None
+
+    predicate1_list = find_predicate('predicate1', init)
+    predicate0_list = find_predicate('predicate0', init)
+    predicate3_list = find_predicate('predicate3', init)
+    predicate5_list = find_predicate('predicate5', init)
+    initial_object = predicate1_list[0][1]
+
+    while True:
+        connected_object, predicate_type = find_connected_object(predicate0_list, predicate5_list, initial_object)
+        if not connected_object:
+            break
+
+        # Remove the used connected object from the predicate0_list and predicate5_list
+        if predicate_type == 'predicate0':
+            predicate0_list = [atom for atom in predicate0_list if not (atom[1] == initial_object and atom[2] == connected_object)]
+        else:
+            predicate5_list = [atom for atom in predicate5_list if not (atom[1] == initial_object and atom[2] == connected_object)]
+
+        if any(atom[1] == connected_object for atom in predicate3_list):
+            operator = 'operator0'
+        else:
+            operator = 'operator1'
+
+        plan.append(f'({operator} {initial_object} {connected_object})')
+        initial_object = connected_object
+
+        if any(atom[1] == initial_object for atom in goal):
+            break
+
+    return plan

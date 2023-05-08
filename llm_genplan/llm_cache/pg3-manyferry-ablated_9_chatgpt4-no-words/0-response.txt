@@ -1,0 +1,13 @@
+This PDDL domain, named "my-pddl-domain", models a system with several objects and predicates, and three operators (actions) that manipulate these objects and predicates.
+
+The domain has 8 predicates: predicate0 to predicate8. They represent various relationships between objects, such as being connected to, possessing certain properties, or having specific states.
+
+There are three operators: operator0, operator1, and operator2.
+
+- operator2 has two parameters and transfers a property (predicate1) from one object to another, given they are connected (predicate7) and share another property (predicate6).
+
+- operator0 has two parameters and is responsible for disconnecting an object (predicate3) from another object (predicate6), given that they are connected (predicate0), the second object has a specific property (predicate1), and a global condition (predicate5) holds. After this action, the first object acquires a new state (predicate8), and the global condition (predicate5) is negated.
+
+- operator1 has two parameters and aims to connect an object (predicate3) to another object (predicate6), given that they are not connected (predicate8) and the second object has a specific property (predicate1). After this action, the connection (predicate0) is established, the first object loses its disconnected state (predicate8), and the global condition (predicate5) is satisfied.
+
+The example problems provided define specific initial conditions and goal states. In these problems, the objective is to manipulate the connections between objects and transfer properties to achieve the desired goal state using the operators available in the domain.
