@@ -1,0 +1,9 @@
+This PDDL domain, named "my-pddl-domain", consists of several predicates and actions that revolve around objects and their relationships. There are 8 predicates: predicate0 to predicate6, and predicate9. The domain features 3 actions: operator0, operator1, and operator2.
+
+The action "operator1" has two parameters, and its precondition checks that both parameters have the predicate9 property, while one of them also has predicate1. The effect of this action is to transfer the predicate1 property from one object to the other.
+
+The action "operator2" has three parameters and is responsible for managing the relationships among objects with predicate2, predicate9, and predicate6 properties. The precondition checks that specific relationships exist between these objects, such as predicate0 and predicate1 for objects with predicate2 and predicate9, and predicate5 for objects with predicate6. The effect of this action is to create a new relationship between objects with predicate2 and predicate6 properties (predicate3) and remove the predicate0 and predicate5 relationships.
+
+The action "operator0" also has three parameters and reverses the relationships created by "operator2." The precondition checks for the existence of predicate3 relationships between objects with predicate2 and predicate6 properties and predicate1 for objects with predicate9 properties. The effect of this action is to re-establish the predicate0 and predicate5 relationships and remove the predicate3 relationship.
+
+Two example problems, "my-problem-9" and "my-problem-5", are provided, each with a different set of objects and initial conditions. The goal state for each problem specifies the desired relationships (predicate0) between different objects.

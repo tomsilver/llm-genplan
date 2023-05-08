@@ -1,0 +1,7 @@
+This PDDL domain, named "my-pddl-domain," consists of five predicates and two actions. The predicates are predicate0, predicate1, predicate2, predicate4, and predicate6. Predicate1 takes two arguments, while the other predicates take one argument each. 
+
+There are two operators in this domain, operator0 and operator1. Operator0 has one parameter, ?v1, and requires that predicate0 holds as a precondition. When this action is applied, predicate0 is negated, predicate4 and predicate2 are applied to ?v1, and predicate6 is negated for ?v1. 
+
+Operator1 has two parameters, ?v0 and ?v4, and has several preconditions: predicate4 and predicate2 must hold for ?v0, and predicate1 and predicate6 must hold for ?v0 and ?v4, respectively. When this action is applied, predicate4 and predicate2 are applied to ?v4, and predicate2 and predicate6 are negated for ?v0 and ?v4, respectively.
+
+Two example problems are given for this domain, my-problem-9 and my-problem-5. Both problems have five objects (object0 to object4) and aim to achieve the same goal: to have predicate4 hold for all objects. The initial states for each problem include predicate0 and predicate6 holding for all objects and different arrangements of predicate1 relationships between objects.

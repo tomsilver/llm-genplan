@@ -1,0 +1,42 @@
+def get_predicate_objects(predicate, init):
+    return {tuple(atom[1:]) for atom in init if atom[0] == predicate}
+
+def find(predicate, init, value):
+    return next((obj for obj in get_predicate_objects(predicate, init) if value in obj), None)
+
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Group atoms in the initial state by predicate
+    predicate1 = get_predicate_objects("predicate1", init)
+    predicate2 = get_predicate_objects("predicate2", init)
+    predicate5 = get_predicate_objects("predicate5", init)
+    predicate6 = get_predicate_objects("predicate6", init)
+    predicate9 = get_predicate_objects("predicate9", init)
+
+    for goal_rel in goal:
+        if goal_rel in init:
+            continue
+
+        obj2, obj9 = goal_rel[1], goal_rel[2]
+        available_obj6 = next(iter(predicate5 & predicate6), None)
+
+        if available_obj6 is None:
+            raise RuntimeError("No available object with predicate6 and predicate5 found.")
+
+        if (obj9,) not in predicate1:
+            obj1 = next(iter(predicate1), None)
+            if obj1 is None:
+                raise RuntimeError("No available object with predicate1 found.")
+            plan.append(f"(operator1 {obj1[0]} {obj9})")
+            predicate1.remove(obj1)
+            predicate1.add((obj9,))
+
+        plan.append(f"(operator2 {obj2} {obj9} {available_obj6[0]})")
+        predicate5.remove(available_obj6)
+        predicate3 = find("predicate3", init, obj2)
+        if predicate3 is not None:
+            plan.append(f"(operator0 {obj2} {obj9} {predicate3[1]})")
+            predicate5.add((predicate3[1],))
+
+    return plan

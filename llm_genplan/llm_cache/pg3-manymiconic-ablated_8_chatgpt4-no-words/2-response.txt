@@ -1,0 +1,9 @@
+The simple strategy for solving all problems in this domain without using search is to follow a sequence of actions:
+
+1. Identify an object of type0 that has predicate6 and a corresponding object of type2 with which it is connected through either predicate7 or predicate4.
+2. Apply the operator0 action, using the objects identified in step 1 as parameters. This will make predicate2 hold for the type2 object.
+3. Apply the operator1 action, using the same objects as in step 2 as parameters. This will remove predicate2 from the type2 object and make predicate8 hold for it.
+4. If there are any other type0 objects connected to the type2 object through predicate0, apply operator3 or operator2 to move predicate6 from the current type0 object to the next connected type0 object.
+5. Repeat steps 2-4 until predicate8 holds for all objects of type2.
+
+This strategy works because it ensures that the actions are applied in a specific order, which will satisfy the goal state requirements for all problems in this domain.

@@ -1,0 +1,17 @@
+This PDDL domain, named "my-pddl-domain," consists of two types, type0 and type2, with type0 being a subtype of type1 and type2 also being a subtype of type1. There are six predicates and four actions defined in this domain.
+
+Predicates:
+1. predicate7: connects objects of type2 and type0.
+2. predicate4: connects objects of type2 and type0.
+3. predicate0: connects objects of type0 with other objects of type0.
+4. predicate2: applies to objects of type2.
+5. predicate8: applies to objects of type2.
+6. predicate6: applies to objects of type0.
+
+Actions:
+1. operator0: This action takes two parameters, an object of type0 and an object of type2. It requires that predicate6 holds for the type0 object and predicate7 holds between both objects. The effect is that predicate2 holds for the type2 object.
+2. operator1: This action takes the same parameters as operator0. It requires that predicate6 holds for the type0 object, predicate4 holds between both objects, and predicate2 holds for the type2 object. The effect is that predicate2 no longer holds for the type2 object, and predicate8 holds for it.
+3. operator3: This action takes two parameters, both objects of type0. It requires that predicate6 holds for the first object and predicate0 holds between both objects. The effect is that predicate6 now holds for the second object and no longer holds for the first object.
+4. operator2: This action is similar to operator3, taking two parameters, both objects of type0. It requires that predicate6 holds for the first object and predicate0 holds between the second and first objects. The effect is that predicate6 now holds for the second object and no longer holds for the first object.
+
+The example problems provided consist of objects of type0 and type2, initial states with various combinations of predicates, and goal states that require specific predicates to hold for objects of type2.

@@ -1,0 +1,44 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find an object that has predicate0 in init
+    initial_object = None
+    for atom in init:
+        if atom[0] == 'predicate0':
+            initial_object = list(objects)[0]
+            break
+
+    if initial_object is None:
+        raise ValueError("predicate0 not found in init.")
+
+    # Apply operator0 to the initial_object
+    plan.append(f'(operator0 {initial_object})')
+
+    # Extract all predicate1 relationships
+    predicate1_relations = {tuple(atom[1:]) for atom in init if atom[0] == 'predicate1'}
+
+    # Function to find a valid path for applying operator1
+    def find_path(src, dst, visited):
+        if src == dst:
+            return [src]
+        visited.add(src)
+        for obj1, obj2 in predicate1_relations:
+            if obj1 == src and obj2 not in visited:
+                path = find_path(obj2, dst, visited)
+                if path:
+                    return [src] + path
+        return []
+
+    # Apply operator1 to remaining objects using the initial_object while ensuring the preconditions are satisfied
+    for obj in objects:
+        if obj == initial_object:
+            continue
+
+        path = find_path(initial_object, obj, set())
+        if not path:
+            raise ValueError("Unable to create a valid plan.")
+        
+        for i in range(len(path) - 1):
+            plan.append(f'(operator1 {path[i]} {path[i + 1]})')
+
+    return plan

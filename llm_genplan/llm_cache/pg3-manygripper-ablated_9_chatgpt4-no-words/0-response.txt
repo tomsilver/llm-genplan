@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain," consists of seven predicates and three action operators. The predicates are predicate0, predicate1, predicate2, predicate3, predicate5, predicate6, and predicate9. Each of these predicates takes a different number of arguments, ranging from one to two. 
+
+The domain contains three action operators: operator1, operator2, and operator0. Each operator has a different set of parameters, preconditions, and effects, involving the aforementioned predicates. The operators manipulate the state of the predicates, changing the relationships between the objects.
+
+Two example problems, "my-problem-9" and "my-problem-5," are provided. Both problems have a set of objects, initial state conditions (described by the predicates), and goal conditions. The goal of each problem is to find a sequence of actions that modifies the initial state such that the goal conditions are satisfied. The problems consist of different initial states and goals, but they share the same domain, which governs the possible actions and the structure of the world.

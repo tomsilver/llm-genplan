@@ -1,0 +1,39 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Extract objects of type0 and type1
+    type0_objects = {obj for obj, obj_type in objects if obj_type == 'type0'}
+    type1_objects = {obj for obj, obj_type in objects if obj_type == 'type1'}
+
+    # Identify goal objects
+    goal_objects = {g[1] for g in goal if g[0] == 'predicate7'}
+
+    # Find the object with predicate0
+    object_with_predicate0 = next(iter({p[1] for p in init if p[0] == 'predicate0'}))
+
+    # Loop through goal objects
+    for goal_object in goal_objects:
+        # Execute operator1
+        if object_with_predicate0 != goal_object:
+            plan.append(f'(operator1 {object_with_predicate0} {goal_object})')
+            object_with_predicate0 = goal_object
+
+        # Find a type1 object with predicate8
+        type1_object_with_predicate8 = next((obj for obj in type1_objects if ('predicate8', obj) in init), None)
+
+        # If not found, use operator2 to make a type1 object satisfy predicate8
+        if not type1_object_with_predicate8:
+            type1_object_with_predicate1 = next((obj for obj in type1_objects if ('predicate1', obj) in init), None)
+            plan.append(f'(operator2 {type1_object_with_predicate1} {goal_object})')
+            type1_object_with_predicate8 = type1_object_with_predicate1
+            init.remove(('predicate1', type1_object_with_predicate8))
+            init.add(('predicate8', type1_object_with_predicate8))
+
+        # Execute operator0
+        plan.append(f'(operator0 {type1_object_with_predicate8} {goal_object})')
+
+        # Update the init state by removing predicate8 from the type1 object and adding predicate1
+        init.remove(('predicate8', type1_object_with_predicate8))
+        init.add(('predicate1', type1_object_with_predicate8))
+
+    return plan

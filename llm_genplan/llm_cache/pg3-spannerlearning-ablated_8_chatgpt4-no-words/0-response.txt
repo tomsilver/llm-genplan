@@ -1,0 +1,7 @@
+This PDDL domain, named "my-pddl-domain," contains a set of objects, predicates, and actions for solving specific problems related to the domain. The domain has the requirements of typing and strips. There are three types of objects: type2, type3, and type4, which inherit from a common parent type0, and type6, which is an independent type.
+
+There are six predicates in the domain, which are defined with different variable types. The domain includes three actions: operator2, operator0, and operator1. These actions have specific parameters and preconditions that need to be satisfied before they can be executed. The effects of these actions involve changes to the predicates, such as adding or removing relationships between objects.
+
+Two example problems are provided: "my-problem-9" and "my-problem-5." Each problem has a unique set of objects and initial states defined by specific predicates. The goal of both problems is to achieve a state where certain objects of type4 satisfy the predicate6.
+
+In summary, this PDDL domain models a problem-solving environment with a variety of object types, predicates, and actions, which can be used to create and solve various problem instances.

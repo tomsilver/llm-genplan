@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Extract objects
+    type2_objects = [obj for obj, obj_type in objects if obj_type == 'type2']
+    type3_objects = [obj for obj, obj_type in objects if obj_type == 'type3']
+    type4_objects = [obj for obj, obj_type in objects if obj_type == 'type4']
+    type6_objects = [obj for obj, obj_type in objects if obj_type == 'type6']
+
+    # Extract initial state
+    predicate0 = {tuple(atom[1:]) for atom in init if atom[0] == 'predicate0'}
+    predicate2 = {tuple(atom[1:]) for atom in init if atom[0] == 'predicate2'}
+    predicate7 = {atom[1] for atom in init if atom[0] == 'predicate7'}
+    predicate3 = {atom[1] for atom in init if atom[0] == 'predicate3'}
+
+    # Extract goal state
+    goal_predicate6 = {atom[1] for atom in goal if atom[0] == 'predicate6'}
+
+    # Find suitable objects for each action
+    for obj4 in goal_predicate6:
+        for obj2 in type2_objects:
+            for obj3 in type3_objects:
+                obj6_candidates = [obj6 for obj6 in type6_objects if (obj3, obj6) in predicate0 and obj6 in predicate7]
+                for obj6 in obj6_candidates:
+                    if (obj4, obj2) in predicate0 and any((obj2, t6) in predicate2 for t6 in obj6_candidates) and obj4 in predicate3:
+                        # Execute operator1
+                        plan.append(f"(operator1 {obj2} {obj6} {obj3} {obj4})")
+                        predicate7.remove(obj6)
+                        predicate3.remove(obj4)
+                        break
+                if not predicate3:
+                    break
+            if not predicate3:
+                break
+        if not predicate3:
+            break
+
+    return plan

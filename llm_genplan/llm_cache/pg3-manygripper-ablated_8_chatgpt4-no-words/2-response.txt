@@ -1,0 +1,19 @@
+The simple strategy for solving all problems in this domain without using search involves the systematic application of the actions (operators) to achieve the desired goal state. To do this, follow these steps:
+
+1. Identify the goal state relationships (predicate0) that need to be established between the objects.
+
+2. For each goal relationship (predicate0) that needs to be established:
+
+   a. If the relationship (predicate0) already exists, proceed to the next goal relationship.
+   
+   b. If the relationship (predicate0) does not exist, find an available object with predicate6 and predicate5 properties.
+
+   c. Apply "operator1" to transfer the predicate1 property to the desired object with predicate9 property.
+   
+   d. Apply "operator2" using the object with predicate2, the object with the transferred predicate1 property (predicate9), and the available object with predicate6 and predicate5 properties. This creates a new relationship (predicate3) between the object with predicate2 and the object with predicate6.
+   
+   e. Apply "operator0" using the object with predicate2, the object with the transferred predicate1 property (predicate9), and the object with predicate6 that now has the predicate3 relationship. This will establish the desired predicate0 relationship and restore the predicate5 property to the object with predicate6.
+
+3. After applying these steps for each goal relationship, the goal state will be achieved.
+
+This strategy works without search as it systematically updates the relationships according to the goal state by applying the operators in a specific order, using the properties of the objects and their relationships.

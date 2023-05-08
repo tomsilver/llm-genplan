@@ -1,0 +1,11 @@
+This PDDL domain, called "my-pddl-domain," consists of two types: type0 and type1. There are seven predicates, with five predicates concerning objects of type0, and two predicates concerning objects of type1.
+
+There are three actions defined in the domain:
+
+1. operator2: Takes two parameters - one of type1 (v2) and another of type0 (v1). The precondition for this action requires v1 to satisfy predicate0 and predicate3, and v2 to satisfy predicate8. The effect of this action is that v2 no longer satisfies predicate8 but now satisfies predicate1.
+
+2. operator1: Takes two parameters - both of type0 (v0 and v3). The precondition for this action requires v0 to satisfy predicate0 and predicate6. The effect of this action is that v0 no longer satisfies predicate0 but v3 now satisfies predicate0.
+
+3. operator0: Takes two parameters - one of type1 (v2) and another of type0 (v1). The precondition for this action requires v1 to satisfy predicate0 and v2 to satisfy predicate1. The effect of this action is that v2 no longer satisfies predicate1, v1 no longer satisfies predicate9 but now satisfies predicate7.
+
+Two example problems are provided: "my-problem-4" and "my-problem-3." Both problems have the same domain, object types, and initial conditions involving the predicates. The goals in both problems are to make specific type0 objects satisfy predicate7, but the specific objects to achieve this goal are different for each problem.

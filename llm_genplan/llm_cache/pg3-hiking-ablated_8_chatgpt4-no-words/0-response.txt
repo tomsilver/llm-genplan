@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain," represents a problem-solving environment with a single object type, "type0." There are five predicates defined: predicate0, predicate1, predicate3, predicate4, and predicate5. These predicates involve either one or two objects of type0. 
+
+Two operators are defined, "operator1" and "operator0." Both operators require two objects of type0 as parameters and have similar preconditions. The preconditions involve checking for the absence of predicate3 or predicate4 for specific objects, and the presence of predicate1 and predicate0 for the input objects. The effect of both operators is to remove predicate1 from the first object and add it to the second object.
+
+Two example problems are provided for this domain, "my-problem-3" and "my-problem-2." Both problems have a set of objects of type0 and an initial state with various relationships defined by the domain predicates. The goal for both problems is to achieve a specific state defined by predicate1 for a particular object.

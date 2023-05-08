@@ -1,0 +1,38 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Find an object that has predicate0 in init
+    initial_object = None
+    for atom in init:
+        if atom[0] == 'predicate0':
+            initial_object = list(objects)[0]
+            break
+
+    if initial_object is None:
+        raise ValueError("predicate0 not found in init.")
+
+    # Apply operator0 to the initial_object
+    plan.append(f'(operator0 {initial_object})')
+
+    # Extract all predicate1 relationships
+    predicate1_relations = {tuple(atom[1:]) for atom in init if atom[0] == 'predicate1'}
+
+    # Apply operator1 to remaining objects using the initial_object while ensuring the preconditions are satisfied
+    for obj in objects:
+        if obj == initial_object:
+            continue
+
+        if (initial_object, obj) in predicate1_relations:
+            plan.append(f'(operator1 {initial_object} {obj})')
+        else:
+            intermediate_step = False
+            for other_obj in objects:
+                if other_obj != obj and (other_obj, obj) in predicate1_relations and other_obj != initial_object:
+                    plan.append(f'(operator1 {initial_object} {other_obj})')
+                    plan.append(f'(operator1 {other_obj} {obj})')
+                    intermediate_step = True
+                    break
+            if not intermediate_step:
+                raise ValueError("Unable to create a valid plan.")
+
+    return plan

@@ -1,0 +1,7 @@
+# Example usage:
+objects = {('object0', 'type0'), ('object1', 'type0'), ('object10', 'type0'), ('object11', 'type0'), ...} # Replace ... with the complete set of objects
+init = {('predicate0', 'object0', 'object1'), ('predicate0', 'object0', 'object10'), ...}  # Replace ... with the complete set of initial conditions
+goal = {('predicate1', 'object67')}
+
+plan = get_plan(objects, init, goal)
+print(plan)

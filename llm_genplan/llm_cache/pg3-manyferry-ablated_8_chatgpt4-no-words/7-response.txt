@@ -1,0 +1,58 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    predicate0_pairs = [atom for atom in init if atom[0] == "predicate0"]
+    predicate1_objects = [atom[1] for atom in init if atom[0] == "predicate1"]
+    predicate3_objects = [atom[1] for atom in init if atom[0] == "predicate3"]
+    predicate6_objects = [atom[1] for atom in init if atom[0] == "predicate6"]
+    predicate7_pairs = [atom for atom in init if atom[0] == "predicate7"]
+
+    for g in goal:
+        if g[0] == "predicate0":
+            obj1, obj2 = g[1], g[2]
+
+            # Find the current pair in the init state
+            current_pair = [p for p in predicate0_pairs if p[1] == obj1][0]
+
+            # Check if the goal is already satisfied
+            if current_pair[2] == obj2:
+                continue
+
+            # Detach the object with the predicate1 property if required
+            if current_pair[2] == predicate1_objects[0]:
+                operator0_action = f"(operator0 {obj1} {current_pair[2]})"
+                plan.append(operator0_action)
+
+            # Transfer predicate1 property if required
+            if obj2 not in predicate1_objects:
+                transfer_candidates = [p for p in predicate7_pairs if p[1] == predicate1_objects[0] and p[2] in predicate6_objects]
+                if transfer_candidates:
+                    transfer_pair = transfer_candidates[0]
+                    operator2_action = f"(operator2 {transfer_pair[1]} {transfer_pair[2]})"
+                    plan.append(operator2_action)
+                    predicate1_objects.remove(transfer_pair[1])
+                    predicate1_objects.append(transfer_pair[2])
+
+            # Apply operator0 to detach the objects
+            operator0_action = f"(operator0 {obj1} {current_pair[2]})"
+            plan.append(operator0_action)
+
+            # Transfer predicate1 property if required
+            if obj2 not in predicate1_objects:
+                transfer_candidates = [p for p in predicate7_pairs if p[1] == predicate1_objects[0] and p[2] in predicate6_objects]
+                if transfer_candidates:
+                    transfer_pair = transfer_candidates[0]
+                    operator2_action = f"(operator2 {transfer_pair[1]} {transfer_pair[2]})"
+                    plan.append(operator2_action)
+                    predicate1_objects.remove(transfer_pair[1])
+                    predicate1_objects.append(transfer_pair[2])
+
+            # Apply operator1 to reattach the objects
+            operator1_action = f"(operator1 {obj1} {obj2})"
+            plan.append(operator1_action)
+
+            # Update the current state
+            predicate0_pairs.remove(current_pair)
+            predicate0_pairs.append((g[0], g[1], g[2]))
+
+    return plan

@@ -1,0 +1,30 @@
+def get_plan(objects, init, goal):
+    predicate0_connections = {atom[1]: atom[2] for atom in init if isinstance(atom, tuple) and atom[0] == 'predicate0'}
+
+    def find_path(start, end, path=[]):
+        path = path + [start]
+        if start == end:
+            return path
+        if start not in predicate0_connections:
+            return None
+        for node in predicate0_connections[start]:
+            if node not in path:
+                newpath = find_path(node, end, path)
+                if newpath:
+                    return newpath
+        return None
+
+    plan = []
+    for g in goal:
+        if g[0] == 'predicate1':
+            start_object = None
+            for atom in init:
+                if isinstance(atom, tuple) and atom[0] == 'predicate1':
+                    start_object = atom[1]
+                    break
+            if start_object:
+                path = find_path(start_object, g[1])
+                if path:
+                    for i in range(len(path) - 1):
+                        plan.append('(move {} {})'.format(path[i], path[i+1]))
+    return plan

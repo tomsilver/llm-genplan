@@ -1,0 +1,50 @@
+def get_plan(objects, init, goal):
+    plan = []
+
+    # Group atoms in the initial state by predicate
+    predicate1 = get_predicate_objects("predicate1", init)
+    predicate2 = get_predicate_objects("predicate2", init)
+    predicate5 = get_predicate_objects("predicate5", init)
+    predicate6 = get_predicate_objects("predicate6", init)
+    predicate9 = get_predicate_objects("predicate9", init)
+
+    def apply_operator2(obj2, obj9, obj6):
+        nonlocal init, predicate5, predicate6
+        plan.append(f"(operator2 {obj2} {obj9} {obj6})")
+        init.remove(("predicate0", obj2, obj9))
+        init.add(("predicate3", obj2, obj6))
+        predicate5.remove((obj6,))
+        predicate6.remove((obj6,))
+
+    def apply_operator1(obj1, obj9):
+        nonlocal init, predicate1
+        plan.append(f"(operator1 {obj1[0]} {obj9})")
+        predicate1.remove(obj1)
+        predicate1.add((obj9,))
+        init.remove(("predicate1", obj1[0]))
+        init.add(("predicate1", obj9))
+
+    for goal_rel in goal:
+        if goal_rel in init:
+            continue
+
+        obj2, obj9 = goal_rel[1], goal_rel[2]
+        obj1 = next(iter(predicate1), None)
+        if obj1 is None:
+            continue
+
+        apply_operator1(obj1, obj9)
+        available_obj6 = next(iter(predicate5 & predicate6), None)
+
+        if available_obj6 is None:
+            continue
+
+        if not can_apply_operator2(obj2, obj9, available_obj6[0], init):
+            apply_operator1(obj9, obj1[0])
+            if not can_apply_operator2(obj2, obj9, available_obj6[0], init):
+                continue
+
+        apply_operator2(obj2, obj9, available_obj6[0])
+        init.add(goal_rel)
+
+    return plan

@@ -1,0 +1,20 @@
+# Example usage:
+objects = {
+    ('object0', 'type0'),
+    ('object1', 'type0'),
+    ('object2', 'type0'),
+    ('object3', 'type0'),
+}
+
+init = {
+    ('predicate0', 'object0', 'object1'),
+    ('predicate0', 'object1', 'object2'),
+    ('predicate0', 'object2', 'object3'),
+    ('predicate1', 'object0'),
+    ('predicate3', 'object3'),
+}
+
+goal = {('predicate1', 'object3')}
+
+plan = get_plan(objects, init, goal)
+print(plan)

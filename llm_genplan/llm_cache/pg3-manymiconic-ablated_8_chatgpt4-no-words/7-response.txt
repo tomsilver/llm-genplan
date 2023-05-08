@@ -1,0 +1,48 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    predicate6_objects = {atom[1] for atom in init if atom[0] == 'predicate6'}
+    predicate7_connections = {(atom[1], atom[2]) for atom in init if atom[0] == 'predicate7'}
+    predicate4_connections = {(atom[1], atom[2]) for atom in init if atom[0] == 'predicate4'}
+    predicate0_connections = {(atom[1], atom[2]) for atom in init if atom[0] == 'predicate0'}
+    predicate2_objects = set()
+
+    for g in goal:
+        if g[0] == 'predicate8':
+            type2_object = g[1]
+            type0_object = None
+            
+            # Find connected type0 object with predicate6
+            for connection in predicate7_connections:
+                if connection[0] == type2_object and connection[1] in predicate6_objects:
+                    type0_object = connection[1]
+                    break
+                    
+            if type0_object is not None:
+                # Apply operator0
+                plan.append(f'(operator0 {type0_object} {type2_object})')
+                predicate2_objects.add(type2_object)
+            else:
+                for connection in predicate4_connections:
+                    if connection[0] == type2_object and connection[1] in predicate6_objects:
+                        type0_object = connection[1]
+                        break
+                        
+                if type0_object is not None:
+                    # Apply operator0
+                    plan.append(f'(operator0 {type0_object} {type2_object})')
+                    predicate2_objects.add(type2_object)
+
+            if type0_object is not None and type2_object in predicate2_objects:
+                # Apply operator1
+                plan.append(f'(operator1 {type0_object} {type2_object})')
+                
+                # Move predicate6 to next connected type0 object using operator3 or operator2
+                connected_type0_objects = {conn[1] for conn in predicate0_connections if conn[0] == type0_object} | \
+                                          {conn[0] for conn in predicate0_connections if conn[1] == type0_object}
+                for next_type0_object in connected_type0_objects:
+                    if next_type0_object != type0_object:
+                        plan.append(f'(operator3 {type0_object} {next_type0_object})')
+                        break
+                    
+    return plan

@@ -1,0 +1,7 @@
+def apply_operator1(obj1, obj9):
+    nonlocal init, predicate1
+    plan.append(f"(operator1 {obj1[0]} {obj9})")
+    predicate1.remove(obj1)
+    predicate1.add((obj9,))
+    init.remove(("predicate1", obj1[0]))
+    init.add(("predicate1", obj9))
