@@ -1,0 +1,13 @@
+In this domain, the strategy to solve all problems without using search can be derived by understanding the relationship between predicates and the two operators. The main goal in these problems is to make predicate1 true for a specific object. Both operators have the same effect: making predicate1 true for ?v4 and false for ?v0. 
+
+The simple strategy for solving all problems in this domain without using search is:
+
+1. Identify the goal object (the one that needs to have predicate1 true).
+2. Find a valid pair of objects (?v0 and ?v4) such that:
+   a. predicate0 is true for the pair.
+   b. predicate1 is true for ?v0.
+   c. predicate4 is false for ?v0.
+   d. For operator1, predicate3 is false for ?v4, and for operator0, predicate3 is true for ?v4.
+3. Apply the appropriate operator (operator1 or operator0) to the pair (?v0 and ?v4) found in step 2. This will make predicate1 true for the goal object.
+
+Following this strategy, you can solve all problems in this domain without the need for search.

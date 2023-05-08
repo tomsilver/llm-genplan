@@ -1,0 +1,31 @@
+def get_goal_object(goal):
+    for atom in goal:
+        if atom[0] == 'predicate1':
+            return atom[1]
+    return None
+
+def find_applicable_operator(init, goal_object):
+    for atom in init:
+        if atom[0] == 'predicate0':
+            v0, v4 = atom[1], atom[2]
+            if v4 == goal_object:
+                if ('predicate1', v0) in init and ('predicate4', v0) not in init:
+                    if ('predicate3', v4) in init:
+                        return 'operator0', v0, v4
+                    elif ('predicate3', v4) not in init:
+                        return 'operator1', v0, v4
+    return None
+
+def get_plan(objects, init, goal):
+    plan = []
+    goal_object = get_goal_object(goal)
+    
+    if goal_object is None:
+        return plan
+    
+    op, v0, v4 = find_applicable_operator(init, goal_object)
+    
+    if op is not None:
+        plan.append(f'({op} {v0} {v4})')
+        
+    return plan

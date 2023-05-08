@@ -1,0 +1,5 @@
+This PDDL domain, called "my-pddl-domain", consists of two types: type0 and type1. There are seven predicates defined for these types, with five predicates (predicate0, predicate3, predicate7, predicate9, and predicate6) involving objects of type0, and two predicates (predicate8 and predicate1) involving objects of type1.
+
+The domain has three actions, operator2, operator1, and operator0, each with their own parameters, preconditions, and effects. Operator2 has parameters of both types, operator1 has two parameters of type0, and operator0 also has parameters of both types.
+
+The example problems provided are my-problem-4 and my-problem-3. Both problems have objects of type0 and type1, with specific initial states and goals. The goal of my-problem-4 is to reach a state where objects object1, object2, and object4 have predicate7, while the goal of my-problem-3 is to reach a state where objects object2 and object4 have predicate7.

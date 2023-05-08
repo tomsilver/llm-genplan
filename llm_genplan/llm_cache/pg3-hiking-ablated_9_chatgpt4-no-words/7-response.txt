@@ -1,0 +1,70 @@
+def find_path(init, start, end, visited=None):
+    if visited is None:
+        visited = set()
+
+    visited.add(start)
+    if start == end:
+        return [start]
+
+    for atom in init:
+        if atom[0] in {'predicate0', 'predicate5'}:
+            v0, v4 = atom[1], atom[2]
+            if v0 == start and v4 not in visited:
+                path = find_path(init, v4, end, visited)
+                if path:
+                    return [start] + path
+    return None
+
+def find_mixed_path(init, start, end, visited=None):
+    if visited is None:
+        visited = set()
+
+    visited.add(start)
+    if start == end:
+        return [start]
+
+    for atom in init:
+        if atom[0] == 'predicate0':
+            v0, v4 = atom[1], atom[2]
+            if v0 == start and v4 not in visited:
+                path = find_path(init, v4, end, visited)
+                if path:
+                    return [start] + path
+        elif atom[0] == 'predicate5':
+            v0, v4 = atom[1], atom[2]
+            if v0 == start and v4 not in visited:
+                path = find_mixed_path(init, v4, end, visited)
+                if path:
+                    return [start] + path
+    return None
+
+def get_plan(objects, init, goal):
+    plan = []
+    goal_object = get_goal_object(goal)
+    
+    if goal_object is None:
+        return plan
+
+    # Find the object with predicate1 true
+    start_object = None
+    for atom in init:
+        if atom[0] == 'predicate1':
+            start_object = atom[1]
+            break
+
+    # Find the path from start_object to goal_object using a combination of predicate0 and predicate5
+    path = find_mixed_path(init, start_object, goal_object)
+
+    if path is None:
+        return plan
+
+    # Apply the applicable operator along the path to make predicate1 true for the goal_object
+    for i in range(len(path) - 1):
+        v0, v4 = path[i], path[i + 1]
+        op, _, _ = find_applicable_operator(init, v0, v4)
+        if op is not None:
+            plan.append(f'({op} {v0} {v4})')
+            init.remove(('predicate1', v0))
+            init.add(('predicate1', v4))
+        
+    return plan

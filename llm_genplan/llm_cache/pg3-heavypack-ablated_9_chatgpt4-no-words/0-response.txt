@@ -1,0 +1,5 @@
+This PDDL domain, named "my-pddl-domain", consists of five predicates and two actions. The predicates are: predicate0, predicate1, predicate2, predicate4, and predicate6. The actions are named operator0 and operator1, each with their own parameters, preconditions, and effects.
+
+The domain is used to define problems with different numbers of objects, such as "my-problem-9" and "my-problem-5". Both problems aim to achieve a goal state where all objects have the predicate4 property. The initial state in the problems includes predicate0 and predicate6 for all objects, along with various combinations of predicate1 relationships between the objects.
+
+The operator0 action can be applied to an object when predicate0 is true. It removes predicate0, adds predicate4 and predicate2, and removes predicate6 for the object. The operator1 action can be applied to a pair of objects when the first object has predicate4 and predicate2, the second object has predicate6, and there is a predicate1 relationship between them. The action results in the second object gaining predicate4 and predicate2, while losing predicate6, and the first object losing predicate2.

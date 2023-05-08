@@ -1,0 +1,25 @@
+def get_plan(objects, init, goal):
+    plan = []
+    
+    predicate0_objs = {x[1] for x in init if x[0] == 'predicate0'}
+    predicate3_objs = {x[1] for x in init if x[0] == 'predicate3'}
+    predicate6_objs = {x[1] for x in init if x[0] == 'predicate6'}
+    predicate8_objs = {x[1] for x in init if x[0] == 'predicate8'}
+
+    # Step 1: Apply operator1 to transfer predicate0 to objects with predicate6
+    for obj in predicate6_objs:
+        if obj not in predicate0_objs:
+            plan.append(f'(operator1 {list(predicate0_objs)[0]} {obj})')
+            predicate0_objs.add(obj)
+
+    # Step 2: Apply operator2 to link objects with predicate0 and predicate3, and objects with predicate8
+    for obj0, obj8 in zip(predicate3_objs, predicate8_objs):
+        plan.append(f'(operator2 {obj8} {obj0})')
+
+    # Step 3: Apply operator0 to remove predicate1 and predicate9, and add predicate7 to objects with predicate0
+    for obj0 in predicate0_objs:
+        if ('predicate9', obj0) in init:
+            obj1 = [x[0] for x in objects if x[1] == 'type1' and x[0] not in predicate8_objs][0]
+            plan.append(f'(operator0 {obj1} {obj0})')
+
+    return plan
