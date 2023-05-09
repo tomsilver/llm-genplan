@@ -128,11 +128,13 @@ def _create_interactive_debug_plot(df: pd.DataFrame):
                 y = row.success_rate
             x_to_ys[x].append(y)
     xs = sorted(x_to_ys)
-    ys = [np.mean(x_to_ys[x]) for x in xs]
+    ys = np.array([np.mean(x_to_ys[x]) for x in xs])
+    errs = [np.std(x_to_ys[x], ddof=1) / np.sqrt(np.size(x_to_ys[x])) for x in xs]
     outfile = "num_automated_debug.png"
     with plt.style.context("bmh"):
         plt.figure()
         plt.plot(xs, ys, marker="o")
+        plt.fill_between(xs, ys - errs, ys + errs, alpha=0.25)
         plt.ylim((-0.1, 1.1))
         plt.xticks(xs)
         plt.xlabel("# Debug Steps")
