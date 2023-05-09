@@ -1,0 +1,27 @@
+def get_plan(objects, init, goal):
+    plan = []
+    predicate0_flag = False
+
+    # Check if predicate0 is in the initial state
+    for atom in init:
+        if atom[0] == 'predicate0':
+            predicate0_flag = True
+            break
+
+    # Apply operator0 to all objects, but only if predicate0 is true
+    if predicate0_flag:
+        for obj in objects:
+            action = f'(operator0 {obj})'
+            plan.append(action)
+
+    # Apply operator1 for each pair of objects with a predicate1 relationship
+    for obj1 in objects:
+        for obj2 in objects:
+            # Check if there's a predicate1 relationship between obj1 and obj2
+            if ('predicate1', obj1, obj2) in init:
+                # Apply operator1 only if both obj1 and obj2 have predicate4 in the goal state
+                if (('predicate4', obj1) in goal) and (('predicate4', obj2) in goal):
+                    action = f'(operator1 {obj1} {obj2})'
+                    plan.append(action)
+
+    return plan

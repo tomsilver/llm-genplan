@@ -1,0 +1,61 @@
+Given this task:
+(define (problem my-problem-9 (:domain my-pddl-domain)
+  (:objects
+    object1 - type2
+    object2 - type2
+    object3 - type2
+    object4 - type2
+    object8 - type2
+    object0 - type3
+    object5 - type4
+    object6 - type4
+    object7 - type4
+    object10 - type6
+    object11 - type6
+    object12 - type6
+    object13 - type6
+    object9 - type6
+  )
+  (:init
+    (predicate0 object0 object8)
+    (predicate0 object10 object4)
+    (predicate0 object11 object3)
+    (predicate0 object12 object4)
+    (predicate0 object13 object3)
+    (predicate0 object5 object1)
+    (predicate0 object6 object1)
+    (predicate0 object7 object1)
+    (predicate0 object9 object2)
+    (predicate2 object2 object3)
+    (predicate2 object3 object4)
+    (predicate2 object4 object1)
+    (predicate2 object8 object2)
+    (predicate3 object5)
+    (predicate3 object6)
+    (predicate3 object7)
+    (predicate7 object10)
+    (predicate7 object11)
+    (predicate7 object12)
+    (predicate7 object13)
+    (predicate7 object9)
+  )
+  (:goal (and
+    (predicate6 object5)
+    (predicate6 object6)
+    (predicate6 object7)
+    )
+  )    
+)
+        
+The code raised the following exception:
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "<file-name-omitted>", line 149
+    predicate7_facts.remove(("predicate7", obj6
+                            ^
+SyntaxError: '(' was never closed
+
+Fix the code.
