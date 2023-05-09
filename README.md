@@ -1,8 +1,8 @@
-# Generalized Planning with Large Language Models
+# Generalized Planning in PDDL Domains with Pretrained Large Language Models
 
 ![workflow](https://github.com/tomsilver/llm-genplan/actions/workflows/ci.yml/badge.svg)
 
-Under development.
+Preprint coming soon.
 
 ## Requirements
 
@@ -18,11 +18,10 @@ Under development.
 
 Run `./run_ci_checks.sh`. It should complete with all green successes in 5-10 seconds.
 
-## Usage
+## Reproduce Results
 
-1. Open [chat.openai.com](https://chat.openai.com/) in your web browser.
-2. Run a command like the example below and follow the instructions in the terminal. **Note that your copy-paste clipboard will be automatically updated.**
+Run `./scripts/run_all.sh`. This reproduces results using cached chat logs. It will take 12-16 hours to complete.
 
-Example command:
+## Examine Chat Logs
 
-```python llm_genplan/main.py --env pg3-manygripper --seed 0 --experiment_id chatgpt4 --num_prompt_tasks 2 --num_extra_train_tasks 8 --num_eval_tasks 30 --abbreviate_problem_strs```
+See `llm_genplan/llm_cache`.
