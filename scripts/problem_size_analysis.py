@@ -42,7 +42,7 @@ ENV_ORDER = [
 ]
 
 APPROACH_TO_LABEL = {
-    "chatgpt4": "GPT-4 GenPlan",
+    "chatgpt4": "GPT-4",
     "fd-lama-first": "Fast Downward",
 }
 
@@ -50,7 +50,7 @@ TIMEOUT = 30
 
 
 def _main() -> None:
-    matplotlib.rcParams.update({"font.size": 20})
+    matplotlib.rcParams.update({"font.size": 32})
     plot_filepath = Path("problem_size_analysis.png")
     # Load raw results.
     parser = argparse.ArgumentParser()
@@ -318,8 +318,9 @@ def _generate_plots(
     num_subplots = len(results)
     with plt.style.context("bmh"):
         fig, _ = plt.subplots(
-            1, num_subplots, figsize=(6 * num_subplots, 7), sharey=True
+            1, num_subplots, figsize=(5 * num_subplots, 7), sharey=True
         )
+        ax = None
         for i, (ax, env) in enumerate(zip(fig.axes, ENV_ORDER)):
             env_xs, approach_to_env_ys = results[env]
             for approach in sorted(approach_to_env_ys):
@@ -327,25 +328,45 @@ def _generate_plots(
                 median_env_ys = np.median(env_ys, axis=(0, 2))
                 assert len(env_xs) == len(median_env_ys)
                 ax.loglog(
-                    env_xs, median_env_ys, marker="o", label=APPROACH_TO_LABEL[approach]
+                    env_xs,
+                    median_env_ys,
+                    marker="o",
+                    label=APPROACH_TO_LABEL[approach],
+                    linewidth=5,
+                    markersize=12,
                 )
             ax.loglog(
                 [-100, 10 * max(env_xs)],
                 [TIMEOUT, TIMEOUT],
                 linestyle="--",
+                linewidth=5,
+                markersize=12,
                 label="Timeout",
             )
             ax.set_xlim(right=1.25 * max(env_xs))
             if i == 0:
-                ax.legend(loc=(0.05, 0.6))
                 ax.set_yticks([1e-3, 1e-2, 1e-1, 1e0, 10, 100])
-            ax.set_title(ENV_TO_LABEL[env], fontsize=36)
+            ax.set_title(ENV_TO_LABEL[env], fontsize=48)
             ax.set_xticks([10, 100])
+        assert ax is not None
         fig.supxlabel("# Objects", fontsize=36)
         fig.supylabel("Planning Time (s)", x=0.01, fontsize=36)
         plt.tight_layout()
-        plt.savefig(outfile_path, dpi=250)
+        plt.savefig(outfile_path, dpi=500)
+        # Save legend as separate figure.
+        legend_fig = plt.figure()
+        legend = legend_fig.legend(
+            *ax.get_legend_handles_labels(), framealpha=1, frameon=False
+        )
+        bbox = legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+        legend_outfile_path = outfile_path.parent / f"legend-{outfile_path.name}"
+        bbox_extents = bbox.extents
+        bbox_extents[:2] -= 0.1
+        bbox_extents[2:] += 0.1
+        bbox = bbox.from_extents(bbox_extents)
+        plt.savefig(legend_outfile_path, dpi=500, bbox_inches=bbox)
     print(f"Wrote out to {outfile_path}")
+    print(f"Wrote out to {legend_outfile_path}")
 
 
 if __name__ == "__main__":

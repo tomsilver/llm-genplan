@@ -23,7 +23,11 @@ CACHE_DIR = _DIR / "llm_cache"
 @functools.lru_cache(maxsize=None)
 def get_git_commit_hash() -> str:
     """Return the hash of the current git commit."""
-    out = subprocess.check_output(["git", "rev-parse", "HEAD"])
+    try:
+        out = subprocess.check_output(["git", "rev-parse", "HEAD"])
+    except subprocess.CalledProcessError:
+        logging.warning("Code is not inside a git repository.")
+        return "not-a-git-repository"
     return out.decode("ascii").strip()
 
 
