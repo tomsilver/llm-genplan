@@ -2,7 +2,9 @@
 
 ![workflow](https://github.com/tomsilver/llm-genplan/actions/workflows/ci.yml/badge.svg)
 
-Preprint coming soon.
+Preprint: [https://arxiv.org/abs/2305.11014](https://arxiv.org/abs/2305.11014)
+
+Tom Silver, Soham Dan, Kavitha Srinivas, Joshua B. Tenenbaum, Leslie Pack Kaelbling, Michael Katz (2023)
 
 ## Requirements
 
